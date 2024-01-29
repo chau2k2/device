@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "Hash": "1bj5gr1PqFRw4C+dxbrfuBvdVQtwdBFxhRCGT4VOabs=",
+  "Source": "device",
+  "BasePath": "_content/device",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": []
+}

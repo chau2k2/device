@@ -4,5 +4,6 @@ namespace device.Data
 {
     public class LaptopDbContext :DbContext
     {
+
     }
 }
