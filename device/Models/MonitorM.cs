@@ -3,7 +3,7 @@ using System.Text.Json.Serialization;
 
 namespace device.Models
 {
-    public class Vga
+    public class MonitorM
     {
         [Key]
         public int Id { get; set; }
@@ -11,6 +11,6 @@ namespace device.Models
         public string Name { get; set; }
         public bool IsActive { get; set; }
         [JsonIgnore]
-        public ICollection<LaptopDetail> laptopDetail { get; set; }
+        public ICollection<LaptopDetail> LaptopDetail { get; set;}
     }
 }

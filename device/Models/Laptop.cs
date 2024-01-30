@@ -12,10 +12,10 @@ namespace device.Models
         public string Name { get; set; }
         //foreign key for Laptop
         [Required]
-        [ForeignKey("producer")]
+        [ForeignKey("producers")]
         public int Producer { get; set; }
         [JsonIgnore]
-        public Producer producer { get; set; }
+        public ICollection<Producer> Producers { get; set; } 
         [Required]
         [ForeignKey("laptop_detail")]
         public int LaptopDetail { get; set; }
