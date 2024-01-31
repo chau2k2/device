@@ -1,6 +1,10 @@
 ﻿using device.Data;
 using device.IRepository;
 using device.IServices;
+using Newtonsoft.Json;
+using System.Net.WebSockets;
+using System.Text;
+using System.Text.Json.Serialization;
 
 namespace device.Services
 {
@@ -20,37 +24,18 @@ namespace device.Services
             return entity;
         }
 
-        public async Task<bool> CheckConstraint(int id)
+        public async Task<int> Delete<T>(string urlGetById, string urlDel, int id)
         {
-            var checkIdLaptop = _dbContext.laptops.Any(x => x.Id == id);
-            var checkIdLapDetail = _dbContext.laptopsDetail.Any(x => x.Id == id);
-            var checkidProducer = _dbContext.producers.Any(x => x.Id == id);
-            var checkIdRam = _dbContext.ram.Any(x => x.Id == id);
-            var chechIdVga = _dbContext.vgas.Any(x => x.Id == id);
-            var checkIdMonitor = _dbContext.monitors.Any(x => x.Id == id);
-            var checkIdKhoHang = _dbContext.khoHangs.Any(x => x.Id == id);
-            return checkIdLaptop && checkIdLapDetail && checkidProducer && checkIdRam && chechIdVga && checkIdMonitor && checkIdKhoHang;
-        }
-
-        public async Task<T> Delete(int id)
-        {
-            var checkIdLaptop = _dbContext.laptops.Any(x => x.Id == id);
-            var checkIdLapDetail = _dbContext.laptopsDetail.Any(x => x.Id == id);
-            var checkidProducer = _dbContext.producers.Any(x => x.Id == id);
-            var checkIdRam = _dbContext.ram.Any(x => x.Id == id);
-            var chechIdVga = _dbContext.vgas.Any(x => x.Id == id);
-            var checkIdMonitor = _dbContext.monitors.Any(x => x.Id == id);
-            var checkIdKhoHang = _dbContext.khoHangs.Any(x => x.Id == id);
-            if (checkIdLaptop && checkIdLapDetail && checkidProducer && checkIdRam && chechIdVga && checkIdMonitor && checkIdKhoHang)
+            T model = await GetById<T>(urlGetById, id);
+            HttpClient client = new HttpClient();
+            var content = new StringContent(JsonConvert.SerializeObject(model),Encoding.UTF8,"application/json"); // get id from url
+            var reponse = await client.GetAsync(urlDel + id); //remove id
+            string result = await reponse.Content.ReadAsStringAsync();
+            if (!reponse.IsSuccessStatusCode)
             {
-                throw new Exception("can not delete this entity");
+                return 0;
             }
-            var idDel = await _repository.GetAsyncById(id);
-            if (idDel != null)
-            {
-                await _repository.DeleteOneAsync(idDel);
-            }
-            return idDel;
+            return 1;
         }
 
         public async Task<IEnumerable<T>> GetAll(int page, int pageSize)
@@ -58,10 +43,14 @@ namespace device.Services
             return await _repository.GetAllAsync(page, pageSize);
         }
 
-        public async Task<T> GetById(int id)
+        public async Task<T> GetById<T>(string urlGetById, int id)
         {
-            return await _repository.GetAsyncById(id);
-        }
+            var httpClient = new HttpClient();// tao Response from http
+            var response = await httpClient.GetAsync(urlGetById + id); // tao url 
+            string TResponse = await response.Content.ReadAsStringAsync(); // doc response
+            T model = JsonConvert.DeserializeObject<T>(TResponse);
+            return model;
+        } 
 
         public async Task<T> Update(int id, T entity)
         {

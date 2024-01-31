@@ -41,3 +41,6 @@ C:\Users\nguye\source\repos\FINATECH\device\device\obj\Debug\net7.0\refint\devic
 C:\Users\nguye\source\repos\FINATECH\device\device\obj\Debug\net7.0\device.pdb
 C:\Users\nguye\source\repos\FINATECH\device\device\obj\Debug\net7.0\device.genruntimeconfig.cache
 C:\Users\nguye\source\repos\FINATECH\device\device\obj\Debug\net7.0\ref\device.dll
+C:\Users\nguye\source\repos\FINATECH\device\device\bin\Debug\net7.0\System.Net.Http.Formatting.dll
+C:\Users\nguye\source\repos\FINATECH\device\device\bin\Debug\net7.0\Newtonsoft.Json.dll
+C:\Users\nguye\source\repos\FINATECH\device\device\bin\Debug\net7.0\Newtonsoft.Json.Bson.dll

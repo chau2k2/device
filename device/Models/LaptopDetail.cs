@@ -12,12 +12,14 @@ namespace device.Models
         public string Cpu {  get; set; }
         [Required]
         public string Seri { get; set; }
-        [Required,ForeignKey("cvga")]
+        [Required]
         public int IdVga { get; set; }
-        [Required, ForeignKey("cram")]
+        [Required]
         public int IdRam { get; set; }
+        [JsonIgnore]
+        public Ram Rams { get; set; }
         public string HardDriver { get; set; }
-        [Required,ForeignKey("monitor")]
+        [Required]
         public int IdMonitor { get; set; }
         public string Webcam { get; set; }
         public double Weight { get; set; }
@@ -31,14 +33,15 @@ namespace device.Models
 
         [JsonIgnore]
         public Vga Vga { get; set; }
-        [JsonIgnore]
-        public Ram Ram { get; set; }
+        
         [JsonIgnore]
         public MonitorM Monitor { get; set; }
         [JsonIgnore]
         public KhoHang KhoHang { get; set; }
         [JsonIgnore]
-        public ICollection<Laptop> laptops { get; set; }
-
+        [Required]
+        public int idLaptop { get; set; }
+        [JsonIgnore]
+        public Laptop Laptops { get; set;}
     }
 }

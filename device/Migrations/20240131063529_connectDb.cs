@@ -6,7 +6,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace device.Migrations
 {
     /// <inheritdoc />
-    public partial class init : Migration
+    public partial class connectDb : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -25,6 +25,20 @@ namespace device.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_khoHangs", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "laptops",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Name = table.Column<string>(type: "text", nullable: false),
+                    Producer = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_laptops", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -52,7 +66,7 @@ namespace device.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_producer", x => x.Id);
+                    table.PrimaryKey("PK_producers", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -84,6 +98,30 @@ namespace device.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "LaptopProducer",
+                columns: table => new
+                {
+                    LaptopsId = table.Column<int>(type: "integer", nullable: false),
+                    ProducersId = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_LaptopProducer", x => new { x.LaptopsId, x.ProducersId });
+                    table.ForeignKey(
+                        name: "FK_LaptopProducer_laptops_LaptopsId",
+                        column: x => x.LaptopsId,
+                        principalTable: "laptops",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_LaptopProducer_producers_ProducersId",
+                        column: x => x.ProducersId,
+                        principalTable: "producers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "laptopsDetail",
                 columns: table => new
                 {
@@ -103,10 +141,8 @@ namespace device.Migrations
                     BatteryCatttery = table.Column<string>(type: "text", nullable: false),
                     IdKhoHang = table.Column<int>(type: "integer", nullable: false),
                     Image = table.Column<byte[]>(type: "bytea", nullable: false),
-                    VgaId = table.Column<int>(type: "integer", nullable: false),
-                    RamId = table.Column<int>(type: "integer", nullable: false),
-                    MonitorId = table.Column<int>(type: "integer", nullable: false),
-                    KhoHangId = table.Column<int>(type: "integer", nullable: false)
+                    KhoHangId = table.Column<int>(type: "integer", nullable: false),
+                    idLaptop = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -118,89 +154,67 @@ namespace device.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_laptopsDetail_monitors_MonitorId",
-                        column: x => x.MonitorId,
+                        name: "FK_laptopsDetail_laptops_idLaptop",
+                        column: x => x.idLaptop,
+                        principalTable: "laptops",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_laptopsDetail_monitors_IdMonitor",
+                        column: x => x.IdMonitor,
                         principalTable: "monitors",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_laptopsDetail_ram_RamId",
-                        column: x => x.RamId,
+                        name: "FK_laptopsDetail_ram_IdRam",
+                        column: x => x.IdRam,
                         principalTable: "ram",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_laptopsDetail_vgas_VgaId",
-                        column: x => x.VgaId,
+                        name: "FK_laptopsDetail_vgas_IdVga",
+                        column: x => x.IdVga,
                         principalTable: "vgas",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "laptops",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Name = table.Column<string>(type: "text", nullable: false),
-                    Producer = table.Column<int>(type: "integer", nullable: false),
-                    LaptopDetail = table.Column<int>(type: "integer", nullable: false),
-                    laptopDetailId = table.Column<int>(type: "integer", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_laptops", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_laptops_laptopsDetail_laptopDetailId",
-                        column: x => x.laptopDetailId,
-                        principalTable: "laptopsDetail",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_laptops_producer_Producer",
-                        column: x => x.Producer,
-                        principalTable: "producers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_laptops_laptopDetailId",
-                table: "laptops",
-                column: "laptopDetailId");
+                name: "IX_LaptopProducer_ProducersId",
+                table: "LaptopProducer",
+                column: "ProducersId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_laptops_Producer",
-                table: "laptops",
-                column: "Producer");
+                name: "IX_laptopsDetail_idLaptop",
+                table: "laptopsDetail",
+                column: "idLaptop");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_laptopsDetail_IdMonitor",
+                table: "laptopsDetail",
+                column: "IdMonitor");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_laptopsDetail_IdRam",
+                table: "laptopsDetail",
+                column: "IdRam");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_laptopsDetail_IdVga",
+                table: "laptopsDetail",
+                column: "IdVga");
 
             migrationBuilder.CreateIndex(
                 name: "IX_laptopsDetail_KhoHangId",
                 table: "laptopsDetail",
                 column: "KhoHangId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_laptopsDetail_MonitorId",
-                table: "laptopsDetail",
-                column: "MonitorId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_laptopsDetail_RamId",
-                table: "laptopsDetail",
-                column: "RamId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_laptopsDetail_VgaId",
-                table: "laptopsDetail",
-                column: "VgaId");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "laptops");
+                name: "LaptopProducer");
 
             migrationBuilder.DropTable(
                 name: "laptopsDetail");
@@ -210,6 +224,9 @@ namespace device.Migrations
 
             migrationBuilder.DropTable(
                 name: "khoHangs");
+
+            migrationBuilder.DropTable(
+                name: "laptops");
 
             migrationBuilder.DropTable(
                 name: "monitors");

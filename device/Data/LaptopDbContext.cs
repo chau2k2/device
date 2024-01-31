@@ -24,6 +24,30 @@ namespace device.Data
                 .HasMany(p => p.Producers)
                 .WithMany(p => p.Laptops);
             //1-n
+            //Laptop - laptopDetail
+            modelBuilder.Entity<Laptop>()
+                .HasMany(l => l.LaptopDetails)
+                .WithOne(l => l.Laptops)
+                .HasForeignKey(l => l.idLaptop)
+                .OnDelete(DeleteBehavior.Restrict);
+            // Ram - LaptopDetail
+            modelBuilder.Entity<Ram>()
+                .HasMany(r => r.LaptopDetail)
+                .WithOne(r => r.Rams)
+                .HasForeignKey(r => r.IdRam)
+                .OnDelete(DeleteBehavior.Restrict);
+            // Monitor - LaptopDetail
+            modelBuilder.Entity<MonitorM>()
+                .HasMany(m => m.LaptopDetail)
+                .WithOne(m => m.Monitor)
+                .HasForeignKey(m => m.IdMonitor)
+                .OnDelete(DeleteBehavior.Restrict);
+            // vga - LaptopDetail
+            modelBuilder.Entity<Vga>()
+                .HasMany(v => v.laptopDetail)
+                .WithOne(v => v.Vga)
+                .HasForeignKey(v => v.IdVga)
+                .OnDelete(DeleteBehavior.Restrict);
         }
         
         public DbSet<Laptop> laptops { get; set; }

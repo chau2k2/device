@@ -21,6 +21,21 @@ namespace device.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("LaptopProducer", b =>
+                {
+                    b.Property<int>("LaptopsId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("ProducersId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("LaptopsId", "ProducersId");
+
+                    b.HasIndex("ProducersId");
+
+                    b.ToTable("LaptopProducer");
+                });
+
             modelBuilder.Entity("device.Models.KhoHang", b =>
                 {
                     b.Property<int>("Id")
@@ -54,9 +69,6 @@ namespace device.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("LaptopDetail")
-                        .HasColumnType("integer");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text");
@@ -64,14 +76,7 @@ namespace device.Migrations
                     b.Property<int>("Producer")
                         .HasColumnType("integer");
 
-                    b.Property<int>("laptopDetailId")
-                        .HasColumnType("integer");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("Producer");
-
-                    b.HasIndex("laptopDetailId");
 
                     b.ToTable("laptops");
                 });
@@ -121,18 +126,9 @@ namespace device.Migrations
                     b.Property<double>("Length")
                         .HasColumnType("double precision");
 
-                    b.Property<int>("MonitorId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("RamId")
-                        .HasColumnType("integer");
-
                     b.Property<string>("Seri")
                         .IsRequired()
                         .HasColumnType("text");
-
-                    b.Property<int>("VgaId")
-                        .HasColumnType("integer");
 
                     b.Property<string>("Webcam")
                         .IsRequired()
@@ -144,15 +140,20 @@ namespace device.Migrations
                     b.Property<double>("Width")
                         .HasColumnType("double precision");
 
+                    b.Property<int>("idLaptop")
+                        .HasColumnType("integer");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("IdMonitor");
+
+                    b.HasIndex("IdRam");
+
+                    b.HasIndex("IdVga");
 
                     b.HasIndex("KhoHangId");
 
-                    b.HasIndex("MonitorId");
-
-                    b.HasIndex("RamId");
-
-                    b.HasIndex("VgaId");
+                    b.HasIndex("idLaptop");
 
                     b.ToTable("laptopsDetail");
                 });
@@ -237,56 +238,60 @@ namespace device.Migrations
                     b.ToTable("vgas");
                 });
 
-            modelBuilder.Entity("device.Models.Laptop", b =>
+            modelBuilder.Entity("LaptopProducer", b =>
                 {
-                    b.HasOne("device.Models.Producer", "producers")
-                        .WithMany("Laptops")
-                        .HasForeignKey("Producer")
+                    b.HasOne("device.Models.Laptop", null)
+                        .WithMany()
+                        .HasForeignKey("LaptopsId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("device.Models.LaptopDetail", "laptopDetail")
-                        .WithMany("laptops")
-                        .HasForeignKey("laptopDetailId")
+                    b.HasOne("device.Models.Producer", null)
+                        .WithMany()
+                        .HasForeignKey("ProducersId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("laptopDetail");
-
-                    b.Navigation("producers");
                 });
 
             modelBuilder.Entity("device.Models.LaptopDetail", b =>
                 {
+                    b.HasOne("device.Models.MonitorM", "Monitor")
+                        .WithMany("LaptopDetail")
+                        .HasForeignKey("IdMonitor")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("device.Models.Ram", "Rams")
+                        .WithMany("LaptopDetail")
+                        .HasForeignKey("IdRam")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("device.Models.Vga", "Vga")
+                        .WithMany("laptopDetail")
+                        .HasForeignKey("IdVga")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("device.Models.KhoHang", "KhoHang")
                         .WithMany("LaptopDetail")
                         .HasForeignKey("KhoHangId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("device.Models.MonitorM", "Monitor")
-                        .WithMany("LaptopDetail")
-                        .HasForeignKey("MonitorId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("device.Models.Ram", "Ram")
-                        .WithMany("LaptopDetail")
-                        .HasForeignKey("RamId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("device.Models.Vga", "Vga")
-                        .WithMany("laptopDetail")
-                        .HasForeignKey("VgaId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                    b.HasOne("device.Models.Laptop", "Laptops")
+                        .WithMany("LaptopDetails")
+                        .HasForeignKey("idLaptop")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("KhoHang");
 
+                    b.Navigation("Laptops");
+
                     b.Navigation("Monitor");
 
-                    b.Navigation("Ram");
+                    b.Navigation("Rams");
 
                     b.Navigation("Vga");
                 });
@@ -296,19 +301,14 @@ namespace device.Migrations
                     b.Navigation("LaptopDetail");
                 });
 
-            modelBuilder.Entity("device.Models.LaptopDetail", b =>
+            modelBuilder.Entity("device.Models.Laptop", b =>
                 {
-                    b.Navigation("laptops");
+                    b.Navigation("LaptopDetails");
                 });
 
             modelBuilder.Entity("device.Models.MonitorM", b =>
                 {
                     b.Navigation("LaptopDetail");
-                });
-
-            modelBuilder.Entity("device.Models.Producer", b =>
-                {
-                    b.Navigation("Laptops");
                 });
 
             modelBuilder.Entity("device.Models.Ram", b =>

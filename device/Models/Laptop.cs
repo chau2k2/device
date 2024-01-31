@@ -16,10 +16,7 @@ namespace device.Models
         public int Producer { get; set; }
         [JsonIgnore]
         public ICollection<Producer> Producers { get; set; } 
-        [Required]
-        [ForeignKey("laptop_detail")]
-        public int LaptopDetail { get; set; }
         [JsonIgnore]
-        public LaptopDetail laptopDetail { get; set; }
+        public ICollection<LaptopDetail> LaptopDetails { get; set; }
     }
 }
