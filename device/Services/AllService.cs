@@ -2,6 +2,7 @@
 using device.IRepository;
 using device.IServices;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System.Net.WebSockets;
 using System.Text;
 using System.Text.Json.Serialization;
@@ -20,22 +21,13 @@ namespace device.Services
 
         public async Task<T> Add(T entity)
         {
-            await _repository.AddOneAsync(entity);
-            return entity;
+            return await _repository.AddOneAsync(entity);
         }
 
-        public async Task<int> Delete<T>(string urlGetById, string urlDel, int id)
+        public async Task<int> Delete(int id)
         {
-            T model = await GetById<T>(urlGetById, id);
-            HttpClient client = new HttpClient();
-            var content = new StringContent(JsonConvert.SerializeObject(model),Encoding.UTF8,"application/json"); // get id from url
-            var reponse = await client.GetAsync(urlDel + id); //remove id
-            string result = await reponse.Content.ReadAsStringAsync();
-            if (!reponse.IsSuccessStatusCode)
-            {
-                return 0;
-            }
-            return 1;
+            return 0;
+            
         }
 
         public async Task<IEnumerable<T>> GetAll(int page, int pageSize)
@@ -43,13 +35,9 @@ namespace device.Services
             return await _repository.GetAllAsync(page, pageSize);
         }
 
-        public async Task<T> GetById<T>(string urlGetById, int id)
+        public async Task<T> GetById(int id)
         {
-            var httpClient = new HttpClient();// tao Response from http
-            var response = await httpClient.GetAsync(urlGetById + id); // tao url 
-            string TResponse = await response.Content.ReadAsStringAsync(); // doc response
-            T model = JsonConvert.DeserializeObject<T>(TResponse);
-            return model;
+            return await _repository.GetAsyncById(id);
         } 
 
         public async Task<T> Update(int id, T entity)

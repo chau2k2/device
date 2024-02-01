@@ -34,7 +34,7 @@ namespace device.Controllers
         {
             try
             {
-                var result = await _service.GetById<Laptop>($"https://localhost:7121/api/Laptop/{id}", id);
+                var result = await _service.GetById( id);
                 return Ok(result);
             }
             catch (Exception ex)

@@ -16,7 +16,7 @@ builder.Services.AddDbContext<LaptopDbContext>(opt => opt.UseNpgsql("DeviceDB"))
 builder.Services.AddScoped(typeof(IAllRepository<>), typeof(AllRepository<>));
 builder.Services.AddScoped(typeof(IAllService<>), typeof(AllService<>));
 
-builder.Services.AddControllers();
+builder.Services.AddControllers(option => option.SuppressImplicitRequiredAttributeForNonNullableReferenceTypes = true);
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
