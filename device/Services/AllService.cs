@@ -35,9 +35,13 @@ namespace device.Services
             return await _repository.GetAllAsync(page, pageSize);
         }
 
-        public async Task<T> GetById(int id)
+        public async Task<T> GetById<T>( string url,int id)
         {
-            return await _repository.GetAsyncById(id);
+            var httpClient = new HttpClient();
+            var response = await httpClient.GetAsync(url + id);
+            string TReponse = await response.Content.ReadAsStringAsync();
+            T model = JsonConvert.DeserializeObject<T>(TReponse);
+            return model;
         } 
 
         public async Task<T> Update(int id, T entity)

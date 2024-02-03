@@ -34,7 +34,7 @@ namespace device.Controllers
         {
             try
             {
-                var result = await _service.GetById( id);
+                var result = await _service.GetById<Producer>($"http://localhost:5272/api/Producer/Get/{id}", id);
                 return Ok(result);
             }
             catch (HttpRequestException ex)

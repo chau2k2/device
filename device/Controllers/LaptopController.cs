@@ -9,11 +9,9 @@ namespace device.Controllers
     [ApiController]
     public class LaptopController : ControllerBase
     {
-        private readonly ILogger<LaptopController> _logger;
         private readonly IAllService<Laptop> _service;
-        public LaptopController(ILogger<LaptopController> logger, IAllService<Laptop> service)
+        public LaptopController(IAllService<Laptop> service)
         {
-            _logger = logger;
             _service = service;
         }
         [HttpGet("all")]
@@ -34,7 +32,7 @@ namespace device.Controllers
         {
             try
             {
-                var result = await _service.GetById( id);
+                var result = await _service.GetById<Producer>($"http://localhost:5272/api/Laptop/Get/{id}", id);
                 return Ok(result);
             }
             catch (Exception ex)
