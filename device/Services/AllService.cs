@@ -22,10 +22,11 @@ namespace device.Services
             return await _repository.AddOneAsync(entity);
         }
 
-        public async Task<int> Delete(int id)
+        public async Task<T> Delete(int id)
         {
-            return 0;
-            
+            var Del = await _repository.GetAsyncById(id);
+            await _repository.DeleteOneAsync(Del);
+            return Del;
         }
 
         public async Task<IEnumerable<T>> GetAll(int page, int pageSize)
@@ -33,20 +34,10 @@ namespace device.Services
             return await _repository.GetAllAsync(page, pageSize);
         }
 
-        public async Task<T> GetById<T>( string url)
-        {
-            var httpClient = new HttpClient();
-            var response = await httpClient.GetAsync(url);
-            string TReponse = await response.Content.ReadAsStringAsync();
-            T model = JsonConvert.DeserializeObject<T>(TReponse);
-            return model;
-        }
-
-        public async Task<T> Test(int id)
+        public async Task<T> GetById( int id)
         {
             return await _repository.GetAsyncById(id);
         }
-
         public async Task<T> Update(int id, T entity)
         {
             await _repository.UpdateOneAsyns(entity);

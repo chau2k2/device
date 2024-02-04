@@ -34,15 +34,8 @@ namespace device.Controllers
         [HttpGet("Get/{id}")]
         public async Task<IActionResult> FindById(int id)
         {
-            try
-            {
-                var result = await _service.GetById<Producer>($"http://localhost:5272/api/Producer/Get/{id}");
-                return Ok(result);
-            }
-            catch (HttpRequestException ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            var result =  await _service.GetById(id);
+            return Ok(result);
         }
         [HttpPost]
         public async Task<IActionResult> Add([FromBody]Producer producer)
