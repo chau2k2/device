@@ -1,7 +1,9 @@
 ﻿using device.IServices;
 using device.Models;
+using device.Views.Producer;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System.Reflection.Metadata.Ecma335;
 
 namespace device.Controllers
@@ -29,12 +31,12 @@ namespace device.Controllers
             var result = await _service.Update(id, producer);
             return Ok(result);
         }
-        [HttpGet("Get")]
+        [HttpGet("Get/{id}")]
         public async Task<IActionResult> FindById(int id)
         {
             try
             {
-                var result = await _service.GetById<Producer>($"http://localhost:5272/api/Producer/Get/{id}", id);
+                var result = await _service.GetById<Producer>($"http://localhost:5272/api/Producer/Get/{id}");
                 return Ok(result);
             }
             catch (HttpRequestException ex)

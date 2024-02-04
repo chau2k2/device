@@ -32,13 +32,14 @@ namespace device.Controllers
         {
             try
             {
-                var result = await _service.GetById<Producer>($"http://localhost:5272/api/Laptop/Get/{id}", id);
+                var result = await _service.GetById<Producer>($"http://localhost:5272/api/Laptop/GetById/", id);
                 return Ok(result);
             }
             catch (Exception ex)
             {
                 return StatusCode(500, ex.Message);
             }
+
         }
         [HttpPost("create")]
         public async Task<IActionResult> Create([FromBody] Laptop laptop)

@@ -3,9 +3,7 @@ using device.IRepository;
 using device.IServices;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using System.Net.WebSockets;
-using System.Text;
-using System.Text.Json.Serialization;
+using System.Text.Json;
 
 namespace device.Services
 {
@@ -35,14 +33,19 @@ namespace device.Services
             return await _repository.GetAllAsync(page, pageSize);
         }
 
-        public async Task<T> GetById<T>( string url,int id)
+        public async Task<T> GetById<T>( string url)
         {
             var httpClient = new HttpClient();
-            var response = await httpClient.GetAsync(url + id);
+            var response = await httpClient.GetAsync(url);
             string TReponse = await response.Content.ReadAsStringAsync();
             T model = JsonConvert.DeserializeObject<T>(TReponse);
             return model;
-        } 
+        }
+
+        public async Task<T> Test(int id)
+        {
+            return await _repository.GetAsyncById(id);
+        }
 
         public async Task<T> Update(int id, T entity)
         {
