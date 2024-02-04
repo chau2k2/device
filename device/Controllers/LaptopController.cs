@@ -10,6 +10,7 @@ namespace device.Controllers
     public class LaptopController : ControllerBase
     {
         private readonly IAllService<Laptop> _service;
+
         public LaptopController(IAllService<Laptop> service)
         {
             _service = service;
@@ -32,7 +33,7 @@ namespace device.Controllers
         {
             try
             {
-                var result = await _service.GetById<Producer>($"http://localhost:5272/api/Laptop/GetById/", id);
+                var result = await _service.GetById<Producer>($"http://localhost:5272/api/Laptop/GetById/{id}");
                 return Ok(result);
             }
             catch (Exception ex)

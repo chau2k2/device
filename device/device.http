@@ -1,0 +1,9 @@
+﻿@device_HostAddress = http://localhost:5272
+
+GET {{device_HostAddress}}/api/laptop/GetById/1
+
+###
+
+GET {{device_HostAddress}}/api/laptop/GetById/2
+
+###
