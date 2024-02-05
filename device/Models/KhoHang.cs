@@ -15,10 +15,7 @@ namespace device.Models
         public int SoLuongBan { get; set; }
         [Required]
         public int SoLuongNhap { get; set; }
-        [Required]
-        public double GiaVon {  get; set; }
-        [Required]
-        public double Giaban { get; set; }
+        
         [JsonIgnore]
         public LaptopDetail laptopDetail { get; set; }
     }
