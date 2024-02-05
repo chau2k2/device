@@ -22,7 +22,12 @@ namespace device.Data
             // n-n laptop - producers
             modelBuilder.Entity<Laptop>()
                 .HasMany(p => p.Producers)
-                .WithMany(p => p.Laptops);
+                .WithMany(p => p.Laptops)
+                .UsingEntity(
+                    "LaptopProducer",
+                    l => l.HasOne(typeof(Producer)).WithMany().HasForeignKey("ProducerId").HasPrincipalKey(nameof(Producer.Id)).OnDelete(DeleteBehavior.Restrict),
+                    p => p.HasOne(typeof(Laptop)).WithMany().HasForeignKey("LaptopId").HasPrincipalKey(nameof(Laptop.Id)).OnDelete(DeleteBehavior.Restrict),
+                    j => j.HasKey("LaptopId","ProducerId"));
             //1-n
             //Laptop - laptopDetail
             modelBuilder.Entity<Laptop>()
@@ -47,6 +52,13 @@ namespace device.Data
                 .HasMany(v => v.laptopDetail)
                 .WithOne(v => v.Vga)
                 .HasForeignKey(v => v.IdVga)
+                .OnDelete(DeleteBehavior.Restrict);
+            // 1-1 
+            //LaptopDetail - kho hang
+            modelBuilder.Entity<LaptopDetail>()
+                .HasOne(l => l.khoHang)
+                .WithOne(l => l.laptopDetail)
+                .HasForeignKey<KhoHang>(l => l.idDetail)
                 .OnDelete(DeleteBehavior.Restrict);
         }
         

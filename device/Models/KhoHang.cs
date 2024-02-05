@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Reflection;
 using System.Text.Json.Serialization;
 
@@ -8,6 +9,8 @@ namespace device.Models
     {
         [Key]
         public int Id { get; set; }
+        [ForeignKey("fkDetail")]
+        public int idDetail { get; set; }
         [Required]
         public int SoLuongBan { get; set; }
         [Required]
@@ -17,6 +20,6 @@ namespace device.Models
         [Required]
         public double Giaban { get; set; }
         [JsonIgnore]
-        public ICollection<LaptopDetail> LaptopDetail { get; set;}
+        public LaptopDetail laptopDetail { get; set; }
     }
 }

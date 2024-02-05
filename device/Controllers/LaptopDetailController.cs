@@ -7,11 +7,10 @@ namespace device.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class LaptopController : ControllerBase
+    public class LaptopDetailController : ControllerBase
     {
-        private readonly IAllService<Laptop> _service;
-
-        public LaptopController(IAllService<Laptop> service)
+        private readonly IAllService<LaptopDetail> _service;
+        public LaptopDetailController(IAllService<LaptopDetail> service)
         {
             _service = service;
         }
@@ -43,37 +42,21 @@ namespace device.Controllers
 
         }
         [HttpPost("create")]
-        public async Task<IActionResult> Create([FromBody] Laptop laptop)
+        public async Task<IActionResult> Create([FromBody] LaptopDetail laptopDetail)
         {
-            var checkConstraint = await _service.CheckIdProducerOfProducer(laptop.Producer);
-            if (checkConstraint)
-            {
-                return BadRequest("can not create this");
-            }
-            var result = await _service.Add(laptop);
+            var result = await _service.Add(laptopDetail);
             return Ok(result);
-            
         }
         [HttpPost("{id}")]
-        public async Task<IActionResult> Update(int id, [FromBody] Laptop laptop)
+        public async Task<IActionResult> Update(int id, [FromBody] LaptopDetail laptopDetail)
         {
-            var result = await _service.Update(id, laptop);
+            var result = await _service.Update(id, laptopDetail);
             return Ok(result);
         }
         [HttpDelete]
         public async Task<IActionResult> Delete(int id)
         {
-            bool checkConstraint = await _service.CheckIdLaptop_LaptopDetail(id);
-            if (checkConstraint)
-            {
-                return BadRequest("can not delete this");
-            }
-            var del = await _service.Delete(id);
-            if (del == null)
-            {
-                return NotFound();
-            }
-            return NoContent();
+            return Ok(await _service.Delete(id));
         }
     }
 }

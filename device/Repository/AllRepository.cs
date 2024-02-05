@@ -37,7 +37,7 @@ namespace device.Repository
 
         public async Task<T> GetAsyncById(int id)
         {
-            return await Entities.FindAsync(id);
+            return await _dbContext.FindAsync<T>(id);
         }
 
         public async Task<T> UpdateOneAsyns(T entity)

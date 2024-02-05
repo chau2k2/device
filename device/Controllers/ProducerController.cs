@@ -1,10 +1,6 @@
 ﻿using device.IServices;
 using device.Models;
-using device.Views.Producer;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using System.Reflection.Metadata.Ecma335;
 
 namespace device.Controllers
 {
@@ -40,14 +36,28 @@ namespace device.Controllers
         [HttpPost]
         public async Task<IActionResult> Add([FromBody]Producer producer)
         {
+            var checkConstraint = await _service.CheckIdProducerOfProducer(producer.Id);
+            if (checkConstraint)
+            {
+                return BadRequest("can not create this");
+            }
             var result = await _service.Add(producer);
             return Ok(result);
         }
-
-        //public async Task<IActionResult> delete(int id)
-        //{
-        //    var result = _service.Delete<Producer>($"https://localhost:7121/api/producer/{id}",$"https://localhost:7121/api/producer/", id); 
-        //    return Ok(result);
-        //}
+        [HttpDelete]
+        public async Task<IActionResult> delete(int id)
+        {
+            bool checkConstraint = await _service.CheckIdProducer_Laptop(id);
+            if (checkConstraint)
+            {
+                return BadRequest("can not delete this");
+            }
+            var del = await _service.Delete(id);
+            if(del == null)
+            {
+                return NotFound();
+            }
+            return NoContent();
+        }
     }
 }
