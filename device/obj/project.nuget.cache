@@ -1,9 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "yopIQlhMDs4lpn68ZTtgtcG191sej/YWTxpAUS+KHwsV6ttDjx13Pu0w26qH2QfCo+z1Dpqnef4HFNCV54ry+w==",
+  "dgSpecHash": "vdl7ABThQGptfWvnqF+oK/ok7xfvdCXkergHQ6in52aEG1ZsxYyF9IUzBywlo8AwzRBuvvJ/MHApGB7I+Vmvsg==",
   "success": true,
   "projectFilePath": "C:\\Users\\nguye\\source\\repos\\FINATECH\\device\\device\\device.csproj",
   "expectedPackageFiles": [
+    "C:\\Users\\nguye\\.nuget\\packages\\fluentvalidation\\7.0.1\\fluentvalidation.7.0.1.nupkg.sha512",
     "C:\\Users\\nguye\\.nuget\\packages\\humanizer\\2.14.1\\humanizer.2.14.1.nupkg.sha512",
     "C:\\Users\\nguye\\.nuget\\packages\\humanizer.core\\2.14.1\\humanizer.core.2.14.1.nupkg.sha512",
     "C:\\Users\\nguye\\.nuget\\packages\\humanizer.core.af\\2.14.1\\humanizer.core.af.2.14.1.nupkg.sha512",

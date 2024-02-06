@@ -2,6 +2,22 @@
   "version": 3,
   "targets": {
     "net7.0": {
+      "FluentValidation/7.0.1": {
+        "type": "package",
+        "dependencies": {
+          "NETStandard.Library": "1.6.1"
+        },
+        "compile": {
+          "lib/netstandard1.0/FluentValidation.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/netstandard1.0/FluentValidation.dll": {
+            "related": ".xml"
+          }
+        }
+      },
       "Humanizer/2.14.1": {
         "type": "package",
         "dependencies": {
@@ -3657,6 +3673,21 @@
     }
   },
   "libraries": {
+    "FluentValidation/7.0.1": {
+      "sha512": "08cpZ4NvCTtFT+JZXq65+1rh1MPCENH9+MK4Z79oC9BryQype/XhY7v1JLzIqYkgCFVn2c/ugcdsHyQIUIf+Cg==",
+      "type": "package",
+      "path": "fluentvalidation/7.0.1",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "fluentvalidation.7.0.1.nupkg.sha512",
+        "fluentvalidation.nuspec",
+        "lib/net45/FluentValidation.dll",
+        "lib/net45/FluentValidation.xml",
+        "lib/netstandard1.0/FluentValidation.dll",
+        "lib/netstandard1.0/FluentValidation.xml"
+      ]
+    },
     "Humanizer/2.14.1": {
       "sha512": "/FUTD3cEceAAmJSCPN9+J+VhGwmL/C12jvwlyM1DFXShEMsBzvLzLqSrJ2rb+k/W2znKw7JyflZgZpyE+tI7lA==",
       "type": "package",
@@ -10877,6 +10908,7 @@
   },
   "projectFileDependencyGroups": {
     "net7.0": [
+      "FluentValidation >= 7.0.1",
       "Microsoft.AspNetCore.OpenApi >= 7.0.11",
       "Microsoft.EntityFrameworkCore >= 7.0.11",
       "Microsoft.EntityFrameworkCore.Tools >= 7.0.11",
@@ -10926,6 +10958,10 @@
       "net7.0": {
         "targetAlias": "net7.0",
         "dependencies": {
+          "FluentValidation": {
+            "target": "Package",
+            "version": "[7.0.1, )"
+          },
           "Microsoft.AspNetCore.OpenApi": {
             "target": "Package",
             "version": "[7.0.11, )"

@@ -2,6 +2,7 @@
 using device.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace device.Controllers
 {
@@ -44,8 +45,26 @@ namespace device.Controllers
         [HttpPost("create")]
         public async Task<IActionResult> Create([FromBody] LaptopDetail laptopDetail)
         {
-            var result = await _service.Add(laptopDetail);
-            return Ok(result);
+            try
+            {
+                var result = await _service.Add(laptopDetail);
+                return Ok(result);
+            }
+            catch (DbUpdateException ex)
+            {
+                if (ex.InnerException is Npgsql.PostgresException postgresException)
+                {
+                    string message = postgresException.MessageText;
+                    string constraintName = postgresException.ConstraintName;
+
+                    return BadRequest($"Error: {message}. Constraint: {constraintName}");
+                }
+                return StatusCode(500, "An error occurred while processing your request. Please try again later.");
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, "An error occurred while processing your request. Please try again later.");
+            }
         }
         [HttpPost("{id}")]
         public async Task<IActionResult> Update(int id, [FromBody] LaptopDetail laptopDetail)
@@ -56,7 +75,21 @@ namespace device.Controllers
         [HttpDelete]
         public async Task<IActionResult> Delete(int id)
         {
-            return Ok(await _service.Delete(id));
+            try
+            {
+                return Ok(await _service.Delete(id));
+            }
+            catch (DbUpdateException ex) when (ex.InnerException is Npgsql.PostgresException postgresException)
+            {
+                    string message = postgresException.MessageText;
+                    string constraintName = postgresException.ConstraintName;
+
+                    return BadRequest($"Error: {message}. Constraint: {constraintName}");
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, "An error occurred while processing your request. Please try again later.");
+            }
         }
     }
 }

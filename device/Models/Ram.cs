@@ -10,7 +10,7 @@ namespace device.Models
         [Required]
         public string Name { get; set; }
         [Required]
-        public bool IsActive { get; set; }
+        public double Price { get; set; }
         [JsonIgnore]
         public ICollection<LaptopDetail> LaptopDetail { get; set;}
     }

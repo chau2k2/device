@@ -2,6 +2,7 @@
 using device.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace device.Controllers
 {
@@ -45,9 +46,26 @@ namespace device.Controllers
         [HttpPost("create")]
         public async Task<IActionResult> Create([FromBody] Laptop laptop)
         {
-            var result = await _service.Add(laptop);
-            return Ok(result);
-            
+            try
+            {
+                var result = await _service.Add(laptop);
+                return Ok(result);
+            }
+            catch (DbUpdateException ex)
+            {
+                if (ex.InnerException is Npgsql.PostgresException postgresException)
+                {
+                    string message = postgresException.MessageText;
+                    string constraintName = postgresException.ConstraintName;
+
+                    return BadRequest($"Error: {message}. Constraint: {constraintName}");
+                }
+                return StatusCode(500, "An error occurred while processing your request. Please try again later.");
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, "An error occurred while processing your request. Please try again later.");
+            }
         }
         [HttpPost("{id}")]
         public async Task<IActionResult> Update(int id, [FromBody] Laptop laptop)
@@ -58,13 +76,30 @@ namespace device.Controllers
         [HttpDelete]
         public async Task<IActionResult> Delete(int id)
         {
-
-            var del = await _service.Delete(id);
-            if (del == null)
+            try
             {
-                return NotFound();
+                var del = await _service.Delete(id);
+                if (del == null)
+                {
+                    return NotFound();
+                }
+                return NoContent();
             }
-            return NoContent();
+            catch (DbUpdateException ex)
+            {
+                if (ex.InnerException is Npgsql.PostgresException postgresException)
+                {
+                    string message = postgresException.MessageText;
+                    string constraintName = postgresException.ConstraintName;
+
+                    return BadRequest($"Error: {message}. Constraint: {constraintName}");
+                }
+                return StatusCode(500, "An error occurred while processing your request. Please try again later.");
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, "An error occurred while processing your request. Please try again later.");
+            }
         }
     }
 }

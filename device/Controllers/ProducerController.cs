@@ -1,6 +1,8 @@
 ﻿using device.IServices;
 using device.Models;
+using device.Validation;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace device.Controllers
 {
@@ -18,8 +20,15 @@ namespace device.Controllers
         [HttpGet("GetAll")]
         public async Task<IActionResult> GetAll(int page = 1, int pageSize = 5)
         {
-            var result = await _service.GetAll(page,pageSize);
-            return Ok(result);
+            try
+            {
+                var result = await _service.GetAll(page,pageSize);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }      
         }
         [HttpPut]
         public async Task< IActionResult> Update(int id, [FromBody] Producer producer)
@@ -36,23 +45,58 @@ namespace device.Controllers
         [HttpPost]
         public async Task<IActionResult> Add([FromBody]Producer producer)
         {
-            var checkConstraint = await _service.CheckIdProducerOfProducer(producer.Id);
-            if (checkConstraint)
+            try
             {
-                return BadRequest("can not create this");
+                
+                    var result = await _service.Add(producer);
+               
+                    return Ok(result);
+                
             }
-            var result = await _service.Add(producer);
-            return Ok(result);
+            catch (DbUpdateException ex)
+            {
+                if (ex.InnerException is Npgsql.PostgresException postgresException)
+                {
+                    string message = postgresException.MessageText;
+                    string constraintName = postgresException.ConstraintName;
+
+                    return BadRequest($"Error: {message}. Constraint: {constraintName}");
+                }
+                return StatusCode(500, "An error occurred while processing your request. Please try again later.");
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, "An error occurred while processing your request. Please try again later.");
+            }
+
         }
         [HttpDelete]
         public async Task<IActionResult> delete(int id)
         {
-            var del = await _service.Delete(id);
-            if(del == null)
+            try
             {
-                return NotFound();
+                var del = await _service.Delete(id);
+                if(del == null)
+                {
+                    return NotFound();
+                }
+                return NoContent();
             }
-            return NoContent();
+            catch (DbUpdateException ex)
+            {
+                if (ex.InnerException is Npgsql.PostgresException postgresException)
+                {
+                    string message = postgresException.MessageText;
+                    string constraintName = postgresException.ConstraintName;
+
+                    return BadRequest($"Error: {message}. Constraint: {constraintName}");
+                }
+                return StatusCode(500, "An error occurred while processing your request. Please try again later.");
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, "An error occurred while processing your request. Please try again later.");
+            }
         }
     }
 }

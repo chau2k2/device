@@ -8,6 +8,7 @@
     ".NETCoreApp,Version=v7.0": {
       "device/1.0.0": {
         "dependencies": {
+          "FluentValidation": "7.0.1",
           "Microsoft.AspNetCore.OpenApi": "7.0.11",
           "Microsoft.EntityFrameworkCore": "7.0.11",
           "Microsoft.EntityFrameworkCore.Tools": "7.0.11",
@@ -18,6 +19,17 @@
         },
         "runtime": {
           "device.dll": {}
+        }
+      },
+      "FluentValidation/7.0.1": {
+        "dependencies": {
+          "NETStandard.Library": "1.6.1"
+        },
+        "runtime": {
+          "lib/netstandard1.0/FluentValidation.dll": {
+            "assemblyVersion": "7.0.0.0",
+            "fileVersion": "7.0.1.0"
+          }
         }
       },
       "Humanizer/2.14.1": {
@@ -2339,6 +2351,13 @@
       "type": "project",
       "serviceable": false,
       "sha512": ""
+    },
+    "FluentValidation/7.0.1": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-08cpZ4NvCTtFT+JZXq65+1rh1MPCENH9+MK4Z79oC9BryQype/XhY7v1JLzIqYkgCFVn2c/ugcdsHyQIUIf+Cg==",
+      "path": "fluentvalidation/7.0.1",
+      "hashPath": "fluentvalidation.7.0.1.nupkg.sha512"
     },
     "Humanizer/2.14.1": {
       "type": "package",

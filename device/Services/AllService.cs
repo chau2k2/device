@@ -45,25 +45,5 @@ namespace device.Services
             await _repository.UpdateOneAsyns(entity);
             return entity;
         }
-        //check trong laptop co idproducer khong
-        public async Task<bool> CheckIdProducer_Laptop(int id)
-        {
-            return _dbContext.laptops.Any(l => l.IdProducer == id);
-        }
-        //check trong bang producer da co id chua => check constraint laptop va producer
-        public async Task<bool> CheckIdProducerOfProducer(int id)
-        {
-            return _dbContext.producers.Any(i => i.Id == id);
-        }
-        //check trong bang LaptopDetail co Idlap khong
-        public async Task<bool> CheckIdLaptop_LaptopDetail(int id)
-        {
-            return _dbContext.laptopsDetail.Any(l => l.idLaptop == id);
-        }
-        //check bang laptop id da ton tai chua
-        public async Task<bool> CheckIdLaptop(int id)
-        {
-            return _dbContext.laptops.Any(l => l.Id == id);
-        }
     }
 }
