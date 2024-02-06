@@ -48,7 +48,7 @@ namespace device.Services
         //check trong laptop co idproducer khong
         public async Task<bool> CheckIdProducer_Laptop(int id)
         {
-            return _dbContext.laptops.Any(l => l.Producer == id);
+            return _dbContext.laptops.Any(l => l.IdProducer == id);
         }
         //check trong bang producer da co id chua => check constraint laptop va producer
         public async Task<bool> CheckIdProducerOfProducer(int id)

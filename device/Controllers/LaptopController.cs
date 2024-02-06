@@ -45,11 +45,6 @@ namespace device.Controllers
         [HttpPost("create")]
         public async Task<IActionResult> Create([FromBody] Laptop laptop)
         {
-            var checkConstraint = await _service.CheckIdProducerOfProducer(laptop.Producer);
-            if (checkConstraint)
-            {
-                return BadRequest("can not create this");
-            }
             var result = await _service.Add(laptop);
             return Ok(result);
             
@@ -63,11 +58,7 @@ namespace device.Controllers
         [HttpDelete]
         public async Task<IActionResult> Delete(int id)
         {
-            bool checkConstraint = await _service.CheckIdLaptop_LaptopDetail(id);
-            if (checkConstraint)
-            {
-                return BadRequest("can not delete this");
-            }
+
             var del = await _service.Delete(id);
             if (del == null)
             {

@@ -21,41 +21,6 @@ namespace device.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("LaptopProducer", b =>
-                {
-                    b.Property<int>("LaptopId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("ProducerId")
-                        .HasColumnType("integer");
-
-                    b.HasKey("LaptopId", "ProducerId");
-
-                    b.HasIndex("ProducerId");
-
-                    b.ToTable("LaptopProducer", (string)null);
-                });
-
-            modelBuilder.Entity("device.Models.Producer", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("boolean");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("producers", (string)null);
-                });
-
             modelBuilder.Entity("device.Models.KhoHang", b =>
                 {
                     b.Property<int>("Id")
@@ -78,7 +43,7 @@ namespace device.Migrations
                     b.HasIndex("idDetail")
                         .IsUnique();
 
-                    b.ToTable("khoHangs", (string)null);
+                    b.ToTable("khoHangs");
                 });
 
             modelBuilder.Entity("device.Models.Laptop", b =>
@@ -95,7 +60,7 @@ namespace device.Migrations
                     b.Property<double>("Giaban")
                         .HasColumnType("double precision");
 
-                    b.Property<int>("Producer")
+                    b.Property<int>("IdProducer")
                         .HasColumnType("integer");
 
                     b.Property<string>("Name")
@@ -104,7 +69,9 @@ namespace device.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("laptops", (string)null);
+                    b.HasIndex("IdProducer");
+
+                    b.ToTable("laptops");
                 });
 
             modelBuilder.Entity("device.Models.LaptopDetail", b =>
@@ -172,7 +139,7 @@ namespace device.Migrations
 
                     b.HasIndex("idLaptop");
 
-                    b.ToTable("laptopsDetail", (string)null);
+                    b.ToTable("laptopsDetail");
                 });
 
             modelBuilder.Entity("device.Models.MonitorM", b =>
@@ -192,7 +159,27 @@ namespace device.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("monitors", (string)null);
+                    b.ToTable("monitors");
+                });
+
+            modelBuilder.Entity("device.Models.Producer", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("producers");
                 });
 
             modelBuilder.Entity("device.Models.Ram", b =>
@@ -212,7 +199,7 @@ namespace device.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("ram", (string)null);
+                    b.ToTable("ram");
                 });
 
             modelBuilder.Entity("device.Models.Vga", b =>
@@ -232,22 +219,7 @@ namespace device.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("vgas", (string)null);
-                });
-
-            modelBuilder.Entity("LaptopProducer", b =>
-                {
-                    b.HasOne("device.Models.Laptop", null)
-                        .WithMany()
-                        .HasForeignKey("LaptopId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("device.Models.Producer", null)
-                        .WithMany()
-                        .HasForeignKey("ProducerId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                    b.ToTable("vgas");
                 });
 
             modelBuilder.Entity("device.Models.KhoHang", b =>
@@ -259,6 +231,17 @@ namespace device.Migrations
                         .IsRequired();
 
                     b.Navigation("laptopDetail");
+                });
+
+            modelBuilder.Entity("device.Models.Laptop", b =>
+                {
+                    b.HasOne("device.Models.Producer", "producer")
+                        .WithMany("Laptops")
+                        .HasForeignKey("IdProducer")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("producer");
                 });
 
             modelBuilder.Entity("device.Models.LaptopDetail", b =>
@@ -309,6 +292,11 @@ namespace device.Migrations
             modelBuilder.Entity("device.Models.MonitorM", b =>
                 {
                     b.Navigation("LaptopDetail");
+                });
+
+            modelBuilder.Entity("device.Models.Producer", b =>
+                {
+                    b.Navigation("Laptops");
                 });
 
             modelBuilder.Entity("device.Models.Ram", b =>

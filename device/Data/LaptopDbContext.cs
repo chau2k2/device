@@ -19,15 +19,12 @@ namespace device.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             //rang buoc giua cac bang
-            // n-n laptop - producers
-            modelBuilder.Entity<Laptop>()
-                .HasMany(p => p.Producers)
-                .WithMany(p => p.Laptops)
-                .UsingEntity(
-                    "LaptopProducer",
-                    l => l.HasOne(typeof(Producer)).WithMany().HasForeignKey("ProducerId").HasPrincipalKey(nameof(Producer.Id)).OnDelete(DeleteBehavior.Restrict),
-                    p => p.HasOne(typeof(Laptop)).WithMany().HasForeignKey("LaptopId").HasPrincipalKey(nameof(Laptop.Id)).OnDelete(DeleteBehavior.Restrict),
-                    j => j.HasKey("LaptopId","ProducerId"));
+            // 1-n producers-laptop 
+            modelBuilder.Entity<Producer>()
+                .HasMany(p => p.Laptops)
+                .WithOne(p => p.producer)
+                .HasForeignKey(p => p.IdProducer)
+                .OnDelete(DeleteBehavior.Restrict);
             //1-n
             //Laptop - laptopDetail
             modelBuilder.Entity<Laptop>()

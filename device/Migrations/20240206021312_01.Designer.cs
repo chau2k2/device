@@ -11,8 +11,8 @@ using device.Data;
 namespace device.Migrations
 {
     [DbContext(typeof(LaptopDbContext))]
-    [Migration("20240205103508_04")]
-    partial class _04
+    [Migration("20240206021312_01")]
+    partial class _01
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,21 +24,6 @@ namespace device.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("LaptopProducer", b =>
-                {
-                    b.Property<int>("LaptopId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("ProducerId")
-                        .HasColumnType("integer");
-
-                    b.HasKey("LaptopId", "ProducerId");
-
-                    b.HasIndex("ProducerId");
-
-                    b.ToTable("LaptopProducer");
-                });
-
             modelBuilder.Entity("device.Models.KhoHang", b =>
                 {
                     b.Property<int>("Id")
@@ -46,12 +31,6 @@ namespace device.Migrations
                         .HasColumnType("integer");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<double>("GiaVon")
-                        .HasColumnType("double precision");
-
-                    b.Property<double>("Giaban")
-                        .HasColumnType("double precision");
 
                     b.Property<int>("SoLuongBan")
                         .HasColumnType("integer");
@@ -78,14 +57,22 @@ namespace device.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<double>("GiaVon")
+                        .HasColumnType("double precision");
+
+                    b.Property<double>("Giaban")
+                        .HasColumnType("double precision");
+
+                    b.Property<int>("IdProducer")
+                        .HasColumnType("integer");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int>("Producer")
-                        .HasColumnType("integer");
-
                     b.HasKey("Id");
+
+                    b.HasIndex("IdProducer");
 
                     b.ToTable("laptops");
                 });
@@ -238,21 +225,6 @@ namespace device.Migrations
                     b.ToTable("vgas");
                 });
 
-            modelBuilder.Entity("LaptopProducer", b =>
-                {
-                    b.HasOne("device.Models.Laptop", null)
-                        .WithMany()
-                        .HasForeignKey("LaptopId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("device.Models.Producer", null)
-                        .WithMany()
-                        .HasForeignKey("ProducerId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("device.Models.KhoHang", b =>
                 {
                     b.HasOne("device.Models.LaptopDetail", "laptopDetail")
@@ -262,6 +234,17 @@ namespace device.Migrations
                         .IsRequired();
 
                     b.Navigation("laptopDetail");
+                });
+
+            modelBuilder.Entity("device.Models.Laptop", b =>
+                {
+                    b.HasOne("device.Models.Producer", "producer")
+                        .WithMany("Laptops")
+                        .HasForeignKey("IdProducer")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("producer");
                 });
 
             modelBuilder.Entity("device.Models.LaptopDetail", b =>
@@ -312,6 +295,11 @@ namespace device.Migrations
             modelBuilder.Entity("device.Models.MonitorM", b =>
                 {
                     b.Navigation("LaptopDetail");
+                });
+
+            modelBuilder.Entity("device.Models.Producer", b =>
+                {
+                    b.Navigation("Laptops");
                 });
 
             modelBuilder.Entity("device.Models.Ram", b =>

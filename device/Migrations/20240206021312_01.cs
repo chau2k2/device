@@ -6,41 +6,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace device.Migrations
 {
     /// <inheritdoc />
-    public partial class connectDb : Migration
+    public partial class _01 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.CreateTable(
-                name: "khoHangs",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    SoLuongBan = table.Column<int>(type: "integer", nullable: false),
-                    SoLuongNhap = table.Column<int>(type: "integer", nullable: false),
-                    GiaVon = table.Column<double>(type: "double precision", nullable: false),
-                    Giaban = table.Column<double>(type: "double precision", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_khoHangs", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "laptops",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Name = table.Column<string>(type: "text", nullable: false),
-                    Producer = table.Column<int>(type: "integer", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_laptops", x => x.Id);
-                });
-
             migrationBuilder.CreateTable(
                 name: "monitors",
                 columns: table => new
@@ -98,27 +68,25 @@ namespace device.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "LaptopProducer",
+                name: "laptops",
                 columns: table => new
                 {
-                    LaptopsId = table.Column<int>(type: "integer", nullable: false),
-                    ProducersId = table.Column<int>(type: "integer", nullable: false)
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Name = table.Column<string>(type: "text", nullable: false),
+                    IdProducer = table.Column<int>(type: "integer", nullable: false),
+                    GiaVon = table.Column<double>(type: "double precision", nullable: false),
+                    Giaban = table.Column<double>(type: "double precision", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_LaptopProducer", x => new { x.LaptopsId, x.ProducersId });
+                    table.PrimaryKey("PK_laptops", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_LaptopProducer_laptops_LaptopsId",
-                        column: x => x.LaptopsId,
-                        principalTable: "laptops",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_LaptopProducer_producers_ProducersId",
-                        column: x => x.ProducersId,
+                        name: "FK_laptops_producers_IdProducer",
+                        column: x => x.IdProducer,
                         principalTable: "producers",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -139,20 +107,12 @@ namespace device.Migrations
                     Width = table.Column<double>(type: "double precision", nullable: false),
                     Length = table.Column<double>(type: "double precision", nullable: false),
                     BatteryCatttery = table.Column<string>(type: "text", nullable: false),
-                    IdKhoHang = table.Column<int>(type: "integer", nullable: false),
-                    Image = table.Column<byte[]>(type: "bytea", nullable: false),
-                    KhoHangId = table.Column<int>(type: "integer", nullable: false),
+                    Image = table.Column<byte[]>(type: "bytea", nullable: true),
                     idLaptop = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_laptopsDetail", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_laptopsDetail_khoHangs_KhoHangId",
-                        column: x => x.KhoHangId,
-                        principalTable: "khoHangs",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_laptopsDetail_laptops_idLaptop",
                         column: x => x.idLaptop,
@@ -179,10 +139,37 @@ namespace device.Migrations
                         onDelete: ReferentialAction.Restrict);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "khoHangs",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    idDetail = table.Column<int>(type: "integer", nullable: false),
+                    SoLuongBan = table.Column<int>(type: "integer", nullable: false),
+                    SoLuongNhap = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_khoHangs", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_khoHangs_laptopsDetail_idDetail",
+                        column: x => x.idDetail,
+                        principalTable: "laptopsDetail",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
             migrationBuilder.CreateIndex(
-                name: "IX_LaptopProducer_ProducersId",
-                table: "LaptopProducer",
-                column: "ProducersId");
+                name: "IX_khoHangs_idDetail",
+                table: "khoHangs",
+                column: "idDetail",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_laptops_IdProducer",
+                table: "laptops",
+                column: "IdProducer");
 
             migrationBuilder.CreateIndex(
                 name: "IX_laptopsDetail_idLaptop",
@@ -203,27 +190,16 @@ namespace device.Migrations
                 name: "IX_laptopsDetail_IdVga",
                 table: "laptopsDetail",
                 column: "IdVga");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_laptopsDetail_KhoHangId",
-                table: "laptopsDetail",
-                column: "KhoHangId");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "LaptopProducer");
+                name: "khoHangs");
 
             migrationBuilder.DropTable(
                 name: "laptopsDetail");
-
-            migrationBuilder.DropTable(
-                name: "producers");
-
-            migrationBuilder.DropTable(
-                name: "khoHangs");
 
             migrationBuilder.DropTable(
                 name: "laptops");
@@ -236,6 +212,9 @@ namespace device.Migrations
 
             migrationBuilder.DropTable(
                 name: "vgas");
+
+            migrationBuilder.DropTable(
+                name: "producers");
         }
     }
 }

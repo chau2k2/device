@@ -47,11 +47,6 @@ namespace device.Controllers
         [HttpDelete]
         public async Task<IActionResult> delete(int id)
         {
-            bool checkConstraint = await _service.CheckIdProducer_Laptop(id);
-            if (checkConstraint)
-            {
-                return BadRequest("can not delete this");
-            }
             var del = await _service.Delete(id);
             if(del == null)
             {
