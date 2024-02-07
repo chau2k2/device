@@ -1,5 +1,6 @@
 ﻿using device.IServices;
 using device.Models;
+using device.Validation;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -11,9 +12,11 @@ namespace device.Controllers
     public class LaptopDetailController : ControllerBase
     {
         private readonly IAllService<LaptopDetail> _service;
+        private readonly LaptopDetailValidate _detailValidate;
         public LaptopDetailController(IAllService<LaptopDetail> service)
         {
             _service = service;
+            _detailValidate = new LaptopDetailValidate();
         }
         [HttpGet("all")]
         public async Task<IActionResult> GetAll(int page = 1, int pageSize = 5)
@@ -47,6 +50,11 @@ namespace device.Controllers
         {
             try
             {
+                var validate = _detailValidate.Validate(laptopDetail);
+                if (!validate.IsValid)
+                {
+                    return BadRequest(validate.Errors);
+                }
                 var result = await _service.Add(laptopDetail);
                 return Ok(result);
             }
@@ -69,8 +77,31 @@ namespace device.Controllers
         [HttpPost("{id}")]
         public async Task<IActionResult> Update(int id, [FromBody] LaptopDetail laptopDetail)
         {
-            var result = await _service.Update(id, laptopDetail);
-            return Ok(result);
+            try
+            {
+                var validate = _detailValidate.Validate(laptopDetail);
+                if (!validate.IsValid)
+                {
+                    return BadRequest(validate.Errors);
+                }
+                var result = await _service.Update(id, laptopDetail);
+                return Ok(result);
+            }
+            catch (DbUpdateException ex)
+            {
+                if (ex.InnerException is Npgsql.PostgresException postgresException)
+                {
+                    string message = postgresException.MessageText;
+                    string constraintName = postgresException.ConstraintName;
+
+                    return BadRequest($"Error: {message}. Constraint: {constraintName}");
+                }
+                return StatusCode(500, "An error occurred while processing your request. Please try again later.");
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, "An error occurred while processing your request. Please try again later.");
+            }
         }
         [HttpDelete]
         public async Task<IActionResult> Delete(int id)
