@@ -1,5 +1,6 @@
 ﻿using device.IServices;
 using device.Models;
+using device.Validation;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -12,10 +13,13 @@ namespace device.Controllers
     {
         private readonly ILogger<VgaController> logger;
         private readonly IAllService<Vga> _service;
+        private readonly VgaValidate _vgaValidate;
+
         public VgaController(ILogger<VgaController> logger, IAllService<Vga> service)
         {
             this.logger = logger;
             _service = service;
+            _vgaValidate = new VgaValidate();
         }
         [HttpGet("GetAll")]
         public async Task<IActionResult> GetAll(int page = 1, int pageSize = 5)
@@ -26,8 +30,31 @@ namespace device.Controllers
         [HttpPut]
         public async Task<IActionResult> Update(int id, [FromBody] Vga vga)
         {
-            var result = await _service.Update(id, vga);
-            return Ok(result);
+            try
+            {
+                var validate = _vgaValidate.Validate(vga);
+                if (!validate.IsValid)
+                {
+                    return BadRequest(validate.Errors);
+                }
+                var result = await _service.Update(id, vga);
+                return Ok(result);
+            }
+            catch (DbUpdateException ex)
+            {
+                if (ex.InnerException is Npgsql.PostgresException postgresException)
+                {
+                    string message = postgresException.MessageText;
+                    string constraintName = postgresException.ConstraintName;
+
+                    return BadRequest($"Error: {message}. Constraint: {constraintName}");
+                }
+                return StatusCode(500, "An error occurred while processing your request. Please try again later.");
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, "An error occurred while processing your request. Please try again later.");
+            }
         }
         [HttpGet("Get/{id}")]
         public async Task<IActionResult> FindById(int id)
@@ -40,15 +67,24 @@ namespace device.Controllers
         {
             try
             {
+                var validate = _vgaValidate.Validate(vga);
+                if (!validate.IsValid)
+                {
+                    return BadRequest(validate.Errors);
+                }
                 var result = await _service.Add(vga);
                 return Ok(result);
             }
-            catch (DbUpdateException ex) when (ex.InnerException is Npgsql.PostgresException postgresException)
+            catch (DbUpdateException ex)
             {
-                string message = postgresException.MessageText;
-                string constraintName = postgresException.ConstraintName;
+                if (ex.InnerException is Npgsql.PostgresException postgresException)
+                {
+                    string message = postgresException.MessageText;
+                    string constraintName = postgresException.ConstraintName;
 
-                return BadRequest($"Error: {message}. Constraint: {constraintName}");
+                    return BadRequest($"Error: {message}. Constraint: {constraintName}");
+                }
+                return StatusCode(500, "An error occurred while processing your request. Please try again later.");
             }
             catch (Exception)
             {

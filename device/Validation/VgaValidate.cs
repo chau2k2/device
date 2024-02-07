@@ -1,4 +1,5 @@
-﻿using device.Models;
+﻿using device.Cons;
+using device.Models;
 using FluentValidation;
 using System.Security.Permissions;
 

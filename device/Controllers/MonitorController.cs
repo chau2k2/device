@@ -1,5 +1,6 @@
 ﻿using device.IServices;
 using device.Models;
+using device.Validation;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -12,10 +13,12 @@ namespace device.Controllers
     {
         private readonly ILogger<MonitorController> logger;
         private readonly IAllService<MonitorM> _service;
+        private readonly MonitorValidate _monitorValidate;
         public MonitorController(ILogger<MonitorController> logger, IAllService<MonitorM> service)
         {
             this.logger = logger;
             _service = service;
+            _monitorValidate = new MonitorValidate();
         }
         [HttpGet("GetAll")]
         public async Task<IActionResult> GetAll(int page = 1, int pageSize = 5)
@@ -26,8 +29,31 @@ namespace device.Controllers
         [HttpPut]
         public async Task<IActionResult> Update(int id, [FromBody] MonitorM monitorM)
         {
-            var result = await _service.Update(id, monitorM);
-            return Ok(result);
+            try
+            {
+                var validate = _monitorValidate.Validate(monitorM);
+                if (!validate.IsValid)
+                {
+                    return BadRequest(validate.Errors);
+                }
+                var result = await _service.Update(id, monitorM);
+                return Ok(result);
+            }
+            catch (DbUpdateException ex)
+            {
+                if (ex.InnerException is Npgsql.PostgresException postgresException)
+                {
+                    string message = postgresException.MessageText;
+                    string constraintName = postgresException.ConstraintName;
+
+                    return BadRequest($"Error: {message}. Constraint: {constraintName}");
+                }
+                return StatusCode(500, "An error occurred while processing your request. Please try again later.");
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, "An error occurred while processing your request. Please try again later.");
+            }
         }
         [HttpGet("Get/{id}")]
         public async Task<IActionResult> FindById(int id)
@@ -40,15 +66,24 @@ namespace device.Controllers
         {
             try
             {
+                var validate = _monitorValidate.Validate(monitorM);
+                if (!validate.IsValid)
+                {
+                    return BadRequest(validate.Errors);
+                }
                 var result = await _service.Add(monitorM);
                 return Ok(result);
             }
-            catch (DbUpdateException ex) when (ex.InnerException is Npgsql.PostgresException postgresException)
+            catch (DbUpdateException ex)
             {
-                string message = postgresException.MessageText;
-                string constraintName = postgresException.ConstraintName;
+                if (ex.InnerException is Npgsql.PostgresException postgresException)
+                {
+                    string message = postgresException.MessageText;
+                    string constraintName = postgresException.ConstraintName;
 
-                return BadRequest($"Error: {message}. Constraint: {constraintName}");
+                    return BadRequest($"Error: {message}. Constraint: {constraintName}");
+                }
+                return StatusCode(500, "An error occurred while processing your request. Please try again later.");
             }
             catch (Exception)
             {

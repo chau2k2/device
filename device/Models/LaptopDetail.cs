@@ -26,7 +26,7 @@ namespace device.Models
         public double Height { get; set; }
         public double Width { get; set; }
         public double Length { get; set; }
-        public string BatteryCatttery { get; set; }
+        public double BatteryCatttery { get; set; }
         public byte[]? Image { get; set; }
         [ForeignKey("laptop")]
         public int idLaptop { get; set; }

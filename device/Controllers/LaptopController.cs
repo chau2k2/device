@@ -1,5 +1,6 @@
 ﻿using device.IServices;
 using device.Models;
+using device.Validation;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -11,10 +12,11 @@ namespace device.Controllers
     public class LaptopController : ControllerBase
     {
         private readonly IAllService<Laptop> _service;
-
+        private readonly LaptopValidate _laptopValidate;
         public LaptopController(IAllService<Laptop> service)
         {
             _service = service;
+            _laptopValidate = new LaptopValidate();
         }
         [HttpGet("all")]
         public async Task<IActionResult> GetAll(int page = 1, int pageSize = 5)
@@ -48,6 +50,11 @@ namespace device.Controllers
         {
             try
             {
+                var validate = _laptopValidate.Validate(laptop);
+                if (!validate.IsValid)
+                {
+                    return BadRequest(validate.Errors);
+                }
                 var result = await _service.Add(laptop);
                 return Ok(result);
             }
@@ -70,8 +77,31 @@ namespace device.Controllers
         [HttpPost("{id}")]
         public async Task<IActionResult> Update(int id, [FromBody] Laptop laptop)
         {
-            var result = await _service.Update(id, laptop);
-            return Ok(result);
+            try
+            {
+                var validate = _laptopValidate.Validate(laptop);
+                if (!validate.IsValid)
+                {
+                    return BadRequest(validate.Errors);
+                }
+                var result = await _service.Update(id, laptop);
+                return Ok(result);
+            }
+            catch (DbUpdateException ex)
+            {
+                if (ex.InnerException is Npgsql.PostgresException postgresException)
+                {
+                    string message = postgresException.MessageText;
+                    string constraintName = postgresException.ConstraintName;
+
+                    return BadRequest($"Error: {message}. Constraint: {constraintName}");
+                }
+                return StatusCode(500, "An error occurred while processing your request. Please try again later.");
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, "An error occurred while processing your request. Please try again later.");
+            }
         }
         [HttpDelete]
         public async Task<IActionResult> Delete(int id)

@@ -1,5 +1,6 @@
 ﻿using device.IServices;
 using device.Models;
+using device.Validation;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -12,10 +13,13 @@ namespace device.Controllers
     {
         private readonly ILogger<RamController> logger;
         private readonly IAllService<Ram> _service;
+        private readonly RamValidate _ramValidate;
+
         public RamController(ILogger<RamController> logger, IAllService<Ram> service)
         {
             this.logger = logger;
             _service = service;
+            _ramValidate = new RamValidate();
         }
         [HttpGet("GetAll")]
         public async Task<IActionResult> GetAll(int page = 1, int pageSize = 5)
@@ -26,8 +30,31 @@ namespace device.Controllers
         [HttpPut]
         public async Task<IActionResult> Update(int id, [FromBody] Ram ram)
         {
-            var result = await _service.Update(id, ram);
-            return Ok(result);
+            try
+            {
+                var validate = _ramValidate.Validate(ram);
+                if (!validate.IsValid)
+                {
+                    return BadRequest(validate.Errors);
+                }
+                var result = await _service.Update(id, ram);
+                return Ok(result);
+            }
+            catch (DbUpdateException ex)
+            {
+                if (ex.InnerException is Npgsql.PostgresException postgresException)
+                {
+                    string message = postgresException.MessageText;
+                    string constraintName = postgresException.ConstraintName;
+
+                    return BadRequest($"Error: {message}. Constraint: {constraintName}");
+                }
+                return StatusCode(500, "An error occurred while processing your request. Please try again later.");
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, "An error occurred while processing your request. Please try again later.");
+            }
         }
         [HttpGet("Get/{id}")]
         public async Task<IActionResult> FindById(int id)
@@ -40,15 +67,24 @@ namespace device.Controllers
         {
             try
             {
+                var validate = _ramValidate.Validate(ram);
+                if (!validate.IsValid)
+                {
+                    return BadRequest(validate.Errors);
+                }
                 var result = await _service.Add(ram);
                 return Ok(result);
             }
-            catch (DbUpdateException ex) when (ex.InnerException is Npgsql.PostgresException postgresException)
+            catch (DbUpdateException ex)
             {
-                string message = postgresException.MessageText;
-                string constraintName = postgresException.ConstraintName;
+                if (ex.InnerException is Npgsql.PostgresException postgresException)
+                {
+                    string message = postgresException.MessageText;
+                    string constraintName = postgresException.ConstraintName;
 
-                return BadRequest($"Error: {message}. Constraint: {constraintName}");
+                    return BadRequest($"Error: {message}. Constraint: {constraintName}");
+                }
+                return StatusCode(500, "An error occurred while processing your request. Please try again later.");
             }
             catch (Exception)
             {
