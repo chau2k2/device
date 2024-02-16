@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Sale.Models
+namespace device.Models
 {
     public class HoaDon
     {

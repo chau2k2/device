@@ -1,7 +1,7 @@
 ﻿using Humanizer.Localisation.TimeToClockNotation;
 using System.ComponentModel.DataAnnotations;
 
-namespace Sale.Models
+namespace device.Models
 {
     public class HoaDonDetail
     {
