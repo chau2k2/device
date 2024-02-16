@@ -9,12 +9,12 @@ namespace device.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class KhoHangController : ControllerBase
+    public class StorageController : ControllerBase
     {
-        private readonly ILogger<KhoHangController> logger;
-        private readonly IAllService<KhoHang> _service;
+        private readonly ILogger<StorageController> logger;
+        private readonly IAllService<Storage> _service;
         private readonly KhoHangValidate _khohangValidate;
-        public KhoHangController(ILogger<KhoHangController> logger, IAllService<KhoHang> service)
+        public StorageController(ILogger<StorageController> logger, IAllService<Storage> service)
         {
             this.logger = logger;
             _service = service;
@@ -27,7 +27,7 @@ namespace device.Controllers
             return Ok(result);
         }
         [HttpPut]
-        public async Task<IActionResult> Update(int id, [FromBody] KhoHang khohang)
+        public async Task<IActionResult> Update(int id, [FromBody] Storage khohang)
         {
             try
             {
@@ -62,7 +62,7 @@ namespace device.Controllers
             return Ok(result);
         }
         [HttpPost]
-        public async Task<IActionResult> Add([FromBody] KhoHang khohang)
+        public async Task<IActionResult> Add([FromBody] Storage khohang)
         {
             try
             {

@@ -40,6 +40,6 @@ namespace device.Models
         public Laptop Laptops { get; set;}
 
         [JsonIgnore]
-        public KhoHang? khoHang { get; set; }
+        public Storage? storage { get; set; }
     }
 }

@@ -1,6 +1,5 @@
 ﻿using device.Models;
 using Microsoft.EntityFrameworkCore;
-using Sale.Models;
 using System.Threading.Tasks;
 
 namespace device.Data
@@ -54,9 +53,9 @@ namespace device.Data
             // 1-1 
             //LaptopDetail - kho hang
             modelBuilder.Entity<LaptopDetail>()
-                .HasOne(l => l.khoHang)
+                .HasOne(l => l.storage)
                 .WithOne(l => l.laptopDetail)
-                .HasForeignKey<KhoHang>(l => l.idDetail)
+                .HasForeignKey<Storage>(l => l.idDetail)
                 .OnDelete(DeleteBehavior.Restrict);
         }
         
@@ -66,9 +65,9 @@ namespace device.Data
         public DbSet<Ram> ram { get; set; } 
         public DbSet<MonitorM> monitors { get; set; }
         public DbSet<Vga> vgas { get; set; }
-        public DbSet<KhoHang> khoHangs { get; set; }
-        public DbSet<HoaDon> hoaDons { get; set; }
-        public DbSet<HoaDonDetail> hoaDonsDetail { get;set; }
+        public DbSet<Storage> storages { get; set; }
+        public DbSet<Invoice> invoices { get; set; }
+        public DbSet<InvoiceDetail> InvoicesDetail { get;set; }
 
     }
 }

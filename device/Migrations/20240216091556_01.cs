@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
@@ -12,13 +13,28 @@ namespace device.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
+                name: "invoices",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    InvoiceNumber = table.Column<string>(type: "text", nullable: false),
+                    DateInvoice = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    TotalInvoice = table.Column<double>(type: "double precision", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_invoices", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "monitors",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Name = table.Column<string>(type: "text", nullable: false),
-                    IsActive = table.Column<bool>(type: "boolean", nullable: false)
+                    Price = table.Column<double>(type: "double precision", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -46,7 +62,7 @@ namespace device.Migrations
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Name = table.Column<string>(type: "text", nullable: false),
-                    IsActive = table.Column<bool>(type: "boolean", nullable: false)
+                    Price = table.Column<double>(type: "double precision", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -60,11 +76,33 @@ namespace device.Migrations
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Name = table.Column<string>(type: "text", nullable: false),
-                    IsActive = table.Column<bool>(type: "boolean", nullable: false)
+                    Price = table.Column<double>(type: "double precision", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_vgas", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "InvoicesDetail",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    IdInvoice = table.Column<int>(type: "integer", nullable: false),
+                    IdLaptop = table.Column<int>(type: "integer", nullable: false),
+                    Number = table.Column<int>(type: "integer", nullable: false),
+                    invoicesId = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_InvoicesDetail", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_InvoicesDetail_invoices_invoicesId",
+                        column: x => x.invoicesId,
+                        principalTable: "invoices",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -75,8 +113,8 @@ namespace device.Migrations
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Name = table.Column<string>(type: "text", nullable: false),
                     IdProducer = table.Column<int>(type: "integer", nullable: false),
-                    GiaVon = table.Column<double>(type: "double precision", nullable: false),
-                    Giaban = table.Column<double>(type: "double precision", nullable: false)
+                    CostPrice = table.Column<double>(type: "double precision", nullable: false),
+                    SalePrice = table.Column<double>(type: "double precision", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -106,7 +144,7 @@ namespace device.Migrations
                     Height = table.Column<double>(type: "double precision", nullable: false),
                     Width = table.Column<double>(type: "double precision", nullable: false),
                     Length = table.Column<double>(type: "double precision", nullable: false),
-                    BatteryCatttery = table.Column<string>(type: "text", nullable: false),
+                    BatteryCatttery = table.Column<double>(type: "double precision", nullable: false),
                     Image = table.Column<byte[]>(type: "bytea", nullable: true),
                     idLaptop = table.Column<int>(type: "integer", nullable: false)
                 },
@@ -140,20 +178,20 @@ namespace device.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "khoHangs",
+                name: "storages",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     idDetail = table.Column<int>(type: "integer", nullable: false),
-                    SoLuongBan = table.Column<int>(type: "integer", nullable: false),
-                    SoLuongNhap = table.Column<int>(type: "integer", nullable: false)
+                    SaleNumber = table.Column<int>(type: "integer", nullable: false),
+                    InserNumber = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_khoHangs", x => x.Id);
+                    table.PrimaryKey("PK_storages", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_khoHangs_laptopsDetail_idDetail",
+                        name: "FK_storages_laptopsDetail_idDetail",
                         column: x => x.idDetail,
                         principalTable: "laptopsDetail",
                         principalColumn: "Id",
@@ -161,10 +199,9 @@ namespace device.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_khoHangs_idDetail",
-                table: "khoHangs",
-                column: "idDetail",
-                unique: true);
+                name: "IX_InvoicesDetail_invoicesId",
+                table: "InvoicesDetail",
+                column: "invoicesId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_laptops_IdProducer",
@@ -190,13 +227,25 @@ namespace device.Migrations
                 name: "IX_laptopsDetail_IdVga",
                 table: "laptopsDetail",
                 column: "IdVga");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_storages_idDetail",
+                table: "storages",
+                column: "idDetail",
+                unique: true);
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "khoHangs");
+                name: "InvoicesDetail");
+
+            migrationBuilder.DropTable(
+                name: "storages");
+
+            migrationBuilder.DropTable(
+                name: "invoices");
 
             migrationBuilder.DropTable(
                 name: "laptopsDetail");

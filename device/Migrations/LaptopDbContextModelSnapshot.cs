@@ -22,7 +22,7 @@ namespace device.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("Sale.Models.HoaDon", b =>
+            modelBuilder.Entity("device.Models.Invoice", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -30,22 +30,22 @@ namespace device.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<DateTime>("HoaDonDate")
+                    b.Property<DateTime>("DateInvoice")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<double>("HoaDonTotal")
-                        .HasColumnType("double precision");
-
-                    b.Property<string>("SoHoaDon")
+                    b.Property<string>("InvoiceNumber")
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<double>("TotalInvoice")
+                        .HasColumnType("double precision");
+
                     b.HasKey("Id");
 
-                    b.ToTable("hoaDons");
+                    b.ToTable("invoices");
                 });
 
-            modelBuilder.Entity("Sale.Models.HoaDonDetail", b =>
+            modelBuilder.Entity("device.Models.InvoiceDetail", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -53,10 +53,7 @@ namespace device.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("HoaDonId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("IdHoaDon")
+                    b.Property<int>("IdInvoice")
                         .HasColumnType("integer");
 
                     b.Property<int>("IdLaptop")
@@ -65,36 +62,14 @@ namespace device.Migrations
                     b.Property<int>("Number")
                         .HasColumnType("integer");
 
-                    b.HasKey("Id");
-
-                    b.HasIndex("HoaDonId");
-
-                    b.ToTable("hoaDonsDetail");
-                });
-
-            modelBuilder.Entity("device.Models.KhoHang", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("SoLuongBan")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("SoLuongNhap")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("idDetail")
+                    b.Property<int>("invoicesId")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("idDetail")
-                        .IsUnique();
+                    b.HasIndex("invoicesId");
 
-                    b.ToTable("khoHangs");
+                    b.ToTable("InvoicesDetail");
                 });
 
             modelBuilder.Entity("device.Models.Laptop", b =>
@@ -105,10 +80,7 @@ namespace device.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<double>("GiaVon")
-                        .HasColumnType("double precision");
-
-                    b.Property<double>("Giaban")
+                    b.Property<double>("CostPrice")
                         .HasColumnType("double precision");
 
                     b.Property<int>("IdProducer")
@@ -117,6 +89,9 @@ namespace device.Migrations
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<double>("SalePrice")
+                        .HasColumnType("double precision");
 
                     b.HasKey("Id");
 
@@ -252,6 +227,31 @@ namespace device.Migrations
                     b.ToTable("ram");
                 });
 
+            modelBuilder.Entity("device.Models.Storage", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("InserNumber")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("SaleNumber")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("idDetail")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("idDetail")
+                        .IsUnique();
+
+                    b.ToTable("storages");
+                });
+
             modelBuilder.Entity("device.Models.Vga", b =>
                 {
                     b.Property<int>("Id")
@@ -272,26 +272,15 @@ namespace device.Migrations
                     b.ToTable("vgas");
                 });
 
-            modelBuilder.Entity("Sale.Models.HoaDonDetail", b =>
+            modelBuilder.Entity("device.Models.InvoiceDetail", b =>
                 {
-                    b.HasOne("Sale.Models.HoaDon", "HoaDon")
-                        .WithMany("HoaDonDetail")
-                        .HasForeignKey("HoaDonId")
+                    b.HasOne("device.Models.Invoice", "invoices")
+                        .WithMany("invoiceDetail")
+                        .HasForeignKey("invoicesId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("HoaDon");
-                });
-
-            modelBuilder.Entity("device.Models.KhoHang", b =>
-                {
-                    b.HasOne("device.Models.LaptopDetail", "laptopDetail")
-                        .WithOne("khoHang")
-                        .HasForeignKey("device.Models.KhoHang", "idDetail")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("laptopDetail");
+                    b.Navigation("invoices");
                 });
 
             modelBuilder.Entity("device.Models.Laptop", b =>
@@ -340,9 +329,20 @@ namespace device.Migrations
                     b.Navigation("Vga");
                 });
 
-            modelBuilder.Entity("Sale.Models.HoaDon", b =>
+            modelBuilder.Entity("device.Models.Storage", b =>
                 {
-                    b.Navigation("HoaDonDetail");
+                    b.HasOne("device.Models.LaptopDetail", "laptopDetail")
+                        .WithOne("storage")
+                        .HasForeignKey("device.Models.Storage", "idDetail")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("laptopDetail");
+                });
+
+            modelBuilder.Entity("device.Models.Invoice", b =>
+                {
+                    b.Navigation("invoiceDetail");
                 });
 
             modelBuilder.Entity("device.Models.Laptop", b =>
@@ -352,7 +352,7 @@ namespace device.Migrations
 
             modelBuilder.Entity("device.Models.LaptopDetail", b =>
                 {
-                    b.Navigation("khoHang");
+                    b.Navigation("storage");
                 });
 
             modelBuilder.Entity("device.Models.MonitorM", b =>

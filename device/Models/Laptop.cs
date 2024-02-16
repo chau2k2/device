@@ -14,9 +14,9 @@ namespace device.Models
         [Required]
         public int IdProducer { get; set; }
         [Required]
-        public double GiaVon { get; set; }
+        public double CostPrice { get; set; }
         [Required]
-        public double Giaban { get; set; }
+        public double SalePrice { get; set; }
         [JsonIgnore]
         
         public Producer? producer { get; set; }
