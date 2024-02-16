@@ -1,5 +1,6 @@
 ﻿using device.Models;
 using Microsoft.EntityFrameworkCore;
+using Sale.Models;
 using System.Threading.Tasks;
 
 namespace device.Data
@@ -66,6 +67,8 @@ namespace device.Data
         public DbSet<MonitorM> monitors { get; set; }
         public DbSet<Vga> vgas { get; set; }
         public DbSet<KhoHang> khoHangs { get; set; }
+        public DbSet<HoaDon> hoaDons { get; set; }
+        public DbSet<HoaDonDetail> hoaDonsDetail { get;set; }
 
     }
 }
