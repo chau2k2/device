@@ -4,6 +4,7 @@ using device.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.DotNet.Scaffolding.Shared.Messaging;
+using System.Linq;
 
 namespace device.Controllers
 {
@@ -39,7 +40,7 @@ namespace device.Controllers
             {
                 civ.DateInvoice = DateTime.Now;
             }
-            
+            List<InvoiceDetail> invoiceDetails = new List<InvoiceDetail>();
             Invoice invoice = new Invoice()
             {
                 Id = civ.Id,
