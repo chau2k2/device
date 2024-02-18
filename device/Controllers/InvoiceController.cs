@@ -40,7 +40,6 @@ namespace device.Controllers
             {
                 civ.DateInvoice = DateTime.Now;
             }
-            List<InvoiceDetail> invoiceDetails = new List<InvoiceDetail>();
             Invoice invoice = new Invoice()
             {
                 Id = civ.Id,
