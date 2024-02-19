@@ -1,4 +1,5 @@
-﻿using device.IServices;
+﻿using device.Data;
+using device.IServices;
 using device.Models;
 using device.Validation;
 using Microsoft.AspNetCore.Http;
@@ -13,10 +14,10 @@ namespace device.Controllers
     {
         private readonly IAllService<LaptopDetail> _service;
         private readonly LaptopDetailValidate _detailValidate;
-        public LaptopDetailController(IAllService<LaptopDetail> service)
+        public LaptopDetailController(IAllService<LaptopDetail> service, LaptopDbContext dbContext)
         {
             _service = service;
-            _detailValidate = new LaptopDetailValidate();
+            _detailValidate = new LaptopDetailValidate(dbContext);
         }
         [HttpGet("all")]
         public async Task<IActionResult> GetAll(int page = 1, int pageSize = 5)

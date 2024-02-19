@@ -144,7 +144,7 @@ namespace device.Migrations
                     Height = table.Column<double>(type: "double precision", nullable: false),
                     Width = table.Column<double>(type: "double precision", nullable: false),
                     Length = table.Column<double>(type: "double precision", nullable: false),
-                    BatteryCatttery = table.Column<double>(type: "double precision", nullable: false),
+                    BatteryCapacity = table.Column<double>(type: "double precision", nullable: false),
                     Image = table.Column<byte[]>(type: "bytea", nullable: true),
                     idLaptop = table.Column<int>(type: "integer", nullable: false)
                 },

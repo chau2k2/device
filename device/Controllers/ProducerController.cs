@@ -69,7 +69,7 @@ namespace device.Controllers
             return Ok(result);
         }
         [HttpPost]
-        public async Task<IActionResult> Add([FromBody]Producer producer)
+        public async Task<IActionResult> CreateProducer([FromBody]Producer producer)
         {
             try
             {

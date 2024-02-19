@@ -13,12 +13,12 @@ namespace device.Controllers
     {
         private readonly ILogger<StorageController> logger;
         private readonly IAllService<Storage> _service;
-        private readonly KhoHangValidate _khohangValidate;
+        private readonly StorageValidate _khohangValidate;
         public StorageController(ILogger<StorageController> logger, IAllService<Storage> service)
         {
             this.logger = logger;
             _service = service;
-            _khohangValidate = new KhoHangValidate();
+            _khohangValidate = new StorageValidate();
         }
         [HttpGet("GetAll")]
         public async Task<IActionResult> GetAll(int page = 1, int pageSize = 5)
