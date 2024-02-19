@@ -67,6 +67,8 @@ namespace device.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("IdLaptop");
+
                     b.HasIndex("invoicesId");
 
                     b.ToTable("InvoicesDetail");
@@ -97,7 +99,7 @@ namespace device.Migrations
 
                     b.HasIndex("IdProducer");
 
-                    b.ToTable("laptops");
+                    b.ToTable("Laptop");
                 });
 
             modelBuilder.Entity("device.Models.LaptopDetail", b =>
@@ -207,7 +209,7 @@ namespace device.Migrations
                     b.ToTable("producers");
                 });
 
-            modelBuilder.Entity("device.Models.Laptop", b =>
+            modelBuilder.Entity("device.Models.Ram", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -224,7 +226,7 @@ namespace device.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("ram");
+                    b.ToTable("Ram");
                 });
 
             modelBuilder.Entity("device.Models.Storage", b =>
@@ -274,6 +276,12 @@ namespace device.Migrations
 
             modelBuilder.Entity("device.Models.InvoiceDetail", b =>
                 {
+                    b.HasOne("device.Models.Laptop", "laptops")
+                        .WithMany("InvoiceDetails")
+                        .HasForeignKey("IdLaptop")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("device.Models.Invoice", "invoices")
                         .WithMany("invoiceDetail")
                         .HasForeignKey("invoicesId")
@@ -281,6 +289,8 @@ namespace device.Migrations
                         .IsRequired();
 
                     b.Navigation("invoices");
+
+                    b.Navigation("laptops");
                 });
 
             modelBuilder.Entity("device.Models.Laptop", b =>
@@ -302,7 +312,7 @@ namespace device.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("device.Models.Laptop", "Rams")
+                    b.HasOne("device.Models.Ram", "Rams")
                         .WithMany("LaptopDetail")
                         .HasForeignKey("IdRam")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -347,6 +357,8 @@ namespace device.Migrations
 
             modelBuilder.Entity("device.Models.Laptop", b =>
                 {
+                    b.Navigation("InvoiceDetails");
+
                     b.Navigation("LaptopDetails");
                 });
 
@@ -365,7 +377,7 @@ namespace device.Migrations
                     b.Navigation("Laptops");
                 });
 
-            modelBuilder.Entity("device.Models.Laptop", b =>
+            modelBuilder.Entity("device.Models.Ram", b =>
                 {
                     b.Navigation("LaptopDetail");
                 });
