@@ -22,5 +22,7 @@ namespace device.Models
         public Producer? producer { get; set; }
         [JsonIgnore]
         public ICollection<LaptopDetail> LaptopDetails { get; set; }
+        
+        public ICollection<InvoiceDetail> InvoiceDetails { get; set; }
     }
 }

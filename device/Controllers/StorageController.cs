@@ -1,4 +1,5 @@
-﻿using device.IServices;
+﻿using device.DTO.Storage;
+using device.IServices;
 using device.Models;
 using device.Validation;
 using Microsoft.AspNetCore.Http;
@@ -13,12 +14,12 @@ namespace device.Controllers
     {
         private readonly ILogger<StorageController> logger;
         private readonly IAllService<Storage> _service;
-        private readonly StorageValidate _khohangValidate;
+        private readonly StorageValidate _StorageValidate;
         public StorageController(ILogger<StorageController> logger, IAllService<Storage> service)
         {
             this.logger = logger;
             _service = service;
-            _khohangValidate = new StorageValidate();
+            _StorageValidate = new StorageValidate();
         }
         [HttpGet("GetAll")]
         public async Task<IActionResult> GetAll(int page = 1, int pageSize = 5)
@@ -27,16 +28,23 @@ namespace device.Controllers
             return Ok(result);
         }
         [HttpPut]
-        public async Task<IActionResult> Update(int id, [FromBody] Storage khohang)
+        public async Task<IActionResult> Update(int id, [FromBody] UpdateStorage USt)
         {
+            Storage storage = new Storage()
+            {
+                Id = id,
+                InserNumber = USt.InserNumber,
+                SaleNumber = USt.SaleNumber,
+                idDetail = USt.idDetail
+            };
             try
             {
-                var validate = _khohangValidate.Validate(khohang);
+                var validate = _StorageValidate.Validate(storage);
                 if (!validate.IsValid)
                 {
                     return BadRequest(validate.Errors);
                 }
-                var result = await _service.Update(id, khohang);
+                var result = await _service.Update(id, storage);
                 return Ok(result);
             }
             catch (DbUpdateException ex)
@@ -48,10 +56,6 @@ namespace device.Controllers
 
                     return BadRequest($"Error: {message}. Constraint: {constraintName}");
                 }
-                return StatusCode(500, "An error occurred while processing your request. Please try again later.");
-            }
-            catch (Exception)
-            {
                 return StatusCode(500, "An error occurred while processing your request. Please try again later.");
             }
         }
@@ -62,16 +66,23 @@ namespace device.Controllers
             return Ok(result);
         }
         [HttpPost]
-        public async Task<IActionResult> Add([FromBody] Storage khohang)
+        public async Task<IActionResult> Add([FromBody] CreateStorage Cst)
         {
+            Storage storage = new Storage()
+            {
+                Id = Cst.Id,
+                InserNumber = Cst.InserNumber,
+                SaleNumber = Cst.SaleNumber,
+                idDetail = Cst.idDetail
+            };
             try
             {
-                var validate = _khohangValidate.Validate(khohang);
+                var validate = _StorageValidate.Validate(storage);
                 if (!validate.IsValid)
                 {
                     return BadRequest(validate.Errors);
                 }
-                var result = await _service.Add(khohang);
+                var result = await _service.Add(storage);
                 return Ok(result);
             }
             catch (DbUpdateException ex)
@@ -83,10 +94,6 @@ namespace device.Controllers
 
                     return BadRequest($"Error: {message}. Constraint: {constraintName}");
                 }
-                return StatusCode(500, "An error occurred while processing your request. Please try again later.");
-            }
-            catch (Exception)
-            {
                 return StatusCode(500, "An error occurred while processing your request. Please try again later.");
             }
         }

@@ -1,4 +1,5 @@
-﻿using device.IServices;
+﻿using device.DTO.Monitor;
+using device.IServices;
 using device.Models;
 using device.Validation;
 using Microsoft.AspNetCore.Http;
@@ -27,16 +28,22 @@ namespace device.Controllers
             return Ok(result);
         }
         [HttpPut]
-        public async Task<IActionResult> Update(int id, [FromBody] MonitorM monitorM)
+        public async Task<IActionResult> Update(int id, [FromBody] UpdateMonitor UMn)
         {
+            MonitorM monitor = new MonitorM()
+            {
+                Id = id,
+                Name = UMn.Name,
+                Price = UMn.Price
+            };
             try
             {
-                var validate = _monitorValidate.Validate(monitorM);
+                var validate = _monitorValidate.Validate(monitor);
                 if (!validate.IsValid)
                 {
                     return BadRequest(validate.Errors);
                 }
-                var result = await _service.Update(id, monitorM);
+                var result = await _service.Update(id,monitor);
                 return Ok(result);
             }
             catch (DbUpdateException ex)
@@ -48,10 +55,6 @@ namespace device.Controllers
 
                     return BadRequest($"Error: {message}. Constraint: {constraintName}");
                 }
-                return StatusCode(500, "An error occurred while processing your request. Please try again later.");
-            }
-            catch (Exception)
-            {
                 return StatusCode(500, "An error occurred while processing your request. Please try again later.");
             }
         }
@@ -62,16 +65,22 @@ namespace device.Controllers
             return Ok(result);
         }
         [HttpPost]
-        public async Task<IActionResult> Add([FromBody] MonitorM monitorM)
+        public async Task<IActionResult> Add([FromBody] CreateMonitor CMn)
         {
+            MonitorM monitor = new MonitorM()
+            {
+                Id = CMn.Id,
+                Name = CMn.Name,
+                Price = CMn.Price
+            };
             try
             {
-                var validate = _monitorValidate.Validate(monitorM);
+                var validate = _monitorValidate.Validate(monitor);
                 if (!validate.IsValid)
                 {
                     return BadRequest(validate.Errors);
                 }
-                var result = await _service.Add(monitorM);
+                var result = await _service.Add(monitor);
                 return Ok(result);
             }
             catch (DbUpdateException ex)
@@ -83,10 +92,6 @@ namespace device.Controllers
 
                     return BadRequest($"Error: {message}. Constraint: {constraintName}");
                 }
-                return StatusCode(500, "An error occurred while processing your request. Please try again later.");
-            }
-            catch (Exception)
-            {
                 return StatusCode(500, "An error occurred while processing your request. Please try again later.");
             }
         }

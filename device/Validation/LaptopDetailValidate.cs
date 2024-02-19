@@ -16,7 +16,7 @@ namespace device.Validation
             _dbconext = dbContext;
             RuleFor(detail => detail.idLaptop).NotEmpty().WithMessage("Laptop id is not null and not empty");
             RuleFor(detail => detail.Cpu).MaximumLength(Constants.MAX_LENGTH_PUBLIC).WithMessage($"length is not greater than {Constants.MAX_LENGTH_PUBLIC}");
-            RuleFor(detail => detail.IdRam).Must(idram => IsRamValue(idram)).WithMessage("IdRam is not exist in table Ram");
+            RuleFor(detail => detail.IdRam).Must(idram => IsRamValue(idram)).WithMessage("IdRam is not exist in table Laptop");
             RuleFor(detail => detail.IdMonitor).Must(idMon => IsMonitor(idMon)).WithMessage("IdMonitor is not exist in table Monitor");
             RuleFor(detail => detail.IdVga).Must(idVga => IsVgaValue(idVga)).WithMessage("IdVga is not exist in table Vga");
             RuleFor(detail => detail.idLaptop).Must(idLap => IsLaptopValue(idLap)).WithMessage("IdLaptop is not exist in table laptop");

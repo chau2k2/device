@@ -7,9 +7,7 @@ namespace device.Models
     {
         [Key]
         public int Id { get; set; }
-        [Required]
         public string Name { get; set; }
-        [Required]
         public double Price { get; set; }
         [JsonIgnore]
         public ICollection<LaptopDetail> LaptopDetail { get; set;}

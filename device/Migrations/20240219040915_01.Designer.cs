@@ -210,7 +210,7 @@ namespace device.Migrations
                     b.ToTable("producers");
                 });
 
-            modelBuilder.Entity("device.Models.Ram", b =>
+            modelBuilder.Entity("device.Models.Laptop", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -305,7 +305,7 @@ namespace device.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("device.Models.Ram", "Rams")
+                    b.HasOne("device.Models.Laptop", "Rams")
                         .WithMany("LaptopDetail")
                         .HasForeignKey("IdRam")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -368,7 +368,7 @@ namespace device.Migrations
                     b.Navigation("Laptops");
                 });
 
-            modelBuilder.Entity("device.Models.Ram", b =>
+            modelBuilder.Entity("device.Models.Laptop", b =>
                 {
                     b.Navigation("LaptopDetail");
                 });

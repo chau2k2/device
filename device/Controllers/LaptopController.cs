@@ -1,9 +1,12 @@
-﻿using device.IServices;
+﻿using device.DTO.Laptop;
+using device.IServices;
 using device.Models;
 using device.Validation;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Runtime.ConstrainedExecution;
+using System.Security.Policy;
 
 namespace device.Controllers
 {
@@ -46,8 +49,16 @@ namespace device.Controllers
 
         }
         [HttpPost("create")]
-        public async Task<IActionResult> Create([FromBody] Laptop laptop)
+        public async Task<IActionResult> Create([FromBody] CreateLaptop CrL)
         {
+            Laptop laptop = new Laptop()
+            {
+                Id = CrL.Id,
+                Name = CrL.Name,
+                IdProducer = CrL.IdProducer,
+                CostPrice = CrL.CostPrice,
+                SalePrice = CrL.SalePrice
+            };
             try
             {
                 var validate = _laptopValidate.Validate(laptop);
@@ -69,14 +80,18 @@ namespace device.Controllers
                 }
                 return StatusCode(500, "An error occurred while processing your request. Please try again later.");
             }
-            catch (Exception)
-            {
-                return StatusCode(500, "An error occurred while processing your request. Please try again later.");
-            }
         }
         [HttpPost("{id}")]
-        public async Task<IActionResult> Update(int id, [FromBody] Laptop laptop)
+        public async Task<IActionResult> Update(int id, [FromBody] UpdateLaptop UdL)
         {
+            Laptop laptop = new Laptop()
+            {
+                Id = id,
+                Name = UdL.Name,
+                IdProducer = UdL.IdProducer,
+                CostPrice = UdL.CostPrice,
+                SalePrice = UdL.SalePrice
+            };
             try
             {
                 var validate = _laptopValidate.Validate(laptop);
@@ -84,7 +99,7 @@ namespace device.Controllers
                 {
                     return BadRequest(validate.Errors);
                 }
-                var result = await _service.Update(id, laptop);
+                var result = await _service.Update(id,laptop);
                 return Ok(result);
             }
             catch (DbUpdateException ex)
@@ -96,10 +111,6 @@ namespace device.Controllers
 
                     return BadRequest($"Error: {message}. Constraint: {constraintName}");
                 }
-                return StatusCode(500, "An error occurred while processing your request. Please try again later.");
-            }
-            catch (Exception)
-            {
                 return StatusCode(500, "An error occurred while processing your request. Please try again later.");
             }
         }

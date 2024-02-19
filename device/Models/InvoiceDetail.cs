@@ -11,5 +11,6 @@ namespace device.Models
         public int IdLaptop { get; set; }
         public int Number { get; set; }
         public virtual Invoice invoices { get; set; }
+        public virtual Laptop laptops { get; set; }
     }
 }

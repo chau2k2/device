@@ -1,9 +1,11 @@
 ﻿using device.Data;
+using device.DTO.LaptopDetail;
 using device.IServices;
 using device.Models;
 using device.Validation;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.CodeAnalysis.Elfie.Diagnostics;
 using Microsoft.EntityFrameworkCore;
 
 namespace device.Controllers
@@ -47,16 +49,33 @@ namespace device.Controllers
 
         }
         [HttpPost("create")]
-        public async Task<IActionResult> Create([FromBody] LaptopDetail laptopDetail)
+        public async Task<IActionResult> Create([FromBody] CreateLaptopDetail CLD)
         {
+            LaptopDetail detail = new LaptopDetail()
+            {
+                Id = CLD.Id,
+                Cpu = CLD.Cpu,
+                Seri = CLD.Seri,
+                IdVga = CLD.IdVga,
+                IdRam = CLD.IdRam,
+                HardDriver = CLD.HardDriver,
+                IdMonitor = CLD.IdMonitor,
+                Webcam = CLD.Webcam,
+                Weight = CLD.Weight,
+                Height = CLD.Height,
+                Width = CLD.Width,
+                Length = CLD.Length,
+                BatteryCapacity = CLD.BatteryCapacity,
+                idLaptop = CLD.idLaptop
+            };
             try
             {
-                var validate = _detailValidate.Validate(laptopDetail);
+                var validate = _detailValidate.Validate(detail);
                 if (!validate.IsValid)
                 {
                     return BadRequest(validate.Errors);
                 }
-                var result = await _service.Add(laptopDetail);
+                var result = await _service.Add(detail);
                 return Ok(result);
             }
             catch (DbUpdateException ex)
@@ -68,24 +87,37 @@ namespace device.Controllers
 
                     return BadRequest($"Error: {message}. Constraint: {constraintName}");
                 }
-                return StatusCode(500, "An error occurred while processing your request. Please try again later.");
-            }
-            catch (Exception)
-            {
                 return StatusCode(500, "An error occurred while processing your request. Please try again later.");
             }
         }
         [HttpPost("{id}")]
-        public async Task<IActionResult> Update(int id, [FromBody] LaptopDetail laptopDetail)
+        public async Task<IActionResult> Update(int id, [FromBody] UpdateLaptopDetail UDL)
         {
+            LaptopDetail detail = new LaptopDetail()
+            {
+                Id = id,
+                Cpu = UDL.Cpu,
+                Seri = UDL.Seri,
+                IdVga = UDL.IdVga,
+                IdRam = UDL.IdRam,
+                HardDriver = UDL.HardDriver,
+                IdMonitor = UDL.IdMonitor,
+                Webcam = UDL.Webcam,
+                Weight = UDL.Weight,
+                Height = UDL.Height,
+                Width = UDL.Width,
+                Length = UDL.Length,
+                BatteryCapacity = UDL.BatteryCapacity,
+                idLaptop = UDL.idLaptop
+            };
             try
             {
-                var validate = _detailValidate.Validate(laptopDetail);
+                var validate = _detailValidate.Validate(detail);
                 if (!validate.IsValid)
                 {
                     return BadRequest(validate.Errors);
                 }
-                var result = await _service.Update(id, laptopDetail);
+                var result = await _service.Update(id, detail);
                 return Ok(result);
             }
             catch (DbUpdateException ex)
@@ -97,10 +129,6 @@ namespace device.Controllers
 
                     return BadRequest($"Error: {message}. Constraint: {constraintName}");
                 }
-                return StatusCode(500, "An error occurred while processing your request. Please try again later.");
-            }
-            catch (Exception)
-            {
                 return StatusCode(500, "An error occurred while processing your request. Please try again later.");
             }
         }

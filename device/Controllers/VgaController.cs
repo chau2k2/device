@@ -1,9 +1,11 @@
-﻿using device.IServices;
+﻿using device.DTO.Vga;
+using device.IServices;
 using device.Models;
 using device.Validation;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Runtime.ConstrainedExecution;
 
 namespace device.Controllers
 {
@@ -28,8 +30,14 @@ namespace device.Controllers
             return Ok(result);
         }
         [HttpPut]
-        public async Task<IActionResult> Update(int id, [FromBody] Vga vga)
+        public async Task<IActionResult> Update(int id, [FromBody] UpdateVga Uvga)
         {
+            Vga vga = new Vga()
+            {
+                Id = id,
+                Name = Uvga.Name,
+                Price = Uvga.Price
+            };
             try
             {
                 var validate = _vgaValidate.Validate(vga);
@@ -37,7 +45,7 @@ namespace device.Controllers
                 {
                     return BadRequest(validate.Errors);
                 }
-                var result = await _service.Update(id, vga);
+                var result = await _service.Update(id,vga);
                 return Ok(result);
             }
             catch (DbUpdateException ex)
@@ -51,10 +59,6 @@ namespace device.Controllers
                 }
                 return StatusCode(500, "An error occurred while processing your request. Please try again later.");
             }
-            catch (Exception)
-            {
-                return StatusCode(500, "An error occurred while processing your request. Please try again later.");
-            }
         }
         [HttpGet("Get/{id}")]
         public async Task<IActionResult> FindById(int id)
@@ -63,8 +67,14 @@ namespace device.Controllers
             return Ok(result);
         }
         [HttpPost]
-        public async Task<IActionResult> Add([FromBody] Vga vga)
+        public async Task<IActionResult> Add([FromBody] CreateVga Cvga)
         {
+            Vga vga = new Vga()
+            {
+                Id = Cvga.Id,
+                Name = Cvga.Name,
+                Price = Cvga.Price
+            };
             try
             {
                 var validate = _vgaValidate.Validate(vga);
@@ -84,10 +94,6 @@ namespace device.Controllers
 
                     return BadRequest($"Error: {message}. Constraint: {constraintName}");
                 }
-                return StatusCode(500, "An error occurred while processing your request. Please try again later.");
-            }
-            catch (Exception)
-            {
                 return StatusCode(500, "An error occurred while processing your request. Please try again later.");
             }
         }

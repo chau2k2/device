@@ -1,9 +1,10 @@
-﻿using device.IServices;
+﻿using device.DTO.Ram;
+using device.IServices;
 using device.Models;
 using device.Validation;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Runtime.ConstrainedExecution;
 
 namespace device.Controllers
 {
@@ -28,8 +29,14 @@ namespace device.Controllers
             return Ok(result);
         }
         [HttpPut]
-        public async Task<IActionResult> Update(int id, [FromBody] Ram ram)
+        public async Task<IActionResult> Update(int id, [FromBody] UpdateRam udR)
         {
+            Ram ram = new Ram()
+            {
+                Id = id,
+                Name = udR.Name,
+                Price = udR.Price
+            };
             try
             {
                 var validate = _ramValidate.Validate(ram);
@@ -51,10 +58,6 @@ namespace device.Controllers
                 }
                 return StatusCode(500, "An error occurred while processing your request. Please try again later.");
             }
-            catch (Exception)
-            {
-                return StatusCode(500, "An error occurred while processing your request. Please try again later.");
-            }
         }
         [HttpGet("Get/{id}")]
         public async Task<IActionResult> FindById(int id)
@@ -63,8 +66,14 @@ namespace device.Controllers
             return Ok(result);
         }
         [HttpPost]
-        public async Task<IActionResult> Add([FromBody] Ram ram)
+        public async Task<IActionResult> Add([FromBody] CreateRam CrR)
         {
+            Ram ram = new Ram()
+            {
+                Id = CrR.Id,
+                Name = CrR.Name,
+                Price = CrR.Price
+            };
             try
             {
                 var validate = _ramValidate.Validate(ram);
@@ -84,10 +93,6 @@ namespace device.Controllers
 
                     return BadRequest($"Error: {message}. Constraint: {constraintName}");
                 }
-                return StatusCode(500, "An error occurred while processing your request. Please try again later.");
-            }
-            catch (Exception)
-            {
                 return StatusCode(500, "An error occurred while processing your request. Please try again later.");
             }
         }

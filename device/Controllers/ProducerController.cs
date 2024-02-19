@@ -1,8 +1,10 @@
-﻿using device.IServices;
+﻿using device.DTO.Producer;
+using device.IServices;
 using device.Models;
 using device.Validation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Runtime.ConstrainedExecution;
 
 namespace device.Controllers
 {
@@ -34,8 +36,14 @@ namespace device.Controllers
             }      
         }
         [HttpPut]
-        public async Task< IActionResult> Update(int id, [FromBody] Producer producer)
+        public async Task< IActionResult> Update(int id, [FromBody] UpdateProducer Upd)
         {
+            Producer producer = new Producer()
+            {
+                Id = id,
+                Name = Upd.Name,
+                IsActive = Upd.IsActive
+            };
             try
             {
                 var validate = _producerValidate.Validate(producer);
@@ -57,10 +65,6 @@ namespace device.Controllers
                 }
                 return StatusCode(500, "An error occurred while processing your request. Please try again later.");
             }
-            catch (Exception)
-            {
-                return StatusCode(500, "An error occurred while processing your request. Please try again later.");
-            }
         }
         [HttpGet("Get/{id}")]
         public async Task<IActionResult> FindById(int id)
@@ -69,17 +73,23 @@ namespace device.Controllers
             return Ok(result);
         }
         [HttpPost]
-        public async Task<IActionResult> CreateProducer([FromBody]Producer producer)
+        public async Task<IActionResult> CreateProducer([FromBody]CreateProducer cpr)
         {
+            Producer producer = new Producer()
+            {
+                Id = cpr.Id,
+                Name = cpr.Name,
+                IsActive = cpr.IsActive
+            };
             try
             {
                 var validate = _producerValidate.Validate(producer);
-                if(!validate.IsValid)
+                if (!validate.IsValid)
                 {
                     return BadRequest(validate.Errors);
                 }
                 var result = await _service.Add(producer);
-                return Ok(result);  
+                return Ok(result);
             }
             catch (DbUpdateException ex)
             {
@@ -90,10 +100,6 @@ namespace device.Controllers
 
                     return BadRequest($"Error: {message}. Constraint: {constraintName}");
                 }
-                return StatusCode(500, "An error occurred while processing your request. Please try again later.");
-            }
-            catch (Exception)
-            {
                 return StatusCode(500, "An error occurred while processing your request. Please try again later.");
             }
         }

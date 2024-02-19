@@ -14,7 +14,7 @@ namespace device.Models
         public string Seri { get; set; }
         [ForeignKey("fkVga")]
         public int IdVga { get; set; }
-        [ForeignKey("Ram")]
+        [ForeignKey("Laptop")]
         public int IdRam { get; set; }
         [JsonIgnore]
         public Ram Rams { get; set; }

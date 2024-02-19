@@ -10,7 +10,7 @@ namespace device.Validation
         public RamValidate()
         {
             RuleFor(ram => ram.Name).NotNull().WithMessage("Name is not null").Must(nam => beInteger(nam) && beInRange(nam))
-                .WithMessage($"Ram must be integer and between {Constants.MIN_RAM} and {Constants.MAX_RAM}");
+                .WithMessage($"Laptop must be integer and between {Constants.MIN_RAM} and {Constants.MAX_RAM}");
             RuleFor(ram => ram.Price).InclusiveBetween(0,Constants.MAX_PRICE).WithMessage($"price must be between 0 and {Constants.MAX_PRICE}");
         }
         private bool beInteger (string name)
