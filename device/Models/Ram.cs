@@ -5,10 +5,6 @@ namespace device.Models
 {
     public class Ram
     {
-        [Key]
-        public int Id { get; set; }
-        public string Name { get; set; }
-        public double Price { get; set; }
         [JsonIgnore]
         public ICollection<LaptopDetail> LaptopDetail { get; set;}
     }
