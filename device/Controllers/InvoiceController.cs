@@ -14,15 +14,15 @@ namespace device.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class HoaDonController : ControllerBase
+    public class InvoiceController : ControllerBase
     {
         protected readonly IAllRepository<Invoice> _repo;
         protected readonly IAllRepository<InvoiceDetail> _repoDetail;
         private readonly LaptopDbContext _context;
         private readonly InvoiceValidate _invoiceValidate;
         private readonly InvoiceDetail _detail;
-        private static int _count = 0; // dem hoa don
-        public HoaDonController(IAllRepository<Invoice> repo, IAllRepository<InvoiceDetail> repoDetail,LaptopDbContext context)
+
+        public InvoiceController(IAllRepository<Invoice> repo, IAllRepository<InvoiceDetail> repoDetail,LaptopDbContext context)
         {
             _repo = repo;
             _repoDetail = repoDetail;
@@ -45,17 +45,24 @@ namespace device.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateInvoice (CreateInvoice civ)
         {
-            _count ++;
+            int _count = 0;
+            _count ++;// dem hoa don
             string formatteDate = civ.DateInvoice.ToString("yyyy-MM-dd HH:mm:ss");
-            double total = 0;
-            
+            double totalPrice = 0;
+            int totalQuantity = 0;
+            List<InvoiceDetail> listdetail = new List<InvoiceDetail>();
+            foreach(var detail in listdetail)
+            {
+                totalPrice += detail.Price * detail.Quantity;
+                totalQuantity += detail.Quantity;
+            }
             Invoice invoice = new Invoice()
             {
                 Id = civ.Id,
                 InvoiceNumber = "IV" + (_count.ToString().PadLeft(5, '0')),
                 DateInvoice = civ.DateInvoice,
-                TotalQuantity = civ.TotalQuanity,
-                TotalPrice = civ.TotalPrice
+                TotalQuantity = totalQuantity,
+                TotalPrice = totalPrice
             };
             try
             {
