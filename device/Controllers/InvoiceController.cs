@@ -20,6 +20,7 @@ namespace device.Controllers
         protected readonly IAllRepository<InvoiceDetail> _repoDetail;
         private readonly LaptopDbContext _context;
         private readonly InvoiceValidate _invoiceValidate;
+        private readonly InvoiceDetail _detail;
         private static int _count = 0; // dem hoa don
         public HoaDonController(IAllRepository<Invoice> repo, IAllRepository<InvoiceDetail> repoDetail,LaptopDbContext context)
         {
@@ -27,6 +28,7 @@ namespace device.Controllers
             _repoDetail = repoDetail;
             _context = context;
             _invoiceValidate = new InvoiceValidate();
+            _detail = new InvoiceDetail();
         }
         [HttpGet("GetAll")]
         public async Task<IActionResult> GetAll(int page = 1, int pageSize = 5)
@@ -46,13 +48,14 @@ namespace device.Controllers
             _count ++;
             string formatteDate = civ.DateInvoice.ToString("yyyy-MM-dd HH:mm:ss");
             double total = 0;
-
+            
             Invoice invoice = new Invoice()
             {
                 Id = civ.Id,
                 InvoiceNumber = "IV" + (_count.ToString().PadLeft(5, '0')),
                 DateInvoice = civ.DateInvoice,
-                TotalInvoice = civ.TotalInvoice
+                TotalQuantity = civ.TotalQuanity,
+                TotalPrice = civ.TotalPrice
             };
             try
             {
@@ -68,7 +71,6 @@ namespace device.Controllers
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, "Create invoice not successfull!!!");
             }
-
         }
     }
 }

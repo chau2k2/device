@@ -56,8 +56,8 @@ namespace device.Controllers
                 Id = CrL.Id,
                 Name = CrL.Name,
                 IdProducer = CrL.IdProducer,
-                CostPrice = CrL.CostPrice,
-                SalePrice = CrL.SalePrice
+                SoldPrice = CrL.SoldPrice,
+                CostPrice = CrL.CostPrice
             };
             try
             {
@@ -90,7 +90,7 @@ namespace device.Controllers
                 Name = UdL.Name,
                 IdProducer = UdL.IdProducer,
                 CostPrice = UdL.CostPrice,
-                SalePrice = UdL.SalePrice
+                SoldPrice = UdL.SoldPrice
             };
             try
             {

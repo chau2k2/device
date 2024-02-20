@@ -2,8 +2,9 @@
 {
     public class UpdateInvoiceDetail
     {
-        public int IdInvoice { get; set; }
         public int IdLaptop { get; set; }
-        public int Number { get; set; }
+        public int IdInvoice { get; set; }
+        public double Price { get; set; }
+        public int Quantity { get; set; }
     }
 }

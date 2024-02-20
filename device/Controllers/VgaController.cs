@@ -73,7 +73,7 @@ namespace device.Controllers
             {
                 Id = Cvga.Id,
                 Name = Cvga.Name,
-                Price = Cvga.Price
+                Price = Cvga.Price            
             };
             try
             {

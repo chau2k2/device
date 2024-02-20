@@ -37,8 +37,11 @@ namespace device.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<double>("TotalInvoice")
+                    b.Property<double>("TotalPrice")
                         .HasColumnType("double precision");
+
+                    b.Property<int>("TotalQuantity")
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
@@ -59,17 +62,17 @@ namespace device.Migrations
                     b.Property<int>("IdLaptop")
                         .HasColumnType("integer");
 
-                    b.Property<int>("Number")
-                        .HasColumnType("integer");
+                    b.Property<double>("Price")
+                        .HasColumnType("double precision");
 
-                    b.Property<int>("invoicesId")
+                    b.Property<int>("Quantity")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("IdLaptop");
+                    b.HasIndex("IdInvoice");
 
-                    b.HasIndex("invoicesId");
+                    b.HasIndex("IdLaptop");
 
                     b.ToTable("InvoicesDetail");
                 });
@@ -92,14 +95,14 @@ namespace device.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<double>("SalePrice")
+                    b.Property<double>("SoldPrice")
                         .HasColumnType("double precision");
 
                     b.HasKey("Id");
 
                     b.HasIndex("IdProducer");
 
-                    b.ToTable("Laptop");
+                    b.ToTable("laptops");
                 });
 
             modelBuilder.Entity("device.Models.LaptopDetail", b =>
@@ -226,7 +229,7 @@ namespace device.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Ram");
+                    b.ToTable("ram");
                 });
 
             modelBuilder.Entity("device.Models.Storage", b =>
@@ -276,21 +279,21 @@ namespace device.Migrations
 
             modelBuilder.Entity("device.Models.InvoiceDetail", b =>
                 {
-                    b.HasOne("device.Models.Laptop", "laptops")
-                        .WithMany("InvoiceDetails")
-                        .HasForeignKey("IdLaptop")
+                    b.HasOne("device.Models.Invoice", "invoices")
+                        .WithMany("invoiceDetail")
+                        .HasForeignKey("IdInvoice")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("device.Models.Invoice", "invoices")
-                        .WithMany("invoiceDetail")
-                        .HasForeignKey("invoicesId")
+                    b.HasOne("device.Models.Laptop", "Laptop")
+                        .WithMany("InvoiceDetails")
+                        .HasForeignKey("IdLaptop")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("invoices");
+                    b.Navigation("Laptop");
 
-                    b.Navigation("laptops");
+                    b.Navigation("invoices");
                 });
 
             modelBuilder.Entity("device.Models.Laptop", b =>

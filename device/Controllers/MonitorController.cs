@@ -71,7 +71,7 @@ namespace device.Controllers
             {
                 Id = CMn.Id,
                 Name = CMn.Name,
-                Price = CMn.Price
+                Price= CMn.Price
             };
             try
             {

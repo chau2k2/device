@@ -16,13 +16,12 @@ namespace device.Models
         [Required]
         public double CostPrice { get; set; }
         [Required]
-        public double SalePrice { get; set; }
-        [JsonIgnore]
-        
+        public double SoldPrice { get; set; }
+        [JsonIgnore]     
         public Producer? producer { get; set; }
         [JsonIgnore]
         public ICollection<LaptopDetail> LaptopDetails { get; set; }
-        
+        [JsonIgnore]
         public ICollection<InvoiceDetail> InvoiceDetails { get; set; }
     }
 }

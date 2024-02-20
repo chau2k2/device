@@ -7,10 +7,11 @@ namespace device.Models
     {
         [Key]
         public int Id { get; set; }
-        public int IdInvoice { get; set; }
         public int IdLaptop { get; set; }
-        public int Number { get; set; }
+        public int IdInvoice { get; set; }
+        public double Price { get; set; }
+        public int Quantity { get; set; }
         public virtual Invoice invoices { get; set; }
-        public virtual Laptop laptops { get; set; }
+        public virtual Laptop Laptop { get; set; }
     }
 }

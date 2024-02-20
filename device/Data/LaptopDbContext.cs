@@ -50,11 +50,16 @@ namespace device.Data
                 .WithOne(v => v.Vga)
                 .HasForeignKey(v => v.IdVga)
                 .OnDelete(DeleteBehavior.Restrict);
-            //laptop - invoiceDetail
-            modelBuilder.Entity<Laptop>()
-                .HasMany(l => l.InvoiceDetails)
-                .WithOne(l => l.laptops)
-                .HasForeignKey(l => l.IdLaptop)
+            //laptop - InvoiceDetail
+            modelBuilder.Entity<InvoiceDetail>()
+                .HasOne(i => i.Laptop)
+                .WithMany(l => l.InvoiceDetails)
+                .HasForeignKey(i => i.IdLaptop);
+            //invoice - invoiceDetail
+            modelBuilder.Entity<Invoice>()
+                .HasMany(l => l.invoiceDetail)
+                .WithOne(i => i.invoices)
+                .HasForeignKey(i => i.IdInvoice)
                 .OnDelete(DeleteBehavior.Restrict);
             // 1-1 
             //LaptopDetail - storage
@@ -68,7 +73,7 @@ namespace device.Data
         public DbSet<Laptop> laptops { get; set; }
         public DbSet<LaptopDetail> laptopsDetail { get; set; }
         public DbSet<Producer> producers { get; set; }
-        public DbSet<Laptop> ram { get; set; } 
+        public DbSet<Ram> ram { get; set; } 
         public DbSet<MonitorM> monitors { get; set; }
         public DbSet<Vga> vgas { get; set; }
         public DbSet<Storage> storages { get; set; }
