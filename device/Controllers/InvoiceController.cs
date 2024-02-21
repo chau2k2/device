@@ -43,23 +43,19 @@ namespace device.Controllers
             return Ok();
         }
         [HttpPost]
-        public async Task<IActionResult> CreateInvoice (CreateInvoice civ)
+        public async Task<IActionResult> CreateInvoice ([FromBody]CreateInvoice civ)
         {
-            int _count = 0;
-            _count ++;// dem hoa don
-            string formatteDate = civ.DateInvoice.ToString("yyyy-MM-dd HH:mm:ss");
             double totalPrice = 0;
             int totalQuantity = 0;
             List<InvoiceDetail> listdetail = new List<InvoiceDetail>();
-            foreach(var detail in listdetail)
+            foreach (var detail in listdetail)
             {
                 totalPrice += detail.Price * detail.Quantity;
                 totalQuantity += detail.Quantity;
             }
             Invoice invoice = new Invoice()
             {
-                Id = civ.Id,
-                InvoiceNumber = "IV" + (_count.ToString().PadLeft(5, '0')),
+                InvoiceNumber = civ.InvoiceNumber,
                 DateInvoice = civ.DateInvoice,
                 TotalQuantity = totalQuantity,
                 TotalPrice = totalPrice
