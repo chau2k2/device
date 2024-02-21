@@ -2,7 +2,6 @@
 {
     public class UpdateInvoice
     {
-        public string InvoiceNumber { get; set; }
         public DateTime DateInvoice { get; set; }
     }
 }

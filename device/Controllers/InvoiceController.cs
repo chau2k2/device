@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.DotNet.Scaffolding.Shared.Messaging;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
+using System.Net.WebSockets;
 using System.Threading;
 
 namespace device.Controllers
@@ -77,6 +78,29 @@ namespace device.Controllers
             catch
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, "Create invoice not successfull!!!");
+            }
+        }
+        [HttpPut]
+        public async Task<IActionResult> UpdateInvoice(int id, UpdateInvoice upI)
+        {
+            Invoice invoice = new Invoice()
+            {
+                Id = id,
+                DateInvoice = upI.DateInvoice
+            };
+            try
+            {
+                var validate = _invoiceValidate.Validate(invoice);
+                if (!validate.IsValid)
+                {
+                    return BadRequest(validate.Errors);
+                }
+                var result = await _repo.UpdateOneAsyns(invoice);
+                return Ok(result);
+            }
+            catch
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, "Update invoice not successfull!!!");
             }
         }
         [HttpDelete]
