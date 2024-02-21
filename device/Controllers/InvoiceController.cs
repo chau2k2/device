@@ -7,6 +7,7 @@ using device.Validation.CheckName;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.DotNet.Scaffolding.Shared.Messaging;
+using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Threading;
 
@@ -45,6 +46,8 @@ namespace device.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateInvoice ([FromBody]CreateInvoice civ)
         {
+            int maxId = await _context.invoices.MaxAsync(e => (int?)e.Id) ?? 0;
+            int nextId = maxId + 1;
             double totalPrice = 0;
             int totalQuantity = 0;
             List<InvoiceDetail> listdetail = new List<InvoiceDetail>();
@@ -55,11 +58,12 @@ namespace device.Controllers
             }
             Invoice invoice = new Invoice()
             {
-                InvoiceNumber = civ.InvoiceNumber,
                 DateInvoice = civ.DateInvoice,
                 TotalQuantity = totalQuantity,
                 TotalPrice = totalPrice
             };
+            invoice.Id = nextId;
+            invoice.InvoiceNumber = $"IV{invoice.Id:D4}";
             try
             {
                 var validate = _invoiceValidate.Validate(invoice);
@@ -74,6 +78,13 @@ namespace device.Controllers
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, "Create invoice not successfull!!!");
             }
+        }
+        [HttpDelete]
+        public async Task<IActionResult> DeleteInvoice(int id)
+        {
+            var findId = await _repo.GetAsyncById(id);
+            if (findId == null){ return NotFound(); }
+            return Ok(await _repo.DeleteOneAsync(findId));
         }
     }
 }
