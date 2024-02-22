@@ -41,7 +41,7 @@ namespace device.Repository
         }
 
         public async Task<T> UpdateOneAsyns(T entity)
-        {
+        { 
             _dbContext.Update(entity).State = EntityState.Modified;
             await _dbContext.SaveChangesAsync();
             return entity;
