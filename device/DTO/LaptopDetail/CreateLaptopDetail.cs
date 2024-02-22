@@ -1,10 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-
-namespace device.DTO.LaptopDetail
+﻿namespace device.DTO.LaptopDetail
 {
     public class CreateLaptopDetail
     {
-        public int Id { get; set; }
         public string Cpu { get; set; }
         public string Seri { get; set; }
         public int IdVga { get; set; }

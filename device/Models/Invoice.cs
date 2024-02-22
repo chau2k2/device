@@ -15,13 +15,5 @@ namespace device.Models
         public double TotalPrice { get; set; }
         [JsonIgnore]
         public ICollection<InvoiceDetail>? invoiceDetail { get; set;}
-        public Invoice()
-        {
-            GererateInvoiceNumber();
-        }
-        private void GererateInvoiceNumber()
-        {
-            InvoiceNumber = "IV" + Id.ToString("D4");
-        }
     }
 }

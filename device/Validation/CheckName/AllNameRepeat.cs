@@ -13,6 +13,7 @@ namespace device.Validation.CheckName
         {
             int maxCountRepeat = 0;
             int currentCountRepeats = 1;
+
             for (int i = 1; i < str.Length; i++)
             {
                 if (str[i] == str[i - 1])
@@ -25,6 +26,7 @@ namespace device.Validation.CheckName
                     currentCountRepeats = 1;
                 }
             }
+
             maxCountRepeat = Math.Max(maxCountRepeat, currentCountRepeats);
             return maxCountRepeat;
         }

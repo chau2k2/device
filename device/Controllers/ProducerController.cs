@@ -1,10 +1,10 @@
-﻿using device.DTO.Producer;
+﻿using device.Data;
+using device.DTO.Producer;
 using device.IServices;
 using device.Models;
 using device.Validation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.Runtime.ConstrainedExecution;
 
 namespace device.Controllers
 {
@@ -15,11 +15,13 @@ namespace device.Controllers
         private readonly ILogger<ProducerController> logger;
         private readonly IAllService<Producer> _service;
         private readonly ProducerValidate _producerValidate;
+        private readonly LaptopDbContext _context;
 
-        public ProducerController(ILogger<ProducerController> logger, IAllService<Producer> service)
+        public ProducerController(ILogger<ProducerController> logger, IAllService<Producer> service,LaptopDbContext context)
         {
             this.logger = logger;
             _service = service;
+            _context = context;
             _producerValidate = new ProducerValidate();
         }
         [HttpGet("GetAll")]
@@ -35,6 +37,7 @@ namespace device.Controllers
                 return StatusCode(500, ex.Message);
             }      
         }
+
         [HttpPut]
         public async Task< IActionResult> Update(int id, [FromBody] UpdateProducer Upd)
         {
@@ -66,21 +69,28 @@ namespace device.Controllers
                 return StatusCode(500, "An error occurred while processing your request. Please try again later.");
             }
         }
+
         [HttpGet("Get/{id}")]
         public async Task<IActionResult> FindById(int id)
         {
             var result =  await _service.GetById(id);
+            if(result == null) { return NotFound(); }
             return Ok(result);
         }
+
         [HttpPost]
         public async Task<IActionResult> CreateProducer([FromBody]CreateProducer cpr)
         {
+            int maxId = await _context.producers.MaxAsync(p => (int?)p.Id) ?? 0;
+            int next = maxId + 1;
+
             Producer producer = new Producer()
             {
-                Id = cpr.Id,
+                Id = next,
                 Name = cpr.Name,
                 IsActive = cpr.IsActive
             };
+            
             try
             {
                 var validate = _producerValidate.Validate(producer);
@@ -103,6 +113,7 @@ namespace device.Controllers
                 return StatusCode(500, "An error occurred while processing your request. Please try again later.");
             }
         }
+
         [HttpDelete]
         public async Task<IActionResult> delete(int id)
         {

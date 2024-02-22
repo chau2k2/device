@@ -2,8 +2,6 @@
 using device.Data;
 using device.Models;
 using FluentValidation;
-using Npgsql;
-using System.Configuration;
 
 namespace device.Validation
 {

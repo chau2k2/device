@@ -1,5 +1,5 @@
-﻿using Humanizer.Localisation.TimeToClockNotation;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace device.Models
 {
@@ -11,7 +11,9 @@ namespace device.Models
         public int IdInvoice { get; set; }
         public double Price { get; set; }
         public int Quantity { get; set; }
+        [JsonIgnore]
         public virtual Invoice invoices { get; set; }
+        [JsonIgnore]
         public virtual Laptop Laptop { get; set; }
     }
 }

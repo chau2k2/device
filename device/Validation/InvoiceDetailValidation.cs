@@ -1,22 +1,18 @@
-﻿using device.Cons;
-using device.Data;
+﻿using device.Data;
 using device.Models;
 using FluentValidation;
-using System.Reflection.Metadata;
 
 namespace device.Validation
 {
-    public class InvoiceDetailValidation :AbstractValidator<InvoiceDetail>
+    public class InvoiceDetailValidation : AbstractValidator<InvoiceDetail>
     {
         private readonly LaptopDbContext _context;
-        private readonly Storage _storage;
         public InvoiceDetailValidation(LaptopDbContext context) 
         {
-            _context = context;
-            _storage = new Storage();
-            RuleFor(detail => detail.IdLaptop).Must(l => IsValueIdLaptop(l)).WithMessage("Invalid Idlaptop!!!");
-            RuleFor(detail => detail.IdInvoice).Must(l => IsValueIdInvoice(l)).WithMessage("Invalid IdInvoice!!!");
-            RuleFor(detail => detail.Quantity).InclusiveBetween(0, _storage.InserNumber).WithMessage($"Quantity must be < {_storage.InserNumber}");
+            _context = context;       
+            RuleFor(detail => detail.IdLaptop).Must(l => IsValueIdLaptop(l)).WithMessage("Not found Idlaptop!!!");
+            RuleFor(detail => detail.IdLaptop).Must(lap => IsValueStorage(lap)).WithMessage($"this laptop does not have storage data!!!");
+            RuleFor(detail => detail.IdInvoice).Must(l => IsValueIdInvoice(l)).WithMessage("Not found IdInvoice!!!");  
         }
         private bool IsValueIdLaptop (int id)
         {
@@ -26,6 +22,18 @@ namespace device.Validation
         {
             return _context.invoices.Any (x => x.Id == id);
         }
-
+        private bool IsValueStorage (int idLap)
+        {
+            var laptop = _context.laptops.FirstOrDefault(x => x.Id == idLap);
+            if (laptop != null)
+            {
+                var idLapDetail = _context.laptopsDetail
+                    .Where(d => d.idLaptop == idLap)
+                    .Select( d => d.Id)
+                    .FirstOrDefault();
+                return _context.storages.Any(s => s.idDetail == idLapDetail);
+            }
+            return false;
+        }
     }
 }

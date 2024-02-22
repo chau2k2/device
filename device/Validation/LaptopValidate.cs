@@ -15,7 +15,7 @@ namespace device.Validation
                 .Must(name => _nameRepeat.IsValueName(name)).WithMessage("dont spam the name");
             RuleFor(lap => lap.Name).MaximumLength(Constants.MAX_LENGTH_NAME).WithMessage($"Length's Name is not greate than {Constants.MAX_LENGTH_NAME}");
             RuleFor(lap => lap.CostPrice).InclusiveBetween(0, Constants.MAX_PRICE).WithMessage($"price must be between 0 and {Constants.MAX_PRICE}");
-            RuleFor(lap => lap.CostPrice).GreaterThan(lap => lap.CostPrice).WithMessage("gia ban phai lon hon gia nhap");
+            RuleFor(lap => lap.SoldPrice).GreaterThan(lap => lap.CostPrice).WithMessage("Sold Price is greater than Cost price");
         }
     }
 }

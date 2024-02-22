@@ -1,12 +1,10 @@
-﻿using device.DTO.Laptop;
+﻿using device.Data;
+using device.DTO.Laptop;
 using device.IServices;
 using device.Models;
 using device.Validation;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.Runtime.ConstrainedExecution;
-using System.Security.Policy;
 
 namespace device.Controllers
 {
@@ -16,11 +14,15 @@ namespace device.Controllers
     {
         private readonly IAllService<Laptop> _service;
         private readonly LaptopValidate _laptopValidate;
-        public LaptopController(IAllService<Laptop> service)
+        private readonly LaptopDbContext _context;
+
+        public LaptopController(IAllService<Laptop> service, LaptopDbContext context)
         {
             _service = service;
+            _context = context;
             _laptopValidate = new LaptopValidate();
         }
+
         [HttpGet("all")]
         public async Task<IActionResult> GetAll(int page = 1, int pageSize = 5)
         {
@@ -34,6 +36,7 @@ namespace device.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
+
         [HttpGet("GetById/{id}")]
         public async Task<IActionResult> GetOne(int id)
         {
@@ -46,19 +49,23 @@ namespace device.Controllers
             {
                 return StatusCode(500, ex.Message);
             }
-
         }
+
         [HttpPost("create")]
         public async Task<IActionResult> Create([FromBody] CreateLaptop CrL)
         {
+            int maxId = await _context.laptops.MaxAsync(l => (int?)l.Id) ?? 0;
+            int next = maxId + 1;
+
             Laptop laptop = new Laptop()
             {
-                Id = CrL.Id,
+                Id = next,
                 Name = CrL.Name,
                 IdProducer = CrL.IdProducer,
                 SoldPrice = CrL.SoldPrice,
                 CostPrice = CrL.CostPrice
             };
+
             try
             {
                 var validate = _laptopValidate.Validate(laptop);
@@ -81,6 +88,7 @@ namespace device.Controllers
                 return StatusCode(500, "An error occurred while processing your request. Please try again later.");
             }
         }
+
         [HttpPost("{id}")]
         public async Task<IActionResult> Update(int id, [FromBody] UpdateLaptop UdL)
         {
@@ -92,6 +100,7 @@ namespace device.Controllers
                 CostPrice = UdL.CostPrice,
                 SoldPrice = UdL.SoldPrice
             };
+
             try
             {
                 var validate = _laptopValidate.Validate(laptop);

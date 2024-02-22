@@ -1,8 +1,4 @@
-﻿using Newtonsoft.Json;
-using System.Text.Json.Serialization;
-
-
-namespace device.DTO.HoaDon
+﻿namespace device.DTO.HoaDon
 {
     public class CreateInvoice
     {

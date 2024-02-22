@@ -1,12 +1,10 @@
 ﻿using device.Models;
 using Microsoft.EntityFrameworkCore;
-using System.Threading.Tasks;
 
 namespace device.Data
 {
     public class LaptopDbContext :DbContext
     {
-        private readonly LaptopDbContext dbContext;
         private readonly IConfiguration Configuration;
         public LaptopDbContext(IConfiguration configuration)
         {
@@ -18,13 +16,13 @@ namespace device.Data
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            //rang buoc giua cac bang
             // 1-n producers-laptop 
             modelBuilder.Entity<Producer>()
                 .HasMany(p => p.Laptops)
                 .WithOne(p => p.producer)
                 .HasForeignKey(p => p.IdProducer)
                 .OnDelete(DeleteBehavior.Restrict);
+
             //1-n
             //Laptop - laptopDetail
             modelBuilder.Entity<Laptop>()
@@ -32,35 +30,41 @@ namespace device.Data
                 .WithOne(l => l.Laptops)
                 .HasForeignKey(l => l.idLaptop)
                 .OnDelete(DeleteBehavior.Restrict);
+
             // Ram - LaptopDetail
             modelBuilder.Entity<Ram>()
                 .HasMany(r => r.LaptopDetail)
                 .WithOne(r => r.Rams)
                 .HasForeignKey(r => r.IdRam)
                 .OnDelete(DeleteBehavior.Restrict);
+
             // Monitor - LaptopDetail
             modelBuilder.Entity<MonitorM>()
                 .HasMany(m => m.LaptopDetail)
                 .WithOne(m => m.Monitor)
                 .HasForeignKey(m => m.IdMonitor)
                 .OnDelete(DeleteBehavior.Restrict);
+
             // vga - LaptopDetail
             modelBuilder.Entity<Vga>()
                 .HasMany(v => v.laptopDetail)
                 .WithOne(v => v.Vga)
                 .HasForeignKey(v => v.IdVga)
                 .OnDelete(DeleteBehavior.Restrict);
+
             //laptop - InvoiceDetail
             modelBuilder.Entity<InvoiceDetail>()
                 .HasOne(i => i.Laptop)
                 .WithMany(l => l.InvoiceDetails)
                 .HasForeignKey(i => i.IdLaptop);
+
             //invoice - invoiceDetail
             modelBuilder.Entity<Invoice>()
                 .HasMany(l => l.invoiceDetail)
                 .WithOne(i => i.invoices)
                 .HasForeignKey(i => i.IdInvoice)
                 .OnDelete(DeleteBehavior.Restrict);
+
             // 1-1 
             //LaptopDetail - storage
             modelBuilder.Entity<LaptopDetail>()

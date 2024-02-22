@@ -1,11 +1,6 @@
 ﻿using device.Data;
 using device.IRepository;
 using device.IServices;
-using device.Models;
-using Humanizer.Localisation.TimeToClockNotation;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using System.Text.Json;
 
 namespace device.Services
 {

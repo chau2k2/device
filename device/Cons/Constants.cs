@@ -1,6 +1,4 @@
-﻿using Humanizer.Localisation.TimeToClockNotation;
-
-namespace device.Cons
+﻿namespace device.Cons
 {
     public class Constants
     {

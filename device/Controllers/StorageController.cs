@@ -1,8 +1,8 @@
-﻿using device.DTO.Storage;
+﻿using device.Data;
+using device.DTO.Storage;
 using device.IServices;
 using device.Models;
 using device.Validation;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -12,12 +12,12 @@ namespace device.Controllers
     [ApiController]
     public class StorageController : ControllerBase
     {
-        private readonly ILogger<StorageController> logger;
+        private readonly LaptopDbContext _context;
         private readonly IAllService<Storage> _service;
         private readonly StorageValidate _StorageValidate;
-        public StorageController(ILogger<StorageController> logger, IAllService<Storage> service)
+        public StorageController(ILogger<StorageController> logger, IAllService<Storage> service, LaptopDbContext context)
         {
-            this.logger = logger;
+            _context = context;
             _service = service;
             _StorageValidate = new StorageValidate();
         }
@@ -37,6 +37,7 @@ namespace device.Controllers
                 SaleNumber = USt.SaleNumber,
                 idDetail = USt.idDetail
             };
+
             try
             {
                 var validate = _StorageValidate.Validate(storage);
@@ -63,18 +64,23 @@ namespace device.Controllers
         public async Task<IActionResult> FindById(int id)
         {
             var result = await _service.GetById(id);
+            if (result == null) { return NotFound(); }
             return Ok(result);
         }
         [HttpPost]
         public async Task<IActionResult> Add([FromBody] CreateStorage Cst)
         {
+            var maxId = await _context.storages.MaxAsync(s => (int?)s.Id) ?? 0;
+            var nextId = maxId +1;
+
             Storage storage = new Storage()
             {
-                Id = Cst.Id,
+                Id = nextId,
                 InserNumber = Cst.InserNumber,
                 SaleNumber = Cst.SaleNumber,
                 idDetail = Cst.idDetail
             };
+            
             try
             {
                 var validate = _StorageValidate.Validate(storage);

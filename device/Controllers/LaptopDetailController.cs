@@ -3,9 +3,7 @@ using device.DTO.LaptopDetail;
 using device.IServices;
 using device.Models;
 using device.Validation;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.CodeAnalysis.Elfie.Diagnostics;
 using Microsoft.EntityFrameworkCore;
 
 namespace device.Controllers
@@ -16,11 +14,14 @@ namespace device.Controllers
     {
         private readonly IAllService<LaptopDetail> _service;
         private readonly LaptopDetailValidate _detailValidate;
-        public LaptopDetailController(IAllService<LaptopDetail> service, LaptopDbContext dbContext)
+        private readonly LaptopDbContext _context;
+        public LaptopDetailController(IAllService<LaptopDetail> service, LaptopDbContext dbContext, LaptopDbContext context)
         {
             _service = service;
             _detailValidate = new LaptopDetailValidate(dbContext);
+            _context = context;
         }
+
         [HttpGet("all")]
         public async Task<IActionResult> GetAll(int page = 1, int pageSize = 5)
         {
@@ -34,26 +35,23 @@ namespace device.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
+
         [HttpGet("GetById/{id}")]
         public async Task<IActionResult> GetOne(int id)
         {
-            try
-            {
-                var result = await _service.GetById(id);
-                return Ok(result);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ex.Message);
-            }
-
+            var result = await _service.GetById(id);
+            if (result == null) { return NotFound(); }
+            return Ok(result);
         }
         [HttpPost("create")]
         public async Task<IActionResult> Create([FromBody] CreateLaptopDetail CLD)
         {
+            int maxId = await _context.laptopsDetail.MaxAsync(d => (int?)d.Id) ?? 0;
+            int next = maxId + 1;
+
             LaptopDetail detail = new LaptopDetail()
             {
-                Id = CLD.Id,
+                Id = next,
                 Cpu = CLD.Cpu,
                 Seri = CLD.Seri,
                 IdVga = CLD.IdVga,
@@ -68,6 +66,7 @@ namespace device.Controllers
                 BatteryCapacity = CLD.BatteryCapacity,
                 idLaptop = CLD.idLaptop
             };
+
             try
             {
                 var validate = _detailValidate.Validate(detail);
@@ -110,6 +109,7 @@ namespace device.Controllers
                 BatteryCapacity = UDL.BatteryCapacity,
                 idLaptop = UDL.idLaptop
             };
+
             try
             {
                 var validate = _detailValidate.Validate(detail);

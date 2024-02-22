@@ -1,11 +1,10 @@
-﻿using device.DTO.Vga;
+﻿using device.Data;
+using device.DTO.Vga;
 using device.IServices;
 using device.Models;
 using device.Validation;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.Runtime.ConstrainedExecution;
 
 namespace device.Controllers
 {
@@ -16,19 +15,23 @@ namespace device.Controllers
         private readonly ILogger<VgaController> logger;
         private readonly IAllService<Vga> _service;
         private readonly VgaValidate _vgaValidate;
+        private readonly LaptopDbContext _context;
 
-        public VgaController(ILogger<VgaController> logger, IAllService<Vga> service)
+        public VgaController(ILogger<VgaController> logger, IAllService<Vga> service, LaptopDbContext context)
         {
             this.logger = logger;
             _service = service;
+            _context = context;
             _vgaValidate = new VgaValidate();
         }
+
         [HttpGet("GetAll")]
         public async Task<IActionResult> GetAll(int page = 1, int pageSize = 5)
         {
             var result = await _service.GetAll(page, pageSize);
             return Ok(result);
         }
+
         [HttpPut]
         public async Task<IActionResult> Update(int id, [FromBody] UpdateVga Uvga)
         {
@@ -38,6 +41,7 @@ namespace device.Controllers
                 Name = Uvga.Name,
                 Price = Uvga.Price
             };
+
             try
             {
                 var validate = _vgaValidate.Validate(vga);
@@ -60,21 +64,28 @@ namespace device.Controllers
                 return StatusCode(500, "An error occurred while processing your request. Please try again later.");
             }
         }
+
         [HttpGet("Get/{id}")]
         public async Task<IActionResult> FindById(int id)
         {
             var result = await _service.GetById(id);
+            if (result == null) { return NotFound(new {Message = "Vga is not exist"}); }
             return Ok(result);
         }
+
         [HttpPost]
         public async Task<IActionResult> Add([FromBody] CreateVga Cvga)
         {
+            int maxId = await _context.vgas.MaxAsync( v => (int?) v.Id ) ?? 0;
+            int nextId = maxId +1;
+
             Vga vga = new Vga()
             {
-                Id = Cvga.Id,
+                Id = nextId,
                 Name = Cvga.Name,
                 Price = Cvga.Price            
             };
+            
             try
             {
                 var validate = _vgaValidate.Validate(vga);
@@ -97,6 +108,7 @@ namespace device.Controllers
                 return StatusCode(500, "An error occurred while processing your request. Please try again later.");
             }
         }
+
         [HttpDelete]
         public async Task<IActionResult> delete(int id)
         {
