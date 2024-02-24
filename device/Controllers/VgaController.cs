@@ -1,10 +1,7 @@
-﻿using device.Data;
-using device.DTO.Vga;
-using device.IServices;
+﻿using device.DTO.Vga;
 using device.Models;
-using device.Validation;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+using Npgsql;
 
 namespace device.Controllers
 {
@@ -12,121 +9,119 @@ namespace device.Controllers
     [ApiController]
     public class VgaController : ControllerBase
     {
-        private readonly ILogger<VgaController> logger;
-        private readonly IAllService<Vga> _service;
-        private readonly VgaValidate _vgaValidate;
-        private readonly LaptopDbContext _context;
+        private readonly string _connectString = "Host=localhost; Database=DEVICE; Username=postgres; Password=123456789";
 
-        public VgaController(ILogger<VgaController> logger, IAllService<Vga> service, LaptopDbContext context)
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<Vga>>> SelectAllVga()
         {
-            this.logger = logger;
-            _service = service;
-            _context = context;
-            _vgaValidate = new VgaValidate();
-        }
-
-        [HttpGet("GetAll")]
-        public async Task<IActionResult> GetAll(int page = 1, int pageSize = 5)
-        {
-            var result = await _service.GetAll(page, pageSize);
-            return Ok(result);
-        }
-
-        [HttpPut]
-        public async Task<IActionResult> Update(int id, [FromBody] UpdateVga Uvga)
-        {
-            Vga vga = new Vga()
+            List<Vga> Vgas = new List<Vga>();
+            using (NpgsqlConnection conn = new NpgsqlConnection(_connectString))
             {
-                Id = id,
-                Name = Uvga.Name,
-                Price = Uvga.Price
-            };
-
-            try
-            {
-                var validate = _vgaValidate.Validate(vga);
-                if (!validate.IsValid)
+                await conn.OpenAsync();
+                using(NpgsqlCommand cmd = new NpgsqlCommand("SELECT * FROM FC_GetAllVga();",conn)) 
                 {
-                    return BadRequest(validate.Errors);
+                    using (NpgsqlDataReader reader = await cmd.ExecuteReaderAsync())
+                    {
+                        while (await reader.ReadAsync())
+                        {
+                            Vga vga = new Vga()
+                            {
+                                Id = reader.GetInt32(0),
+                                Name = reader.GetString(1),
+                                Price = reader.GetDouble(2)
+                            };
+                            Vgas.Add( vga );
+                        }
+                    }
                 }
-                var result = await _service.Update(id,vga);
-                return Ok(result);
             }
-            catch (DbUpdateException ex)
-            {
-                if (ex.InnerException is Npgsql.PostgresException postgresException)
-                {
-                    string message = postgresException.MessageText;
-                    string constraintName = postgresException.ConstraintName;
-
-                    return BadRequest($"Error: {message}. Constraint: {constraintName}");
-                }
-                return StatusCode(500, "An error occurred while processing your request. Please try again later.");
-            }
-        }
-
-        [HttpGet("Get/{id}")]
-        public async Task<IActionResult> FindById(int id)
-        {
-            var result = await _service.GetById(id);
-            if (result == null) { return NotFound(new {Message = "Vga is not exist"}); }
-            return Ok(result);
+            return Vgas;
         }
 
         [HttpPost]
-        public async Task<IActionResult> Add([FromBody] CreateVga Cvga)
+        public async Task<IActionResult> CreateVga(CreateVga vgs)
         {
-            int maxId = await _context.vgas.MaxAsync( v => (int?) v.Id ) ?? 0;
-            int nextId = maxId +1;
-
-            Vga vga = new Vga()
-            {
-                Id = nextId,
-                Name = Cvga.Name,
-                Price = Cvga.Price            
-            };
-            
             try
             {
-                var validate = _vgaValidate.Validate(vga);
-                if (!validate.IsValid)
+                using (NpgsqlConnection conn = new NpgsqlConnection(_connectString))
                 {
-                    return BadRequest(validate.Errors);
-                }
-                var result = await _service.Add(vga);
-                return Ok(result);
-            }
-            catch (DbUpdateException ex)
-            {
-                if (ex.InnerException is Npgsql.PostgresException postgresException)
-                {
-                    string message = postgresException.MessageText;
-                    string constraintName = postgresException.ConstraintName;
+                    conn.Open();
 
-                    return BadRequest($"Error: {message}. Constraint: {constraintName}");
+                    using (NpgsqlCommand cmd = new NpgsqlCommand("insertVga", conn))
+                    {
+                        cmd.CommandType = System.Data.CommandType.StoredProcedure;
+                        cmd.Parameters.AddWithValue("namevga", vgs.Name);
+                        cmd.Parameters.AddWithValue("price", vgs.Price);
+
+                        await cmd.ExecuteNonQueryAsync();
+                    }
+
+                    conn.Close();
+
                 }
-                return StatusCode(500, "An error occurred while processing your request. Please try again later.");
+                return Ok("create vga successfull.");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"Error: {ex.Message}");
             }
         }
 
-        [HttpDelete]
-        public async Task<IActionResult> delete(int id)
+        [HttpPut]
+        public async Task<IActionResult> UpdateVga(int id, UpdateVga Uvga)
         {
             try
             {
-                return Ok(await _service.Delete(id));
-            }
-            catch (DbUpdateException ex) when (ex.InnerException is Npgsql.PostgresException postgresException)
-            {
-                string message = postgresException.MessageText;
-                string constraintName = postgresException.ConstraintName;
+                using (NpgsqlConnection conn = new NpgsqlConnection(_connectString))
+                {
+                    conn.Open();
 
-                return BadRequest($"Error: {message}. Constraint: {constraintName}");
+                    using (NpgsqlCommand cmd = new NpgsqlCommand("updateVga", conn))
+                    {
+                        cmd.CommandType = System.Data.CommandType.StoredProcedure;
+                        cmd.Parameters.AddWithValue("idvga", id);
+                        cmd.Parameters.AddWithValue("namevga", Uvga.Name);
+                        cmd.Parameters.AddWithValue("price", Uvga.Price);
+
+                        await cmd.ExecuteNonQueryAsync();
+                    }
+
+                    conn.Close();
+
+                }
+                return Ok("update vga successfull.");
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return StatusCode(500, "An error occurred while processing your request. Please try again later.");
+                return BadRequest($"Error: {ex.Message}");
             }
-        }   
+        }
+        [HttpDelete]
+        public async Task<IActionResult> DeleteVga(int id)
+        {
+            try
+            {
+                using (NpgsqlConnection conn = new NpgsqlConnection(_connectString))
+                {
+                    conn.Open();
+
+                    using (NpgsqlCommand cmd = new NpgsqlCommand("deleteVga", conn))
+                    {
+                        cmd.CommandType = System.Data.CommandType.StoredProcedure;
+                        cmd.Parameters.AddWithValue("idvga", id);
+
+                        await cmd.ExecuteNonQueryAsync();
+                    }
+
+                    conn.Close();
+
+                }
+                return Ok("delete vga successfull.");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"Error: {ex.Message}");
+            }
+        }
     }
 }

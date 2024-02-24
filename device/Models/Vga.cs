@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
 
 namespace device.Models
@@ -7,8 +8,9 @@ namespace device.Models
     {
         [Key]
         public int Id { get; set; }
-        [Required]
+        [Required,Column(TypeName ="varchar(100)")]
         public string Name { get; set; }
+        []
         public double Price { get; set; }
         [JsonIgnore]
         public ICollection<LaptopDetail> laptopDetail { get; set; }
