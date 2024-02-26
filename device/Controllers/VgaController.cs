@@ -11,32 +11,32 @@ namespace device.Controllers
     {
         private readonly string _connectString = "Host=localhost; Database=DEVICE; Username=postgres; Password=123456789";
 
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<Vga>>> SelectAllVga()
-        {
-            List<Vga> Vgas = new List<Vga>();
-            using (NpgsqlConnection conn = new NpgsqlConnection(_connectString))
-            {
-                await conn.OpenAsync();
-                using(NpgsqlCommand cmd = new NpgsqlCommand("SELECT * FROM FC_GetAllVga();",conn)) 
-                {
-                    using (NpgsqlDataReader reader = await cmd.ExecuteReaderAsync())
-                    {
-                        while (await reader.ReadAsync())
-                        {
-                            Vga vga = new Vga()
-                            {
-                                Id = reader.GetInt32(0),
-                                Name = reader.GetString(1),
-                                Price = reader.GetDouble(2)
-                            };
-                            Vgas.Add( vga );
-                        }
-                    }
-                }
-            }
-            return Vgas;
-        }
+        //[HttpGet]
+        //public async Task<ActionResult<IEnumerable<Vga>>> SelectAllVga()
+        //{
+        //    List<Vga> Vgas = new List<Vga>();
+        //    using (NpgsqlConnection conn = new NpgsqlConnection(_connectString))
+        //    {
+        //        await conn.OpenAsync();
+        //        using(NpgsqlCommand cmd = new NpgsqlCommand("SELECT * FROM FC_GetAllVga();",conn)) 
+        //        {
+        //            using (NpgsqlDataReader reader = await cmd.ExecuteReaderAsync())
+        //            {
+        //                while (await reader.ReadAsync())
+        //                {
+        //                    Vga vga = new Vga()
+        //                    {
+        //                        Id = reader.GetInt32(0),
+        //                        Name = reader.GetString(1),
+        //                        Price = reader.GetDouble(2)
+        //                    };
+        //                    Vgas.Add( vga );
+        //                }
+        //            }
+        //        }
+        //    }
+        //    return Vgas;
+        //}
 
         [HttpPost]
         public async Task<IActionResult> CreateVga(CreateVga vgs)

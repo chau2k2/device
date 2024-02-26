@@ -10,8 +10,8 @@ namespace device.Models
         public int Id { get; set; }
         [Required,Column(TypeName ="varchar(100)")]
         public string Name { get; set; }
-        []
-        public double Price { get; set; }
+        [Column(TypeName ="decimal(10,3)")]
+        public decimal Price { get; set; }
         [JsonIgnore]
         public ICollection<LaptopDetail> laptopDetail { get; set; }
     }
