@@ -1,5 +1,6 @@
 ﻿using device.Data;
 using device.DTO.Producer;
+using device.IRepository;
 using device.Models;
 using device.Services;
 using device.Validation;
@@ -15,11 +16,12 @@ namespace device.Controllers
         private readonly ILogger<ProducerController> logger;
         private readonly ProducerService _service;
         private readonly LaptopDbContext _context;
+        private readonly IAllRepository<Producer> _allRepository;
 
-        public ProducerController(ILogger<ProducerController> logger, ProducerService service,LaptopDbContext context)
+        public ProducerController(ILogger<ProducerController> logger, LaptopDbContext context)
         {
             this.logger = logger;
-            _service = service;
+            _service = new ProducerService(_allRepository);
             _context = context;
         }
 

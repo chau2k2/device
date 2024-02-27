@@ -1,4 +1,5 @@
-﻿using device.Data;
+﻿using device.Controllers;
+using device.Data;
 using device.IRepository;
 using device.Models;
 using device.Validation;
@@ -8,6 +9,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System.ComponentModel.DataAnnotations;
@@ -18,15 +20,24 @@ namespace device.Services
 {
     public class ProducerService 
     {
+        private readonly ILogger<ProducerController> logger;
         private readonly IAllRepository<Producer> _repos;
         private readonly ProducerValidate _validate;
         private readonly LaptopDbContext _context;
+        private IAllRepository<Producer>? allRepository;
+
         public ProducerService(IAllRepository<Producer> repos, ProducerValidate validate, LaptopDbContext context)
         {
             _repos = repos;
             _validate = validate;
             _context = context;
         }
+
+        public ProducerService(IAllRepository<Producer>? allRepository)
+        {
+            this.allRepository = allRepository;
+        }
+
         public async Task<IEnumerable<Producer>> GetAll(int page = 1, int pageSize = 5)
         {
             try
@@ -62,7 +73,7 @@ namespace device.Services
             }
             catch (Exception ex)
             {
-                return ;
+                throw ex;
             }
         }
         public async Task<ActionResult<Producer>> CreateProducer (Producer producer)
@@ -77,16 +88,9 @@ namespace device.Services
                     var result = await _repos.AddOneAsync(producer);
                 return result;
             }
-            catch (DbUpdateException ex)
+            catch (Exception ex)
             {
-                if (ex.InnerException is Npgsql.PostgresException postgresException)
-                {
-                    string message = postgresException.MessageText;
-                    string constraintName = postgresException.ConstraintName;
-
-                    return new ObjectResult($"Error: {message}. Constraint: {constraintName}");
-                }
-                return new ObjectResult($"Error: {"An error occurred while processing your request. Please try again later."}") { StatusCode = 500 };
+                throw ex;
             }
         }
         //public async Task<ActionResult<Producer>> DeleteProducer (int id)
