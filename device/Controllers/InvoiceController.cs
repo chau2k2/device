@@ -38,7 +38,7 @@ namespace device.Controllers
         {
             var findNum = _context.invoices.FirstOrDefault( i => i.InvoiceNumber == invoiceNum);
             if (findNum == null)
-            {
+            {   
                 return NotFound(new {Message = "Invoice is not exist"});
             }
             return Ok(findNum);
@@ -50,7 +50,7 @@ namespace device.Controllers
             int maxId = await _context.invoices.MaxAsync(e => (int?)e.Id) ?? 0;
             int nextId = maxId + 1;
 
-            double totalPrice = 0;
+            decimal totalPrice = 0;
             int totalQuantity = 0;
 
             List<InvoiceDetail> listdetail = new List<InvoiceDetail>();

@@ -8,14 +8,14 @@ namespace device.Models
         [Key]
         public int Id { get; set; }
         [Required]
+        [StringLength(50)]
         public string Name { get; set; }
-        //foreign key for Laptop
         [Required]
         public int IdProducer { get; set; }
+        public decimal CostPrice { get; set; }
         [Required]
-        public double CostPrice { get; set; }
-        [Required]
-        public double SoldPrice { get; set; }
+        [Range(0, 10000000)]
+        public decimal SoldPrice { get; set; }
         [JsonIgnore]     
         public Producer? producer { get; set; }
         [JsonIgnore]

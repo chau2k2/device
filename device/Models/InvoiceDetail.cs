@@ -9,7 +9,8 @@ namespace device.Models
         public int Id { get; set; }
         public int IdLaptop { get; set; }
         public int IdInvoice { get; set; }
-        public double Price { get; set; }
+        public decimal Price { get; set; }
+        [Range(0,1000)]
         public int Quantity { get; set; }
         [JsonIgnore]
         public virtual Invoice invoices { get; set; }

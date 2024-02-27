@@ -9,7 +9,7 @@ namespace device.Controllers
     [ApiController]
     public class VgaController : ControllerBase
     {
-        private readonly string _connectString = "Host=localhost; Database=DEVICE; Username=postgres; Password=123456789";
+        //private readonly string _connectString = "Host=localhost; Database=DEVICE; Username=postgres; Password=123456789";
 
         //[HttpGet]
         //public async Task<ActionResult<IEnumerable<Vga>>> SelectAllVga()
@@ -38,90 +38,90 @@ namespace device.Controllers
         //    return Vgas;
         //}
 
-        [HttpPost]
-        public async Task<IActionResult> CreateVga(CreateVga vgs)
-        {
-            try
-            {
-                using (NpgsqlConnection conn = new NpgsqlConnection(_connectString))
-                {
-                    conn.Open();
+        //[HttpPost]
+        //public async Task<IActionResult> CreateVga(CreateVga vgs)
+        //{
+        //    try
+        //    {
+        //        using (NpgsqlConnection conn = new NpgsqlConnection(_connectString))
+        //        {
+        //            conn.Open();
 
-                    using (NpgsqlCommand cmd = new NpgsqlCommand("insertVga", conn))
-                    {
-                        cmd.CommandType = System.Data.CommandType.StoredProcedure;
-                        cmd.Parameters.AddWithValue("namevga", vgs.Name);
-                        cmd.Parameters.AddWithValue("price", vgs.Price);
+        //            using (NpgsqlCommand cmd = new NpgsqlCommand("insertVga", conn))
+        //            {
+        //                cmd.CommandType = System.Data.CommandType.StoredProcedure;
+        //                cmd.Parameters.AddWithValue("namevga", vgs.Name);
+        //                cmd.Parameters.AddWithValue("price", vgs.Price);
 
-                        await cmd.ExecuteNonQueryAsync();
-                    }
+        //                await cmd.ExecuteNonQueryAsync();
+        //            }
 
-                    conn.Close();
+        //            conn.Close();
 
-                }
-                return Ok("create vga successfull.");
-            }
-            catch (Exception ex)
-            {
-                return BadRequest($"Error: {ex.Message}");
-            }
-        }
+        //        }
+        //        return Ok("create vga successfull.");
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return BadRequest($"Error: {ex.Message}");
+        //    }
+        //}
 
-        [HttpPut]
-        public async Task<IActionResult> UpdateVga(int id, UpdateVga Uvga)
-        {
-            try
-            {
-                using (NpgsqlConnection conn = new NpgsqlConnection(_connectString))
-                {
-                    conn.Open();
+        //[HttpPut]
+        //public async Task<IActionResult> UpdateVga(int id, UpdateVga Uvga)
+        //{
+        //    try
+        //    {
+        //        using (NpgsqlConnection conn = new NpgsqlConnection(_connectString))
+        //        {
+        //            conn.Open();
 
-                    using (NpgsqlCommand cmd = new NpgsqlCommand("updateVga", conn))
-                    {
-                        cmd.CommandType = System.Data.CommandType.StoredProcedure;
-                        cmd.Parameters.AddWithValue("idvga", id);
-                        cmd.Parameters.AddWithValue("namevga", Uvga.Name);
-                        cmd.Parameters.AddWithValue("price", Uvga.Price);
+        //            using (NpgsqlCommand cmd = new NpgsqlCommand("updateVga", conn))
+        //            {
+        //                cmd.CommandType = System.Data.CommandType.StoredProcedure;
+        //                cmd.Parameters.AddWithValue("idvga", id);
+        //                cmd.Parameters.AddWithValue("namevga", Uvga.Name);
+        //                cmd.Parameters.AddWithValue("price", Uvga.Price);
 
-                        await cmd.ExecuteNonQueryAsync();
-                    }
+        //                await cmd.ExecuteNonQueryAsync();
+        //            }
 
-                    conn.Close();
+        //            conn.Close();
 
-                }
-                return Ok("update vga successfull.");
-            }
-            catch (Exception ex)
-            {
-                return BadRequest($"Error: {ex.Message}");
-            }
-        }
-        [HttpDelete]
-        public async Task<IActionResult> DeleteVga(int id)
-        {
-            try
-            {
-                using (NpgsqlConnection conn = new NpgsqlConnection(_connectString))
-                {
-                    conn.Open();
+        //        }
+        //        return Ok("update vga successfull.");
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return BadRequest($"Error: {ex.Message}");
+        //    }
+        //}
+        //[HttpDelete]
+        //public async Task<IActionResult> DeleteVga(int id)
+        //{
+        //    try
+        //    {
+        //        using (NpgsqlConnection conn = new NpgsqlConnection(_connectString))
+        //        {
+        //            conn.Open();
 
-                    using (NpgsqlCommand cmd = new NpgsqlCommand("deleteVga", conn))
-                    {
-                        cmd.CommandType = System.Data.CommandType.StoredProcedure;
-                        cmd.Parameters.AddWithValue("idvga", id);
+        //            using (NpgsqlCommand cmd = new NpgsqlCommand("deleteVga", conn))
+        //            {
+        //                cmd.CommandType = System.Data.CommandType.StoredProcedure;
+        //                cmd.Parameters.AddWithValue("idvga", id);
 
-                        await cmd.ExecuteNonQueryAsync();
-                    }
+        //                await cmd.ExecuteNonQueryAsync();
+        //            }
 
-                    conn.Close();
+        //            conn.Close();
 
-                }
-                return Ok("delete vga successfull.");
-            }
-            catch (Exception ex)
-            {
-                return BadRequest($"Error: {ex.Message}");
-            }
-        }
+        //        }
+        //        return Ok("delete vga successfull.");
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return BadRequest($"Error: {ex.Message}");
+        //    }
+        //}
     }
 }

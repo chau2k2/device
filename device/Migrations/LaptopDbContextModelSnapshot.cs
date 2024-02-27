@@ -34,11 +34,10 @@ namespace device.Migrations
                         .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("InvoiceNumber")
-                        .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<double>("TotalPrice")
-                        .HasColumnType("double precision");
+                    b.Property<decimal>("TotalPrice")
+                        .HasColumnType("numeric");
 
                     b.Property<int>("TotalQuantity")
                         .HasColumnType("integer");
@@ -62,17 +61,23 @@ namespace device.Migrations
                     b.Property<int>("IdLaptop")
                         .HasColumnType("integer");
 
-                    b.Property<double>("Price")
-                        .HasColumnType("double precision");
+                    b.Property<int>("LaptopId")
+                        .HasColumnType("integer");
+
+                    b.Property<decimal>("Price")
+                        .HasColumnType("numeric");
 
                     b.Property<int>("Quantity")
                         .HasColumnType("integer");
 
+                    b.Property<int>("invoicesId")
+                        .HasColumnType("integer");
+
                     b.HasKey("Id");
 
-                    b.HasIndex("IdInvoice");
+                    b.HasIndex("LaptopId");
 
-                    b.HasIndex("IdLaptop");
+                    b.HasIndex("invoicesId");
 
                     b.ToTable("InvoicesDetail");
                 });
@@ -85,22 +90,26 @@ namespace device.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<double>("CostPrice")
-                        .HasColumnType("double precision");
+                    b.Property<decimal>("CostPrice")
+                        .HasColumnType("numeric");
 
                     b.Property<int>("IdProducer")
                         .HasColumnType("integer");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
 
-                    b.Property<double>("SoldPrice")
-                        .HasColumnType("double precision");
+                    b.Property<decimal>("SoldPrice")
+                        .HasColumnType("numeric");
+
+                    b.Property<int?>("producerId")
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("IdProducer");
+                    b.HasIndex("producerId");
 
                     b.ToTable("laptops");
                 });
@@ -113,19 +122,20 @@ namespace device.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<double>("BatteryCapacity")
-                        .HasColumnType("double precision");
+                    b.Property<decimal>("BatteryCapacity")
+                        .HasColumnType("numeric");
 
                     b.Property<string>("Cpu")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
 
                     b.Property<string>("HardDriver")
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<double>("Height")
-                        .HasColumnType("double precision");
+                    b.Property<decimal>("Height")
+                        .HasColumnType("numeric");
 
                     b.Property<int>("IdMonitor")
                         .HasColumnType("integer");
@@ -139,35 +149,53 @@ namespace device.Migrations
                     b.Property<byte[]>("Image")
                         .HasColumnType("bytea");
 
-                    b.Property<double>("Length")
-                        .HasColumnType("double precision");
+                    b.Property<int>("LaptopsId")
+                        .HasColumnType("integer");
+
+                    b.Property<decimal>("Length")
+                        .HasColumnType("numeric");
+
+                    b.Property<int>("MonitorId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("RamsId")
+                        .HasColumnType("integer");
 
                     b.Property<string>("Seri")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<int>("Storage")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("VgaId")
+                        .HasColumnType("integer");
 
                     b.Property<string>("Webcam")
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<double>("Weight")
-                        .HasColumnType("double precision");
+                    b.Property<decimal>("Weight")
+                        .HasColumnType("numeric");
 
-                    b.Property<double>("Width")
-                        .HasColumnType("double precision");
+                    b.Property<decimal>("Width")
+                        .HasColumnType("numeric");
 
                     b.Property<int>("idLaptop")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("IdMonitor");
+                    b.HasIndex("LaptopsId");
 
-                    b.HasIndex("IdRam");
+                    b.HasIndex("MonitorId");
 
-                    b.HasIndex("IdVga");
+                    b.HasIndex("RamsId");
 
-                    b.HasIndex("idLaptop");
+                    b.HasIndex("Storage");
+
+                    b.HasIndex("VgaId");
 
                     b.ToTable("laptopsDetail");
                 });
@@ -182,10 +210,11 @@ namespace device.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(100)
+                        .HasColumnType("varchar");
 
-                    b.Property<double>("Price")
-                        .HasColumnType("double precision");
+                    b.Property<decimal>("Price")
+                        .HasColumnType("numeric");
 
                     b.HasKey("Id");
 
@@ -205,7 +234,8 @@ namespace device.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(100)
+                        .HasColumnType("varchar");
 
                     b.HasKey("Id");
 
@@ -222,10 +252,10 @@ namespace device.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
-                    b.Property<double>("Price")
-                        .HasColumnType("double precision");
+                    b.Property<decimal>("Price")
+                        .HasColumnType("numeric");
 
                     b.HasKey("Id");
 
@@ -240,10 +270,13 @@ namespace device.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("InserNumber")
+                    b.Property<int>("ImportNumber")
                         .HasColumnType("integer");
 
-                    b.Property<int>("SaleNumber")
+                    b.Property<int>("LaptopDetail")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("SoldNumber")
                         .HasColumnType("integer");
 
                     b.Property<int>("idDetail")
@@ -251,8 +284,7 @@ namespace device.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("idDetail")
-                        .IsUnique();
+                    b.HasIndex("LaptopDetail");
 
                     b.ToTable("storages");
                 });
@@ -267,10 +299,11 @@ namespace device.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
 
-                    b.Property<double>("Price")
-                        .HasColumnType("double precision");
+                    b.Property<decimal>("Price")
+                        .HasColumnType("numeric");
 
                     b.HasKey("Id");
 
@@ -279,15 +312,15 @@ namespace device.Migrations
 
             modelBuilder.Entity("device.Models.InvoiceDetail", b =>
                 {
-                    b.HasOne("device.Models.Invoice", "invoices")
-                        .WithMany("invoiceDetail")
-                        .HasForeignKey("IdInvoice")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.HasOne("device.Models.Laptop", "Laptop")
                         .WithMany("InvoiceDetails")
-                        .HasForeignKey("IdLaptop")
+                        .HasForeignKey("LaptopId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("device.Models.Invoice", "invoices")
+                        .WithMany("invoiceDetail")
+                        .HasForeignKey("invoicesId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -300,37 +333,41 @@ namespace device.Migrations
                 {
                     b.HasOne("device.Models.Producer", "producer")
                         .WithMany("Laptops")
-                        .HasForeignKey("IdProducer")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .HasForeignKey("producerId");
 
                     b.Navigation("producer");
                 });
 
             modelBuilder.Entity("device.Models.LaptopDetail", b =>
                 {
+                    b.HasOne("device.Models.Laptop", "Laptops")
+                        .WithMany("LaptopDetails")
+                        .HasForeignKey("LaptopsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("device.Models.MonitorM", "Monitor")
                         .WithMany("LaptopDetail")
-                        .HasForeignKey("IdMonitor")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .HasForeignKey("MonitorId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("device.Models.Ram", "Rams")
                         .WithMany("LaptopDetail")
-                        .HasForeignKey("IdRam")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .HasForeignKey("RamsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("device.Models.Storage", "storage")
+                        .WithMany()
+                        .HasForeignKey("Storage")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("device.Models.Vga", "Vga")
                         .WithMany("laptopDetail")
-                        .HasForeignKey("IdVga")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("device.Models.Laptop", "Laptops")
-                        .WithMany("LaptopDetails")
-                        .HasForeignKey("idLaptop")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .HasForeignKey("VgaId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Laptops");
@@ -340,14 +377,16 @@ namespace device.Migrations
                     b.Navigation("Rams");
 
                     b.Navigation("Vga");
+
+                    b.Navigation("storage");
                 });
 
             modelBuilder.Entity("device.Models.Storage", b =>
                 {
                     b.HasOne("device.Models.LaptopDetail", "laptopDetail")
-                        .WithOne("storage")
-                        .HasForeignKey("device.Models.Storage", "idDetail")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .WithMany()
+                        .HasForeignKey("LaptopDetail")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("laptopDetail");
@@ -363,11 +402,6 @@ namespace device.Migrations
                     b.Navigation("InvoiceDetails");
 
                     b.Navigation("LaptopDetails");
-                });
-
-            modelBuilder.Entity("device.Models.LaptopDetail", b =>
-                {
-                    b.Navigation("storage");
                 });
 
             modelBuilder.Entity("device.Models.MonitorM", b =>

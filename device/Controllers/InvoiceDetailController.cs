@@ -41,8 +41,7 @@ namespace device.Controllers
             InvoiceDetail detail = new InvoiceDetail()
             {
                 Id = nextId,
-                IdInvoice = CID.IdInvoice,
-                IdLaptop = CID.IdLaptop,
+                
                 Quantity = CID.Quantity
             };
 

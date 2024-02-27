@@ -18,10 +18,10 @@ namespace device.Migrations
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    InvoiceNumber = table.Column<string>(type: "text", nullable: false),
+                    InvoiceNumber = table.Column<string>(type: "text", nullable: true),
                     DateInvoice = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
                     TotalQuantity = table.Column<int>(type: "integer", nullable: false),
-                    TotalPrice = table.Column<double>(type: "double precision", nullable: false)
+                    TotalPrice = table.Column<decimal>(type: "numeric", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -34,8 +34,8 @@ namespace device.Migrations
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Name = table.Column<string>(type: "text", nullable: false),
-                    Price = table.Column<double>(type: "double precision", nullable: false)
+                    Name = table.Column<string>(type: "varchar", maxLength: 100, nullable: false),
+                    Price = table.Column<decimal>(type: "numeric", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -48,7 +48,7 @@ namespace device.Migrations
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Name = table.Column<string>(type: "text", nullable: false),
+                    Name = table.Column<string>(type: "varchar", maxLength: 100, nullable: false),
                     IsActive = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
@@ -62,8 +62,8 @@ namespace device.Migrations
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Name = table.Column<string>(type: "text", nullable: false),
-                    Price = table.Column<double>(type: "double precision", nullable: false)
+                    Name = table.Column<string>(type: "varchar(100)", nullable: false),
+                    Price = table.Column<decimal>(type: "numeric", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -76,8 +76,8 @@ namespace device.Migrations
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Name = table.Column<string>(type: "text", nullable: false),
-                    Price = table.Column<double>(type: "double precision", nullable: false)
+                    Name = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    Price = table.Column<decimal>(type: "numeric", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -90,20 +90,20 @@ namespace device.Migrations
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Name = table.Column<string>(type: "text", nullable: false),
+                    Name = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
                     IdProducer = table.Column<int>(type: "integer", nullable: false),
-                    CostPrice = table.Column<double>(type: "double precision", nullable: false),
-                    SoldPrice = table.Column<double>(type: "double precision", nullable: false)
+                    CostPrice = table.Column<decimal>(type: "numeric", nullable: false),
+                    SoldPrice = table.Column<decimal>(type: "numeric", nullable: false),
+                    producerId = table.Column<int>(type: "integer", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_laptops", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_laptops_producers_IdProducer",
-                        column: x => x.IdProducer,
+                        name: "FK_laptops_producers_producerId",
+                        column: x => x.producerId,
                         principalTable: "producers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -114,21 +114,23 @@ namespace device.Migrations
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     IdLaptop = table.Column<int>(type: "integer", nullable: false),
                     IdInvoice = table.Column<int>(type: "integer", nullable: false),
-                    Price = table.Column<double>(type: "double precision", nullable: false),
-                    Quantity = table.Column<int>(type: "integer", nullable: false)
+                    Price = table.Column<decimal>(type: "numeric", nullable: false),
+                    Quantity = table.Column<int>(type: "integer", nullable: false),
+                    invoicesId = table.Column<int>(type: "integer", nullable: false),
+                    LaptopId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_InvoicesDetail", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_InvoicesDetail_invoices_IdInvoice",
-                        column: x => x.IdInvoice,
+                        name: "FK_InvoicesDetail_invoices_invoicesId",
+                        column: x => x.invoicesId,
                         principalTable: "invoices",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_InvoicesDetail_laptops_IdLaptop",
-                        column: x => x.IdLaptop,
+                        name: "FK_InvoicesDetail_laptops_LaptopId",
+                        column: x => x.LaptopId,
                         principalTable: "laptops",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -140,48 +142,53 @@ namespace device.Migrations
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Cpu = table.Column<string>(type: "text", nullable: false),
-                    Seri = table.Column<string>(type: "text", nullable: false),
+                    Cpu = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
+                    Seri = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
                     IdVga = table.Column<int>(type: "integer", nullable: false),
                     IdRam = table.Column<int>(type: "integer", nullable: false),
                     HardDriver = table.Column<string>(type: "text", nullable: false),
                     IdMonitor = table.Column<int>(type: "integer", nullable: false),
                     Webcam = table.Column<string>(type: "text", nullable: false),
-                    Weight = table.Column<double>(type: "double precision", nullable: false),
-                    Height = table.Column<double>(type: "double precision", nullable: false),
-                    Width = table.Column<double>(type: "double precision", nullable: false),
-                    Length = table.Column<double>(type: "double precision", nullable: false),
-                    BatteryCapacity = table.Column<double>(type: "double precision", nullable: false),
+                    Weight = table.Column<decimal>(type: "numeric", nullable: false),
+                    Height = table.Column<decimal>(type: "numeric", nullable: false),
+                    Width = table.Column<decimal>(type: "numeric", nullable: false),
+                    Length = table.Column<decimal>(type: "numeric", nullable: false),
+                    BatteryCapacity = table.Column<decimal>(type: "numeric", nullable: false),
                     Image = table.Column<byte[]>(type: "bytea", nullable: true),
-                    idLaptop = table.Column<int>(type: "integer", nullable: false)
+                    idLaptop = table.Column<int>(type: "integer", nullable: false),
+                    RamsId = table.Column<int>(type: "integer", nullable: false),
+                    VgaId = table.Column<int>(type: "integer", nullable: false),
+                    MonitorId = table.Column<int>(type: "integer", nullable: false),
+                    LaptopsId = table.Column<int>(type: "integer", nullable: false),
+                    Storage = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_laptopsDetail", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_laptopsDetail_laptops_idLaptop",
-                        column: x => x.idLaptop,
+                        name: "FK_laptopsDetail_laptops_LaptopsId",
+                        column: x => x.LaptopsId,
                         principalTable: "laptops",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_laptopsDetail_monitors_IdMonitor",
-                        column: x => x.IdMonitor,
+                        name: "FK_laptopsDetail_monitors_MonitorId",
+                        column: x => x.MonitorId,
                         principalTable: "monitors",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_laptopsDetail_ram_IdRam",
-                        column: x => x.IdRam,
+                        name: "FK_laptopsDetail_ram_RamsId",
+                        column: x => x.RamsId,
                         principalTable: "ram",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_laptopsDetail_vgas_IdVga",
-                        column: x => x.IdVga,
+                        name: "FK_laptopsDetail_vgas_VgaId",
+                        column: x => x.VgaId,
                         principalTable: "vgas",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -191,79 +198,105 @@ namespace device.Migrations
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     idDetail = table.Column<int>(type: "integer", nullable: false),
-                    SaleNumber = table.Column<int>(type: "integer", nullable: false),
-                    InserNumber = table.Column<int>(type: "integer", nullable: false)
+                    SoldNumber = table.Column<int>(type: "integer", nullable: false),
+                    ImportNumber = table.Column<int>(type: "integer", nullable: false),
+                    LaptopDetail = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_storages", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_storages_laptopsDetail_idDetail",
-                        column: x => x.idDetail,
+                        name: "FK_storages_laptopsDetail_LaptopDetail",
+                        column: x => x.LaptopDetail,
                         principalTable: "laptopsDetail",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_InvoicesDetail_IdInvoice",
+                name: "IX_InvoicesDetail_invoicesId",
                 table: "InvoicesDetail",
-                column: "IdInvoice");
+                column: "invoicesId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_InvoicesDetail_IdLaptop",
+                name: "IX_InvoicesDetail_LaptopId",
                 table: "InvoicesDetail",
-                column: "IdLaptop");
+                column: "LaptopId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_laptops_IdProducer",
+                name: "IX_laptops_producerId",
                 table: "laptops",
-                column: "IdProducer");
+                column: "producerId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_laptopsDetail_idLaptop",
+                name: "IX_laptopsDetail_LaptopsId",
                 table: "laptopsDetail",
-                column: "idLaptop");
+                column: "LaptopsId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_laptopsDetail_IdMonitor",
+                name: "IX_laptopsDetail_MonitorId",
                 table: "laptopsDetail",
-                column: "IdMonitor");
+                column: "MonitorId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_laptopsDetail_IdRam",
+                name: "IX_laptopsDetail_RamsId",
                 table: "laptopsDetail",
-                column: "IdRam");
+                column: "RamsId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_laptopsDetail_IdVga",
+                name: "IX_laptopsDetail_Storage",
                 table: "laptopsDetail",
-                column: "IdVga");
+                column: "Storage");
 
             migrationBuilder.CreateIndex(
-                name: "IX_storages_idDetail",
+                name: "IX_laptopsDetail_VgaId",
+                table: "laptopsDetail",
+                column: "VgaId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_storages_LaptopDetail",
                 table: "storages",
-                column: "idDetail",
-                unique: true);
+                column: "LaptopDetail");
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_laptopsDetail_storages_Storage",
+                table: "laptopsDetail",
+                column: "Storage",
+                principalTable: "storages",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Cascade);
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(
-                name: "InvoicesDetail");
+            migrationBuilder.DropForeignKey(
+                name: "FK_laptopsDetail_laptops_LaptopsId",
+                table: "laptopsDetail");
+
+            migrationBuilder.DropForeignKey(
+                name: "FK_laptopsDetail_monitors_MonitorId",
+                table: "laptopsDetail");
+
+            migrationBuilder.DropForeignKey(
+                name: "FK_laptopsDetail_ram_RamsId",
+                table: "laptopsDetail");
+
+            migrationBuilder.DropForeignKey(
+                name: "FK_laptopsDetail_storages_Storage",
+                table: "laptopsDetail");
 
             migrationBuilder.DropTable(
-                name: "storages");
+                name: "InvoicesDetail");
 
             migrationBuilder.DropTable(
                 name: "invoices");
 
             migrationBuilder.DropTable(
-                name: "laptopsDetail");
+                name: "laptops");
 
             migrationBuilder.DropTable(
-                name: "laptops");
+                name: "producers");
 
             migrationBuilder.DropTable(
                 name: "monitors");
@@ -272,10 +305,13 @@ namespace device.Migrations
                 name: "ram");
 
             migrationBuilder.DropTable(
-                name: "vgas");
+                name: "storages");
 
             migrationBuilder.DropTable(
-                name: "producers");
+                name: "laptopsDetail");
+
+            migrationBuilder.DropTable(
+                name: "vgas");
         }
     }
 }

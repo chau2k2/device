@@ -9,37 +9,43 @@ namespace device.Models
         [Key]
         public int Id { get; set; }
         [Required]
+        [MaxLength(50)]
         public string Cpu {  get; set; }
         [Required]
+        [MaxLength(50)]
         public string Seri { get; set; }
-        [ForeignKey("fkVga")]
+
         public int IdVga { get; set; }
-        [ForeignKey("Laptop")]
         public int IdRam { get; set; }
-        [JsonIgnore]
-        public Ram Rams { get; set; }
         public string HardDriver { get; set; }
-        [ForeignKey("fkmonitor")]
+
         public int IdMonitor { get; set; }
         public string Webcam { get; set; }
-        public double Weight { get; set; }
-        public double Height { get; set; }
-        public double Width { get; set; }
-        public double Length { get; set; }
-        public double BatteryCapacity { get; set; }
+        [Range ( 0, 100)]
+        public decimal Weight { get; set; }
+        [Range(0, 100)]
+        public decimal Height { get; set; }
+        [Range(0, 100)]
+        public decimal Width { get; set; }
+        [Range(0, 100)]
+        public decimal Length { get; set; }
+        [Range(0, 100)]
+        public decimal BatteryCapacity { get; set; }
         public byte[]? Image { get; set; }
-        [ForeignKey("laptop")]
+
         public int idLaptop { get; set; }
-        [JsonIgnore]
-        public Vga Vga { get; set; }
-        
-        [JsonIgnore]
-        public MonitorM Monitor { get; set; }
-        
-        [JsonIgnore]
-        public Laptop Laptops { get; set;}
+        public Ram Rams { get; set; }
 
         [JsonIgnore]
-        public Storage? storage { get; set; }
+        public virtual Vga Vga { get; set; }
+        
+        [JsonIgnore]
+        public virtual MonitorM Monitor { get; set; }
+        
+        [JsonIgnore]
+        public virtual Laptop Laptops { get; set;}
+        [JsonIgnore]
+        [ForeignKey("Storage")]
+        public virtual Storage storage { get; set; }
     }
 }

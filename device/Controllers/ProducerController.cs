@@ -1,7 +1,7 @@
 ﻿using device.Data;
 using device.DTO.Producer;
-using device.IServices;
 using device.Models;
+using device.Services;
 using device.Validation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -13,33 +13,31 @@ namespace device.Controllers
     public class ProducerController : ControllerBase
     {
         private readonly ILogger<ProducerController> logger;
-        private readonly IAllService<Producer> _service;
-        private readonly ProducerValidate _producerValidate;
+        private readonly ProducerService _service;
         private readonly LaptopDbContext _context;
 
-        public ProducerController(ILogger<ProducerController> logger, IAllService<Producer> service,LaptopDbContext context)
+        public ProducerController(ILogger<ProducerController> logger, ProducerService service,LaptopDbContext context)
         {
             this.logger = logger;
             _service = service;
             _context = context;
-            _producerValidate = new ProducerValidate();
-        }
-        [HttpGet("GetAll")]
-        public async Task<IActionResult> GetAll(int page = 1, int pageSize = 5)
-        {
-            try
-            {
-                var result = await _service.GetAll(page,pageSize);
-                return Ok(result);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ex.Message);
-            }      
         }
 
+        [HttpGet("get_all_producer")]
+        public async Task<ActionResult> GetAll(int page = 1, int pageSize = 5)
+        {
+            var result =  await _service.GetAll(page, pageSize);
+            return Ok(result);
+        }
+
+        [HttpGet("get_producer_by_id")]
+        public async Task<ActionResult> FindById(int id)
+        {
+            var result =  await _service.GetProducerById(id);
+            return Ok(result);
+        }
         [HttpPut]
-        public async Task< IActionResult> Update(int id, [FromBody] UpdateProducer Upd)
+        public async Task< ActionResult> Update(int id, [FromBody] UpdateProducer Upd)
         {
             Producer producer = new Producer()
             {
@@ -47,39 +45,13 @@ namespace device.Controllers
                 Name = Upd.Name,
                 IsActive = Upd.IsActive
             };
-            try
-            {
-                var validate = _producerValidate.Validate(producer);
-                if (!validate.IsValid)
-                {
-                    return BadRequest(validate.Errors);
-                }
-                var result = await _service.Update(id, producer);
-                return Ok(result);
-            }
-            catch (DbUpdateException ex)
-            {
-                if (ex.InnerException is Npgsql.PostgresException postgresException)
-                {
-                    string message = postgresException.MessageText;
-                    string constraintName = postgresException.ConstraintName;
 
-                    return BadRequest($"Error: {message}. Constraint: {constraintName}");
-                }
-                return StatusCode(500, "An error occurred while processing your request. Please try again later.");
-            }
-        }
-
-        [HttpGet("Get/{id}")]
-        public async Task<IActionResult> FindById(int id)
-        {
-            var result =  await _service.GetById(id);
-            if(result == null) { return NotFound(); }
+            var result = _service.UpdateProducer(producer);
             return Ok(result);
         }
 
-        [HttpPost]
-        public async Task<IActionResult> CreateProducer([FromBody]CreateProducer cpr)
+        [HttpPost("create_producer")]
+        public async Task<ActionResult> CreateProducer([FromBody]CreateProducer cpr)
         {
             int maxId = await _context.producers.MaxAsync(p => (int?)p.Id) ?? 0;
             int next = maxId + 1;
@@ -90,57 +62,38 @@ namespace device.Controllers
                 Name = cpr.Name,
                 IsActive = cpr.IsActive
             };
-            
-            try
-            {
-                var validate = _producerValidate.Validate(producer);
-                if (!validate.IsValid)
-                {
-                    return BadRequest(validate.Errors);
-                }
-                var result = await _service.Add(producer);
-                return Ok(result);
-            }
-            catch (DbUpdateException ex)
-            {
-                if (ex.InnerException is Npgsql.PostgresException postgresException)
-                {
-                    string message = postgresException.MessageText;
-                    string constraintName = postgresException.ConstraintName;
 
-                    return BadRequest($"Error: {message}. Constraint: {constraintName}");
-                }
-                return StatusCode(500, "An error occurred while processing your request. Please try again later.");
-            }
+            var result = _service.CreateProducer(producer);
+            return Ok(result);
         }
 
-        [HttpDelete]
-        public async Task<IActionResult> delete(int id)
-        {
-            try
-            {
-                var del = await _service.Delete(id);
-                if(del == null)
-                {
-                    return NotFound();
-                }
-                return NoContent();
-            }
-            catch (DbUpdateException ex)
-            {
-                if (ex.InnerException is Npgsql.PostgresException postgresException)
-                {
-                    string message = postgresException.MessageText;
-                    string constraintName = postgresException.ConstraintName;
+        //[HttpDelete]
+        //public async Task<IActionResult> delete(int id)
+        //{
+        //    try
+        //    {
+        //        var del = await _service.Delete(id);
+        //        if(del == null)
+        //        {
+        //            return NotFound();
+        //        }
+        //        return NoContent();
+        //    }
+        //    catch (DbUpdateException ex)
+        //    {
+        //        if (ex.InnerException is Npgsql.PostgresException postgresException)
+        //        {
+        //            string message = postgresException.MessageText;
+        //            string constraintName = postgresException.ConstraintName;
 
-                    return BadRequest($"Error: {message}. Constraint: {constraintName}");
-                }
-                return StatusCode(500, "An error occurred while processing your request. Please try again later.");
-            }
-            catch (Exception)
-            {
-                return StatusCode(500, "An error occurred while processing your request. Please try again later.");
-            }
-        }
+        //            return BadRequest($"Error: {message}. Constraint: {constraintName}");
+        //        }
+        //        return StatusCode(500, "An error occurred while processing your request. Please try again later.");
+        //    }
+        //    catch (Exception)
+        //    {
+        //        return StatusCode(500, "An error occurred while processing your request. Please try again later.");
+        //    }
+        //}
     }
 }

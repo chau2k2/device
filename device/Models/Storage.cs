@@ -9,14 +9,13 @@ namespace device.Models
     {
         [Key]
         public int Id { get; set; }
-        [ForeignKey("fkDetail")]
-        public int idDetail { get; set; }
-        [Required]
-        public int SaleNumber { get; set; }
-        [Required]
-        public int InserNumber { get; set; }
         
+        public int idDetail { get; set; }
+        public int SoldNumber { get; set; }
+        [Required]
+        public int ImportNumber { get; set; }
         [JsonIgnore]
-        public LaptopDetail laptopDetail { get; set; }
+        [ForeignKey("LaptopDetail")]
+        public virtual LaptopDetail laptopDetail { get; set; }
     }
 }
