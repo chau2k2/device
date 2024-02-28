@@ -1,41 +1,26 @@
-﻿using device.Controllers;
-using device.Data;
+﻿using device.Data;
+using device.DTO.Producer;
 using device.IRepository;
 using device.Models;
 using device.Validation;
-using Humanizer.Localisation.TimeToClockNotation;
-using Microsoft.AspNetCore.Diagnostics;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using System.ComponentModel.DataAnnotations;
-using System.Configuration;
-using System.Drawing.Printing;
 
 namespace device.Services
 {
     public class ProducerService 
     {
-        private readonly ILogger<ProducerController> logger;
+        private readonly ILogger<ProducerService> _logger;
         private readonly IAllRepository<Producer> _repos;
         private readonly ProducerValidate _validate;
         private readonly LaptopDbContext _context;
-        private IAllRepository<Producer>? allRepository;
 
-        public ProducerService(IAllRepository<Producer> repos, ProducerValidate validate, LaptopDbContext context)
+        public ProducerService(IAllRepository<Producer> repos, ILogger<ProducerService> logger, LaptopDbContext context)
         {
+            this._logger = logger;
             _repos = repos;
-            _validate = validate;
+            _validate = new ProducerValidate();
             _context = context;
-        }
-
-        public ProducerService(IAllRepository<Producer>? allRepository)
-        {
-            this.allRepository = allRepository;
         }
 
         public async Task<IEnumerable<Producer>> GetAll(int page = 1, int pageSize = 5)
@@ -45,9 +30,9 @@ namespace device.Services
                 var result = await _repos.GetAllAsync(page, pageSize);
                 return result;
             }
-            catch
+            catch (Exception ex)
             {
-                return Enumerable.Empty<Producer>();
+                throw ex;
             }
         }
         public async Task<ActionResult<Producer>> GetProducerById( int id)
@@ -59,14 +44,25 @@ namespace device.Services
             }
             return result;
         }
-        public async Task<ActionResult<Producer>> UpdateProducer (Producer producer)
+        public async Task<ActionResult<Producer>> UpdateProducer (int id, UpdateProducer Upd)
         {
+            var findId = await _repos.GetAsyncById(id);
+            if (findId == null)
+            {
+                throw new Exception("not found Producer");
+            }
+            Producer producer = new Producer()
+            {
+                Id = id,
+                Name = Upd.Name,
+                IsActive = Upd.IsActive
+            };
             try
             {
                 var validate = _validate.Validate(producer);
                 if (!validate.IsValid)
                 {
-                    return new ObjectResult(new { errors = validate.Errors });
+                    throw new Exception(string.Join(", ", validate.Errors));
                 }
                 var result = await _repos.UpdateOneAsyns(producer);
                 return result;
@@ -76,14 +72,24 @@ namespace device.Services
                 throw ex;
             }
         }
-        public async Task<ActionResult<Producer>> CreateProducer (Producer producer)
+        public async Task<ActionResult<Producer>> CreateProducer (CreateProducer cpr)
         {
+            int maxId = await _context.producers.MaxAsync(p => (int?)p.Id) ?? 0;
+            int next = maxId + 1;
+
+            Producer producer = new Producer()
+            {
+                Id = next,
+                Name = cpr.Name,
+                IsActive = cpr.IsActive
+            };
+
             try
             {
                 var validate = _validate.Validate(producer);
                 if (!validate.IsValid)
                 {
-                    throw new ArgumentException();
+                    throw new Exception(string.Join(", ", validate.Errors));
                 }
                     var result = await _repos.AddOneAsync(producer);
                 return result;
@@ -93,33 +99,23 @@ namespace device.Services
                 throw ex;
             }
         }
-        //public async Task<ActionResult<Producer>> DeleteProducer (int id)
-        //{
-        //    try
-        //    {
-        //        var findId = _repos.
-        //        var del = await _repos.DeleteOneAsync(id);
-        //        if (del == null)
-        //        {
-        //            return NotFound();
-        //        }
-        //        return NoContent();
-        //    }
-        //    catch (DbUpdateException ex)
-        //    {
-        //        if (ex.InnerException is Npgsql.PostgresException postgresException)
-        //        {
-        //            string message = postgresException.MessageText;
-        //            string constraintName = postgresException.ConstraintName;
+        public async Task<ActionResult<Producer>> DeleteProducer(int id)
+        {
+            var findId = await _repos.GetAsyncById(id);
+            if (findId == null)
+            {
+                throw new Exception("not found Producer");
+            }
 
-        //            return BadRequest($"Error: {message}. Constraint: {constraintName}");
-        //        }
-        //        return StatusCode(500, "An error occurred while processing your request. Please try again later.");
-        //    }
-        //    catch (Exception)
-        //    {
-        //        return StatusCode(500, "An error occurred while processing your request. Please try again later.");
-        //    }
-        //}
+            try
+            {
+                var del = await _repos.DeleteOneAsync(findId);
+                return del;
+            }
+            catch (Exception)
+            {
+                throw new Exception("cant delete this producer");
+            }
+        }
     }
 }

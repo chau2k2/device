@@ -3,9 +3,7 @@ using device.DTO.Producer;
 using device.IRepository;
 using device.Models;
 using device.Services;
-using device.Validation;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace device.Controllers
 {
@@ -13,89 +11,49 @@ namespace device.Controllers
     [ApiController]
     public class ProducerController : ControllerBase
     {
-        private readonly ILogger<ProducerController> logger;
         private readonly ProducerService _service;
-        private readonly LaptopDbContext _context;
-        private readonly IAllRepository<Producer> _allRepository;
 
-        public ProducerController(ILogger<ProducerController> logger, LaptopDbContext context)
+        public ProducerController( LaptopDbContext context, IAllRepository<Producer> repos, ILogger<ProducerService> logger)
         {
-            this.logger = logger;
-            _service = new ProducerService(_allRepository);
-            _context = context;
+            _service = new ProducerService(repos,logger, context);
         }
 
         [HttpGet("get_all_producer")]
         public async Task<ActionResult> GetAll(int page = 1, int pageSize = 5)
         {
-            var result =  await _service.GetAll(page, pageSize);
-            return Ok(result);
+            return Ok(await _service.GetAll(page, pageSize));
         }
 
         [HttpGet("get_producer_by_id")]
         public async Task<ActionResult> FindById(int id)
         {
-            var result =  await _service.GetProducerById(id);
-            return Ok(result);
+            return Ok(await _service.GetProducerById(id));
         }
-        [HttpPut]
+
+        [HttpPut("do_update_producer")]
         public async Task< ActionResult> Update(int id, [FromBody] UpdateProducer Upd)
         {
-            Producer producer = new Producer()
+            if (!ModelState.IsValid)
             {
-                Id = id,
-                Name = Upd.Name,
-                IsActive = Upd.IsActive
-            };
-
-            var result = _service.UpdateProducer(producer);
-            return Ok(result);
+                StatusCode(StatusCodes.Status400BadRequest, "Error Request");
+            }
+            return Ok(await _service.UpdateProducer(id, Upd));
         }
 
         [HttpPost("create_producer")]
         public async Task<ActionResult> CreateProducer([FromBody]CreateProducer cpr)
         {
-            int maxId = await _context.producers.MaxAsync(p => (int?)p.Id) ?? 0;
-            int next = maxId + 1;
-
-            Producer producer = new Producer()
+            if (!ModelState.IsValid)
             {
-                Id = next,
-                Name = cpr.Name,
-                IsActive = cpr.IsActive
-            };
-
-            var result = _service.CreateProducer(producer);
-            return Ok(result);
+                StatusCode(StatusCodes.Status400BadRequest, "Error Request");
+            }
+            return Ok(await _service.CreateProducer(cpr));
         }
 
-        //[HttpDelete]
-        //public async Task<IActionResult> delete(int id)
-        //{
-        //    try
-        //    {
-        //        var del = await _service.Delete(id);
-        //        if(del == null)
-        //        {
-        //            return NotFound();
-        //        }
-        //        return NoContent();
-        //    }
-        //    catch (DbUpdateException ex)
-        //    {
-        //        if (ex.InnerException is Npgsql.PostgresException postgresException)
-        //        {
-        //            string message = postgresException.MessageText;
-        //            string constraintName = postgresException.ConstraintName;
-
-        //            return BadRequest($"Error: {message}. Constraint: {constraintName}");
-        //        }
-        //        return StatusCode(500, "An error occurred while processing your request. Please try again later.");
-        //    }
-        //    catch (Exception)
-        //    {
-        //        return StatusCode(500, "An error occurred while processing your request. Please try again later.");
-        //    }
-        //}
+        [HttpDelete("delete_producer")]
+        public async Task<IActionResult> delete(int id)
+        {
+            return Ok (await _service.DeleteProducer(id));
+        }
     }
 }

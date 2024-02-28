@@ -1,9 +1,9 @@
 ﻿using device.Data;
 using device.DTO.Laptop;
+using device.IRepository;
 using device.Models;
-using device.Validation;
+using device.Services;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace device.Controllers
 {
@@ -11,142 +11,40 @@ namespace device.Controllers
     [ApiController]
     public class LaptopController : ControllerBase
     {
-        //private readonly LaptopValidate _laptopValidate;
-        //private readonly LaptopDbContext _context;
+        private readonly LaptopService _service;
 
-        //public LaptopController( LaptopDbContext context)
-        //{
-        //    _context = context;
-        //    _laptopValidate = new LaptopValidate();
-        //}
+        public LaptopController(LaptopDbContext context, IAllRepository<Laptop> repos, ILogger<LaptopService> logger)
+        {
+            _service = new LaptopService(repos, logger, context);
+        }
 
-        //[HttpGet("all")]
-        //public async Task<IActionResult> GetAll(int page = 1, int pageSize = 5)
-        //{
-        //    try
-        //    {
-        //        var result = await _service.GetAll(page, pageSize);
-        //        return Ok(result);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return StatusCode(500, ex.Message);
-        //    }
-        //}
+        [HttpGet("get_all_laptop")]
+        public async Task<IActionResult> GetAll(int page = 1, int pageSize = 5)
+        {
+            return Ok(await _service.GetAllLaptop(page, pageSize));
+        }
 
-        //[HttpGet("GetById/{id}")]
-        //public async Task<IActionResult> GetOne(int id)
-        //{
-        //    try
-        //    {
-        //        var result = await _service.GetById(id);
-        //        return Ok(result);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return StatusCode(500, ex.Message);
-        //    }
-        //}
+        [HttpGet("get_laptop_id")]
+        public async Task<IActionResult> GetOne(int id)
+        {
+            return Ok ( await _service.GetLaptopById(id));
+        }
 
-        //[HttpPost("create")]
-        //public async Task<IActionResult> Create([FromBody] CreateLaptop CrL)
-        //{
-        //    int maxId = await _context.laptops.MaxAsync(l => (int?)l.Id) ?? 0;
-        //    int next = maxId + 1;
+        [HttpPost("create_laptop")]
+        public async Task<IActionResult> Create([FromBody] CreateLaptop CrL)
+        {
+           return Ok(await _service.CreateLaptop(CrL));
+        }
 
-        //    Laptop laptop = new Laptop()
-        //    {
-        //        Id = next,
-        //        Name = CrL.Name,
-        //        IdProducer = CrL.IdProducer,
-        //        SoldPrice = CrL.SoldPrice,
-        //        CostPrice = CrL.CostPrice
-        //    };
-
-        //    try
-        //    {
-        //        var validate = _laptopValidate.Validate(laptop);
-        //        if (!validate.IsValid)
-        //        {
-        //            return BadRequest(validate.Errors);
-        //        }
-        //        var result = await _service.Add(laptop);
-        //        return Ok(result);
-        //    }
-        //    catch (DbUpdateException ex)
-        //    {
-        //        if (ex.InnerException is Npgsql.PostgresException postgresException)
-        //        {
-        //            string message = postgresException.MessageText;
-        //            string constraintName = postgresException.ConstraintName;
-
-        //            return BadRequest($"Error: {message}. Constraint: {constraintName}");
-        //        }
-        //        return StatusCode(500, "An error occurred while processing your request. Please try again later.");
-        //    }
-        //}
-
-        //[HttpPost("{id}")]
-        //public async Task<IActionResult> Update(int id, [FromBody] UpdateLaptop UdL)
-        //{
-        //    Laptop laptop = new Laptop()
-        //    {
-        //        Id = id,
-        //        Name = UdL.Name,
-        //        IdProducer = UdL.IdProducer,
-        //        CostPrice = UdL.CostPrice,
-        //        SoldPrice = UdL.SoldPrice
-        //    };
-
-        //    try
-        //    {
-        //        var validate = _laptopValidate.Validate(laptop);
-        //        if (!validate.IsValid)
-        //        {
-        //            return BadRequest(validate.Errors);
-        //        }
-        //        var result = await _service.Update(id,laptop);
-        //        return Ok(result);
-        //    }
-        //    catch (DbUpdateException ex)
-        //    {
-        //        if (ex.InnerException is Npgsql.PostgresException postgresException)
-        //        {
-        //            string message = postgresException.MessageText;
-        //            string constraintName = postgresException.ConstraintName;
-
-        //            return BadRequest($"Error: {message}. Constraint: {constraintName}");
-        //        }
-        //        return StatusCode(500, "An error occurred while processing your request. Please try again later.");
-        //    }
-        //}
-        //[HttpDelete]
-        //public async Task<IActionResult> Delete(int id)
-        //{
-        //    try
-        //    {
-        //        var del = await _service.Delete(id);
-        //        if (del == null)
-        //        {
-        //            return NotFound();
-        //        }
-        //        return NoContent();
-        //    }
-        //    catch (DbUpdateException ex)
-        //    {
-        //        if (ex.InnerException is Npgsql.PostgresException postgresException)
-        //        {
-        //            string message = postgresException.MessageText;
-        //            string constraintName = postgresException.ConstraintName;
-
-        //            return BadRequest($"Error: {message}. Constraint: {constraintName}");
-        //        }
-        //        return StatusCode(500, "An error occurred while processing your request. Please try again later.");
-        //    }
-        //    catch (Exception)
-        //    {
-        //        return StatusCode(500, "An error occurred while processing your request. Please try again later.");
-        //    }
-        //}
+        [HttpPost("update_id")]
+        public async Task<IActionResult> Update(int id)
+        {
+            return Ok(_service.DeleteLaptop(id));
+        }
+        [HttpDelete("delete_laptop")]
+        public async Task<IActionResult> Delete(int id)
+        {
+            return Ok (await _service.DeleteLaptop(id));
+        }
     }
 }

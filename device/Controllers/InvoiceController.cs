@@ -17,7 +17,7 @@ namespace device.Controllers
         private readonly LaptopDbContext _context;
         private readonly InvoiceValidate _invoiceValidate;
 
-        public InvoiceController(IAllRepository<Invoice> repo, IAllRepository<InvoiceDetail> repoDetail,LaptopDbContext context)
+        public InvoiceController(IAllRepository<Invoice> repo, IAllRepository<InvoiceDetail> repoDetail, LaptopDbContext context)
         {
             _repo = repo;
             _repoDetail = repoDetail;
@@ -34,18 +34,18 @@ namespace device.Controllers
         }
 
         [HttpGet("GetInvoiceNum")]
-        public async Task<IActionResult> FindByInvoiceNum (string invoiceNum)
+        public async Task<IActionResult> FindByInvoiceNum(string invoiceNum)
         {
-            var findNum = _context.invoices.FirstOrDefault( i => i.InvoiceNumber == invoiceNum);
+            var findNum = _context.invoices.FirstOrDefault(i => i.InvoiceNumber == invoiceNum);
             if (findNum == null)
-            {   
-                return NotFound(new {Message = "Invoice is not exist"});
+            {
+                return NotFound(new { Message = "Invoice is not exist" });
             }
             return Ok(findNum);
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateInvoice ([FromBody]CreateInvoice civ)
+        public async Task<IActionResult> CreateInvoice([FromBody] CreateInvoice civ)
         {
             int maxId = await _context.invoices.MaxAsync(e => (int?)e.Id) ?? 0;
             int nextId = maxId + 1;
@@ -119,12 +119,12 @@ namespace device.Controllers
             try
             {
                 var findId = await _repo.GetAsyncById(id);
-                if (findId == null){ return NotFound(); }
+                if (findId == null) { return NotFound(); }
                 var val = _invoiceValidate.Validate(findId);
                 if (!val.IsValid) { return BadRequest(val.Errors); }
                 return Ok(await _repo.DeleteOneAsync(findId));
             }
-            catch (DbUpdateException ex) when(ex.InnerException is Npgsql.PostgresException postgresException)
+            catch (DbUpdateException ex) when (ex.InnerException is Npgsql.PostgresException postgresException)
             {
                 string message = postgresException.MessageText;
                 string constraintName = postgresException.ConstraintName;

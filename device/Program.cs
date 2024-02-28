@@ -1,7 +1,7 @@
 using device.Data;
 using device.IRepository;
 using device.Repository;
-using Microsoft.EntityFrameworkCore;
+                                                                                                                                                                                                                                   using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -29,8 +29,13 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
+app.UseRouting();
+app.UseAuthentication();
 app.UseAuthorization();
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapControllers();
+});
 
 app.MapControllers();
 

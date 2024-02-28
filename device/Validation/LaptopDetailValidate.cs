@@ -7,11 +7,8 @@ namespace device.Validation
 {
     public class LaptopDetailValidate: AbstractValidator<LaptopDetail>
     {
-        private readonly LaptopDbContext _dbconext;
-
-        public LaptopDetailValidate(LaptopDbContext dbContext)
+        public LaptopDetailValidate()
         {
-            _dbconext = dbContext;
             RuleFor(detail => detail.Weight).InclusiveBetween(0,Constants.MAX_WEIGHT).WithMessage($"The weight must be within the range of 0 to {Constants.MAX_WEIGHT}.");
             RuleFor(detail => detail.Height).InclusiveBetween(0, Constants.MAX_LENGTH_PUBLIC).WithMessage($"The height must be within the range of 0 to {Constants.MAX_LENGTH_PUBLIC}.");
             RuleFor(detail => detail.Width).InclusiveBetween(0, Constants.MAX_LENGTH_PUBLIC).WithMessage($"The width must be within the range of 0 to {Constants.MAX_LENGTH_PUBLIC}.");

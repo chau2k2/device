@@ -14,7 +14,6 @@
         public decimal Width { get; set; }
         public decimal Length { get; set; }
         public decimal BatteryCapacity { get; set; }
-        public byte[]? Image { get; set; }
         public int idLaptop { get; set; }
     }
 }
