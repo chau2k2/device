@@ -2,6 +2,7 @@
 {
     public class LaptopDetailModel
     {
+        public int Id { get; set; }
         public string Cpu { get; set; }
         public string Seri { get; set; }
         public int IdVga { get; set; }
@@ -15,5 +16,6 @@
         public decimal Length { get; set; }
         public decimal BatteryCapacity { get; set; }
         public int idLaptop { get; set; }
+        public bool IsDelete { get; set; }
     }
 }

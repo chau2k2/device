@@ -8,13 +8,14 @@ namespace device.Models
     {
         [Key]
         public int Id { get; set; }
-        public string? InvoiceNumber {  get; set; }
+        public string InvoiceNumber {  get; set; }
         [Column(TypeName = "timestamp without time zone")]
         public DateTime DateInvoice { get; set; }
         [Range(0,10000)]
         public int TotalQuantity { get; set; }
         [Range(0,1000000000)]
         public decimal TotalPrice { get; set; }
+        public bool IsDelete { get; set; }
         [JsonIgnore]
         public ICollection<InvoiceDetail>? invoiceDetail { get; set;}
     }

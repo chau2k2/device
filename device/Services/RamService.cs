@@ -103,15 +103,15 @@ namespace device.Services
         }
         public async Task<ActionResult<Ram>> delete (int id)
         {
-            var findId = await _repo.GetAsyncById(id);
-            if (findId == null)
-            {
-                throw new Exception("not found Producer");
-            }
-
             try
             {
-                var del = await _repo.DeleteOneAsync(findId);
+                var ram = await _repo.GetAsyncById(id);
+                if (ram == null)
+                {
+                    throw new Exception("not found Producer");
+                }
+                ram.IsDelete = true;
+                var del = await _repo.DeleteOneAsync(ram);
                 return del;
             }
             catch (Exception)

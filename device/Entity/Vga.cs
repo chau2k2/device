@@ -12,6 +12,7 @@ namespace device.Models
 
         [Range(0, 10000000)]
         public decimal Price { get; set; }
+        public bool IsDelete { get; set; }
         [JsonIgnore]
         public ICollection<LaptopDetail> laptopDetail { get; set; }
     }

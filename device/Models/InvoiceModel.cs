@@ -10,5 +10,6 @@ namespace device.Models
         public DateTime DateInvoice { get; set; }
         public int TotalQuantity { get; set; }
         public decimal TotalPrice { get; set; }
+        public bool IsDelete { get; set; }
     }
 }

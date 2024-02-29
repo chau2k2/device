@@ -1,6 +1,5 @@
 ﻿using device.Data;
 using device.DTO.HoaDon;
-using device.DTO.Vga;
 using device.IRepository;
 using device.Models;
 using device.Validation;
@@ -35,14 +34,14 @@ namespace device.Services
                 throw ex;
             }
         }
-        public async Task<ActionResult<Invoice>> GetById(int id)
+        public async Task<ActionResult<Invoice>> GetByInvoiceNum(string invoiceNum)
         {
-            var result = await _repo.GetAsyncById(id);
-            if (result == null)
+            var findNum = _context.invoices.FirstOrDefault(i => i.InvoiceNumber == invoiceNum);
+            if (findNum == null)
             {
                 return new NotFoundResult();
             }
-            return result;
+            return findNum;
         }
         public async Task<ActionResult<Invoice>> Create(CreateInvoice CrI)
         {
@@ -86,16 +85,13 @@ namespace device.Services
         }
         public async Task<ActionResult<Invoice>> Update(int id, UpdateInvoice UpI)
         {
-            var findId = await _context.ram.FindAsync(id);
-            if (findId == null)
-            {
-                return new NotFoundResult();
-            }
-
             Invoice invoice = new Invoice()
             {
                 Id = id,
+                DateInvoice = UpI.DateInvoice
             };
+
+            invoice.InvoiceNumber = $"IV{invoice.Id:D4}";
 
             try
             {
@@ -104,7 +100,6 @@ namespace device.Services
                 {
                     throw new Exception(string.Join(",", validate.Errors));
                 }
-
                 var result = await _repo.UpdateOneAsyns(invoice);
                 return result;
             }
@@ -115,15 +110,15 @@ namespace device.Services
         }
         public async Task<ActionResult<Invoice>> delete(int id)
         {
-            var findId = await _repo.GetAsyncById(id);
-            if (findId == null)
-            {
-                throw new Exception("not found Invoice");
-            }
-
             try
             {
-                var del = await _repo.DeleteOneAsync(findId);
+                var invoice = await _repo.GetAsyncById(id);
+                if (invoice == null)
+                {
+                    throw new Exception("not found invoice");
+                }
+                invoice.IsDelete = true;
+                var del = await _repo.DeleteOneAsync(invoice);
                 return del;
             }
             catch (Exception)

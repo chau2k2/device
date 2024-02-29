@@ -104,15 +104,15 @@ namespace device.Services
         }
         public async Task<ActionResult<Vga>> delete(int id)
         {
-            var findId = await _repo.GetAsyncById(id);
-            if (findId == null)
-            {
-                throw new Exception("not found Vga");
-            }
-
             try
             {
-                var del = await _repo.DeleteOneAsync(findId);
+                var vga = await _repo.GetAsyncById(id);
+                if (vga == null)
+                {
+                    throw new Exception("not found Vga");
+                }
+                vga.IsDelete = true;
+                var del = await _repo.UpdateOneAsyns(vga);
                 return del;
             }
             catch (Exception)

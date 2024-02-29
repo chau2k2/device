@@ -11,6 +11,7 @@ namespace device.Models
         [Required, Column(TypeName ="varchar"), MaxLength(100, ErrorMessage ="Length of name is not greater than 100")]
         public string Name { get; set; }
         public bool IsActive { get; set; }
+        public bool IsDelete { get; set; }
         [JsonIgnore]
         public ICollection<Laptop> Laptops { get; set;}
     }

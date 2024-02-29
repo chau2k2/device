@@ -8,14 +8,15 @@ namespace device.Models
     {
         [Key]
         public int Id { get; set; }
-        public int idDetail { get; set; }
+        public int LaptopDetailId { get; set; }
+
         [Range(0, 1000, ErrorMessage ="nhap gia tri trong khoang 0 den 1000")]
         public int SoldNumber { get; set; }
         [Required]
         [Range(0, 1000, ErrorMessage ="nhap gia tri trong khoang 0 den 1000")]
         public int ImportNumber { get; set; }
+        public bool IsDelete { get; set; }
         [JsonIgnore]
-        [ForeignKey("LaptopDetail")]
-        public virtual LaptopDetail laptopDetail { get; set; }
+        public virtual LaptopDetail LaptopDetail { get; set; }
     }
 }

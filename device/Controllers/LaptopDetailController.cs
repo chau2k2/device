@@ -39,13 +39,13 @@ namespace device.Controllers
         [HttpPost("update_lapdetail")]
         public async Task<IActionResult> Update(int id, [FromBody] UpdateLaptopDetail UDL)
         {
-            return Ok (_service.Update(id, UDL));
+            return Ok (await _service.Update(id, UDL));
         }
 
-        [HttpDelete("do_delete_")]
+        [HttpDelete("do_delete")]
         public async Task<IActionResult> Delete(int id)
         {
-            return Ok ( _service.Delete(id));
+            return Ok ( await _service.Delete(id));
         }
     }
 }

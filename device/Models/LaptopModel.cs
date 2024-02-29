@@ -9,5 +9,6 @@ namespace device.Models
         public int IdProducer { get; set; }
         public decimal CostPrice { get; set; }
         public decimal SoldPrice { get; set; }
+        public bool IsDelete { get; set; }
     }
 }

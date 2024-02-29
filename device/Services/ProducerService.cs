@@ -101,15 +101,15 @@ namespace device.Services
         }
         public async Task<ActionResult<Producer>> DeleteProducer(int id)
         {
-            var findId = await _repos.GetAsyncById(id);
-            if (findId == null)
-            {
-                throw new Exception("not found Producer");
-            }
-
             try
             {
-                var del = await _repos.DeleteOneAsync(findId);
+                var producer = await _repos.GetAsyncById(id);
+                if (producer == null)
+                {
+                    throw new Exception("not found Producer");
+                }
+                producer.IsDelete = true;
+                var del = await _repos.DeleteOneAsync(producer);
                 return del;
             }
             catch (Exception)

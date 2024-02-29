@@ -39,7 +39,7 @@ namespace device.Controllers
         [HttpPost("update_id")]
         public async Task<IActionResult> Update(int id)
         {
-            return Ok(_service.DeleteLaptop(id));
+            return Ok(await _service.DeleteLaptop(id));
         }
         [HttpDelete("delete_laptop")]
         public async Task<IActionResult> Delete(int id)

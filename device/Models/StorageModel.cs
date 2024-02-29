@@ -6,5 +6,6 @@
         public int idDetail { get; set; }
         public int SoldNumber { get; set; }
         public int ImportNumber { get; set; }
+        public bool IsDelete { get; set; }
     }
 }

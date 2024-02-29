@@ -52,7 +52,7 @@ namespace device.Services
             Storage storage = new Storage()
             {
                 Id = nextId,
-                idDetail = CrS.idDetail,
+                LaptopDetailId = CrS.idDetail,
                 ImportNumber = CrS.InserNumber,
                 SoldNumber = CrS.SaleNumber
             };
@@ -83,7 +83,7 @@ namespace device.Services
             Storage storage = new Storage()
             {
                 Id = id,
-                idDetail = UpS.idDetail,
+                LaptopDetailId = UpS.idDetail,
                 ImportNumber = UpS.InserNumber,
                 SoldNumber = UpS.SaleNumber
             };
@@ -106,15 +106,15 @@ namespace device.Services
         }
         public async Task<ActionResult<Storage>> delete(int id)
         {
-            var findId = await _repo.GetAsyncById(id);
-            if (findId == null)
-            {
-                throw new Exception("not found Vga");
-            }
-
             try
             {
-                var del = await _repo.DeleteOneAsync(findId);
+                var storage = await _repo.GetAsyncById(id);
+                if (storage == null)
+                {
+                    throw new Exception("not found Vga");
+                }
+                storage.IsDelete = true;
+                var del = await _repo.DeleteOneAsync(storage);
                 return del;
             }
             catch (Exception)

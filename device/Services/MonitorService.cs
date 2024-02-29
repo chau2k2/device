@@ -102,15 +102,15 @@ namespace device.Services
         }
         public async Task<ActionResult<MonitorM>> Delete(int id)
         {
-            var findId = await _repos.GetAsyncById(id);
-            if (findId == null)
-            {
-                throw new Exception("not found Monitor");
-            }
-
             try
             {
-                var del = await _repos.DeleteOneAsync(findId);
+                var monitor = await _repos.GetAsyncById(id);
+                if (monitor == null)
+                {
+                    throw new Exception("not found Monitor");
+                }
+                monitor.IsDelete = true;
+                var del = await _repos.DeleteOneAsync(monitor);
                 return del;
             }
             catch (Exception)

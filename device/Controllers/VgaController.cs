@@ -18,25 +18,25 @@ namespace device.Controllers
             _service = new VgaService(repo,logger, context);
         }
 
-        [HttpGet]
+        [HttpGet("get_all")]
         public async Task<ActionResult<IEnumerable<Vga>>> SelectAllVga(int page = 1, int pageSize = 5)
         {
             return Ok(await _service.GetAll(page, pageSize));
         }
 
-        [HttpPost]
+        [HttpPost("do_create")]
         public async Task<ActionResult<Vga>> CreateVga(CreateVga vgs)
         {
             return Ok(await _service.Create(vgs));
         }
 
-        [HttpPut]
+        [HttpPut("do_update")]
         public async Task<ActionResult<Vga>> UpdateVga(int id, UpdateVga Uvga)
         {
             return Ok (await _service .Update(id, Uvga));
         }
 
-        [HttpDelete]
+        [HttpDelete("do_delete")]
         public async Task<IActionResult> DeleteVga(int id)
         {
             return Ok (await _service.delete(id));

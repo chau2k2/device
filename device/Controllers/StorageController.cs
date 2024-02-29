@@ -27,7 +27,7 @@ namespace device.Controllers
         //    Storage storage = new Storage()
         //    {
         //        Id = id,
-        //        idDetail = USt.idDetail,
+        //        LaptopDetailId = USt.LaptopDetailId,
         //        ImportNumber = USt.InserNumber,
         //        SoldNumber = USt.SaleNumber
         //    };
@@ -70,7 +70,7 @@ namespace device.Controllers
         //    Storage storage = new Storage()
         //    {
         //        Id = nextId,
-        //        idDetail = Cst.idDetail,
+        //        LaptopDetailId = Cst.LaptopDetailId,
         //        ImportNumber = Cst.InserNumber,
         //        SoldNumber = Cst.SaleNumber
         //    };

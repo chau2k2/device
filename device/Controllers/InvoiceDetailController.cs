@@ -15,7 +15,7 @@ namespace device.Controllers
         //protected readonly IAllRepository<InvoiceDetail> _repo;
         //private readonly LaptopDbContext _dbcontext;
         //private readonly InvoiceDetailValidation _validate;
-        //public InvoiceDetailController (IAllRepository<InvoiceDetail> repo,LaptopDbContext dbContext)
+        //public InvoiceDetailController(IAllRepository<InvoiceDetail> repo, LaptopDbContext dbContext)
         //{
         //    _dbcontext = dbContext;
         //    _repo = repo;
@@ -33,22 +33,22 @@ namespace device.Controllers
         ////    return Ok();
         ////}
         //[HttpPost]
-        //public async Task<IActionResult> CreateInvoiceDetail (CreateInvoiceDetail CID)
+        //public async Task<IActionResult> CreateInvoiceDetail(CreateInvoiceDetail CID)
         //{
         //    int maxId = await _dbcontext.InvoicesDetail.MaxAsync(d => (int?)d.Id) ?? 0;
         //    int nextId = maxId + 1;
-            
+
         //    InvoiceDetail detail = new InvoiceDetail()
         //    {
         //        Id = nextId,
-                
+
         //        Quantity = CID.Quantity
         //    };
 
-        //    _dbcontext.invoices.FirstOrDefault( i => i.Id == CID.IdInvoice);
+        //    _dbcontext.invoices.FirstOrDefault(i => i.Id == CID.IdInvoice);
 
         //    var laptop = _dbcontext.laptops.FirstOrDefault(l => l.Id == CID.IdLaptop);
-        //    if (laptop != null) { detail.Price = laptop.SoldPrice;}
+        //    if (laptop != null) { detail.Price = laptop.SoldPrice; }
 
         //    try
         //    {
@@ -103,7 +103,7 @@ namespace device.Controllers
         //        if (findId == null) { return NotFound(); }
         //        return Ok(await _repo.DeleteOneAsync(findId));
         //    }
-        //    catch (DbUpdateException ex) when(ex.InnerException is Npgsql.PostgresException postgresException)
+        //    catch (DbUpdateException ex) when (ex.InnerException is Npgsql.PostgresException postgresException)
         //    {
         //        string message = postgresException.MessageText;
         //        string constraintName = postgresException.ConstraintName;

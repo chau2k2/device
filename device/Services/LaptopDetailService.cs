@@ -1,8 +1,8 @@
 ﻿using device.Data;
 using device.DTO.LaptopDetail;
-using device.DTO.Producer;
 using device.IRepository;
 using device.Models;
+using device.Response;
 using device.Validation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -24,12 +24,43 @@ namespace device.Services
             _context = context;
         }
 
-        public async Task<IEnumerable<LaptopDetail>> GetAll(int page, int pageSize)
+        public async Task<IEnumerable<LaptopDetailResponse>> GetAll(int page, int pageSize)
         {
             try
             {
-                var result = await _repos.GetAllAsync(page, pageSize);
-                return result;
+                var result = await _context.Set<LaptopDetail>()!
+                    .Include(l => l.Laptops)
+                    .Include(r => r.Rams)
+                    .Include(m => m.Monitor)
+                    .Include(v => v.Vga)
+                    .Include(s => s.Storage)
+                    .Take(page).Skip((page - 1) * pageSize)
+                    .ToListAsync();
+
+                List<LaptopDetailResponse> laptopDetailResponse = new List<LaptopDetailResponse>();
+
+                foreach (var laptopDetail in result)
+                {
+                    laptopDetailResponse.Add(new LaptopDetailResponse()
+                    {
+                        Id = laptopDetail.Id,
+                        Cpu = laptopDetail.Cpu,
+                        Seri = laptopDetail.Seri,
+                        VgaName = laptopDetail.Vga.Name,
+                        RamName = laptopDetail.Rams.Name,
+                        HardDriver = laptopDetail.HardDriver,
+                        MonitorName = laptopDetail.Monitor.Name,
+                        Webcam = laptopDetail.Webcam,
+                        Weight = laptopDetail.Weight,
+                        Height = laptopDetail.Height,
+                        Width = laptopDetail.Width,
+                        Length = laptopDetail.Length,
+                        BatteryCapacity = laptopDetail.BatteryCapacity,
+                        LaptopName = laptopDetail.Laptops.Name,
+                        IsDelete = laptopDetail.IsDelete
+                    }) ;
+                }
+                return laptopDetailResponse;
             }
             catch (Exception ex)
             {
@@ -57,17 +88,17 @@ namespace device.Services
                 Id = id,
                 Cpu = UpLD.Cpu,
                 Seri = UpLD.Seri,
-                IdVga = UpLD.IdVga,
-                IdRam = UpLD.IdRam,
+                VgaId = UpLD.IdVga,
+                RamId = UpLD.IdRam,
                 HardDriver = UpLD.HardDriver,
-                IdMonitor = UpLD.IdMonitor,
+                MonitorId = UpLD.IdMonitor,
                 Webcam = UpLD.Webcam,
                 Weight = UpLD.Weight,
                 Height = UpLD.Height,
                 Width = UpLD.Width,
                 Length = UpLD.Length,
                 BatteryCapacity = UpLD.BatteryCapacity,
-                idLaptop = UpLD.idLaptop
+                LaptopId = UpLD.idLaptop
             };
             try
             {
@@ -95,17 +126,17 @@ namespace device.Services
                 Id = next,
                 Cpu = CrLD.Cpu,
                 Seri = CrLD.Seri,
-                IdVga = CrLD.IdVga,
-                IdRam = CrLD.IdRam,
+                VgaId = CrLD.IdVga,
+                RamId = CrLD.IdRam,
                 HardDriver = CrLD.HardDriver,
-                IdMonitor = CrLD.IdMonitor,
+                MonitorId = CrLD.IdMonitor,
                 Webcam = CrLD.Webcam,
                 Weight = CrLD.Weight,
                 Height = CrLD.Height,
                 Width = CrLD.Width,
                 Length = CrLD.Length,
                 BatteryCapacity = CrLD.BatteryCapacity,
-                idLaptop = CrLD.idLaptop
+                LaptopId = CrLD.idLaptop
             };
 
             try
@@ -125,15 +156,15 @@ namespace device.Services
         }
         public async Task<ActionResult<LaptopDetail>> Delete(int id)
         {
-            var findId = await _repos.GetAsyncById(id);
-            if (findId == null)
-            {
-                throw new Exception("not found Laptop Detail");
-            }
-
             try
             {
-                var del = await _repos.DeleteOneAsync(findId);
+                var laptopDetail = await _repos.GetAsyncById(id);
+                if (laptopDetail == null)
+                {
+                    throw new Exception("not found Laptop Detail");
+                }
+                laptopDetail.IsDelete = true;
+                var del = await _repos.DeleteOneAsync(laptopDetail);
                 return del;
             }
             catch (Exception)

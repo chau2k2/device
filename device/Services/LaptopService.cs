@@ -6,6 +6,8 @@ using device.Response;
 using device.Validation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.VisualBasic;
+using NuGet.Packaging;
 
 namespace device.Services
 {
@@ -27,38 +29,26 @@ namespace device.Services
         {
             try
             {
-                var result = await _context.Set<Laptop>()
-                    .Include(s=>s.producer)
-                    .Include(d => d.laptopDetail)
-                        .ThenInclude(r => r.Rams)
-                    .Include( d=> d.laptopDetail)
-                        .ThenInclude(v => v.Vga)
-                    .Include(d => d.laptopDetail)
-                        .ThenInclude(s => s.storage)
-                    .Include(d => d.laptopDetail)
-                        .ThenInclude(m => m.Monitor)
-                    .Where(c=>c.SoldPrice > 1)
+                var result = await _context.Set<Laptop>()!
+                    .Include(s => s.Producer)
+                    .Where(c => c.SoldPrice > 1)
                     .Take(page).Skip((page - 1) * pageSize)
                     .ToListAsync();
 
-                var  laptopResponse = new List< LaptopResponse>();
+                List<LaptopResponse> laptopResponse = new List<LaptopResponse>();
 
-                foreach(var laptop in result)
+                foreach (var laptop in result)
                 {
                     laptopResponse.Add(new LaptopResponse()
                     {
                         Id = laptop.Id,
                         Name = laptop.Name,
                         Profit = laptop.SoldPrice - laptop.CostPrice,
-                        ProducerName = laptop.producer!.Name,
-                        RamName = laptop.laptopDetail.Rams.Name,
-                        VgaName = laptop.laptopDetail.Vga.Name,
-                        Quantity = laptop.laptopDetail.storage.ImportNumber - laptop.laptopDetail.storage.SoldNumber,
-                        MonitorName = laptop.laptopDetail.Monitor.Name
+                        ProducerName = laptop.Producer!.Name,
+                        CostPrice = laptop.CostPrice
                     });
                 }
-  
-
+                return laptopResponse;
             }
             catch (Exception ex)
             {
@@ -86,7 +76,7 @@ namespace device.Services
             {
                 Id = id,
                 Name = Upd.Name,
-                IdProducer = Upd.IdProducer,
+                ProducerId = Upd.IdProducer,
                 CostPrice = Upd.CostPrice,
                 SoldPrice = Upd.SoldPrice
             };
@@ -107,14 +97,14 @@ namespace device.Services
         }
         public async Task<ActionResult<Laptop>> CreateLaptop(CreateLaptop crl)
         {
-            int maxId = await _context.producers.MaxAsync(p => (int?)p.Id) ?? 0;
+            int maxId = await _context.laptops.MaxAsync(p => (int?)p.Id) ?? 0;
             int next = maxId + 1;
 
             Laptop laptop = new Laptop()
             {
                 Id = next,
                 Name = crl.Name,
-                IdProducer = crl.IdProducer,
+                ProducerId = crl.IdProducer,
                 CostPrice = crl.CostPrice,
                 SoldPrice = crl.SoldPrice
             };
@@ -136,15 +126,15 @@ namespace device.Services
         }
         public async Task<ActionResult<Laptop>> DeleteLaptop(int id)
         {
-            var findId = await _repos.GetAsyncById(id);
-            if (findId == null)
-            {
-                throw new Exception("not found Producer");
-            }
-
             try
             {
-                var del = await _repos.DeleteOneAsync(findId);
+                var laptop = await _repos.GetAsyncById(id);
+                if (laptop == null)
+                {
+                    throw new Exception("not found Producer");
+                }
+                laptop.IsDelete = true;
+                var del = await _repos.DeleteOneAsync(laptop);
                 return del;
             }
             catch (Exception)
