@@ -105,7 +105,7 @@ namespace device.Services
                 var validate = _validate.Validate(laptopDetail);
                 if (!validate.IsValid)
                 {
-                    throw new Exception(string.Join(", ", validate.Errors));
+                        
                 }
 
                 var result = await _repos.UpdateOneAsyns(laptopDetail);

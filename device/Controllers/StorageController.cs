@@ -15,10 +15,10 @@ namespace device.Controllers
         //    _service = service;
         //    _StorageValidate = new StorageValidate();
         //}
-        //[HttpGet("GetAll")]
-        //public async Task<IActionResult> GetAll(int page = 1, int pageSize = 5)
+        //[HttpGet("GetAllInvoiceDetail")]
+        //public async Task<IActionResult> GetAllInvoiceDetail(int page = 1, int pageSize = 5)
         //{
-        //    var result = await _service.GetAll(page, pageSize);
+        //    var result = await _service.GetAllInvoiceDetail(page, pageSize);
         //    return Ok(result);
         //}
         //[HttpPut]
