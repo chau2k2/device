@@ -37,9 +37,9 @@ namespace device.Controllers
         }
 
         [HttpPost("update_id")]
-        public async Task<IActionResult> Update(int id)
+        public async Task<IActionResult> Update(int id,[FromBody] UpdateLaptop upl)
         {
-            return Ok(await _service.DeleteLaptop(id));
+            return Ok(await _service.Updatelaptop(id, upl));
         }
         [HttpDelete("delete_laptop")]
         public async Task<IActionResult> Delete(int id)
