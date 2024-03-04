@@ -60,23 +60,21 @@ namespace device.Services
             try
             {
                 int maxId = await _context.InvoicesDetail.MaxAsync(d => (int?)d.Id) ?? 0;
-            int nextId = maxId + 1;
+                int nextId = maxId + 1;
 
-            InvoiceDetail detail = new InvoiceDetail()
-            {
-                Id = nextId,
-                LaptopId = CID.IdLaptop,
-                InvoiceId = CID.IdInvoice,
-                Quantity = CID.Quantity
-            };
+                InvoiceDetail detail = new InvoiceDetail()
+                {
+                    Id = nextId,
+                    LaptopId = CID.IdLaptop,
+                    InvoiceId = CID.IdInvoice,
+                    Quantity = CID.Quantity
+                };
 
-            _context.invoices.FirstOrDefault(i => i.Id == CID.IdInvoice);
-
-            var laptop = _context.laptops.FirstOrDefault(l => l.Id == CID.IdLaptop);
-            if (laptop != null) { detail.Price = laptop.SoldPrice; }
+                var laptop = _context.laptops.FirstOrDefault(l => l.Id == CID.IdLaptop);
+                if (laptop != null) { detail.Price = laptop.SoldPrice; }
 
                 var val = _validate.Validate(detail);
-                if (!val.IsValid) 
+                if (!val.IsValid)
                 { 
                     throw new Exception(string.Join(", ", val.Errors)); 
                 }
@@ -89,35 +87,21 @@ namespace device.Services
             }
         }
 
-        public async Task<ActionResult<InvoiceDetailResponse>> UpdateInvoice(int id, UpdateInvoiceDetail UID)
+        public async Task<ActionResult<InvoiceDetail>> Delete (int id)
         {
-            InvoiceDetail detail = new InvoiceDetail()
-            {
-                Id = id,
-                InvoiceId = UID.IdInvoice,
-                LaptopId = UID.IdLaptop,
-                Quantity = UID.Quantity
-            };
-
-            if (detail.IdLaptop != UID.IdLaptop)
-            {
-                var laptop = _dbcontext.laptops.FirstOrDefault(l => l.Id == detail.IdLaptop);
-                if (laptop != null) { detail.Price = laptop.SoldPrice; }
-            }
-            else
-            {
-                detail.Price = detail.Price;
-            }
-
             try
             {
-                var val = _validate.Validate(detail);
-                if (!val.IsValid) { return BadRequest(val.Errors); }
-                var result = await _repo.UpdateOneAsyns(detail); return Ok(result);
+                var invoiceDetail = await _repo.GetAsyncById(id);
+                if (invoiceDetail == null)
+                {
+                    throw new Exception("not found this Invoice Detail");
+                }
+                invoiceDetail.IsDelete = true;
+                return await _repo.UpdateOneAsyns(invoiceDetail);
             }
-            catch
+            catch (Exception ex)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, "Update Invoice Detail not successfull!!!");
+                throw ex;
             }
         }
     }
