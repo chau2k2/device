@@ -41,6 +41,8 @@ namespace device.Services
                     InvoiceDetailResponse.Add(new InvoiceDetailResponse()
                     {
                         Id = invoiceDetail.Id,
+                        IdLaptop = invoiceDetail.LaptopId,
+                        IdInvoice = invoiceDetail.InvoiceId,
                         LaptopName = invoiceDetail.Laptop.Name,
                         InvoiceNumber = invoiceDetail.invoices.InvoiceNumber,
                         Quantity = invoiceDetail.Quantity,
@@ -100,6 +102,21 @@ namespace device.Services
                 return await _repo.UpdateOneAsyns(invoiceDetail);
             }
             catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public async Task< IEnumerable<InvoiceDetail>> findInvoiceDetailByINumber (string invoiceNumber)
+        {
+            try
+            {
+                var invoiceDetail = await _context.InvoicesDetail
+                    .Include(i => i.invoices)
+                    .Where(i => i.invoices.InvoiceNumber == invoiceNumber)
+                    .ToListAsync();
+                return invoiceDetail;
+            }catch (Exception ex)
             {
                 throw ex;
             }

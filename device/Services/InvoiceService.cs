@@ -36,7 +36,7 @@ namespace device.Services
         }
         public async Task<ActionResult<Invoice>> GetByInvoiceNum(string invoiceNum)
         {
-            var findNum = _context.invoices.FirstOrDefault(i => i.InvoiceNumber == invoiceNum);
+            var findNum = await _context.invoices.FirstOrDefaultAsync(i => i.InvoiceNumber == invoiceNum);
             if (findNum == null)
             {
                 return new NotFoundResult();

@@ -3,9 +3,7 @@ using device.DTO.HDonDetail;
 using device.IRepository;
 using device.Models;
 using device.Services;
-using device.Validation;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace device.Controllers
 {
@@ -19,24 +17,24 @@ namespace device.Controllers
             _service = new InvoiceDetailService(repo, logger, context);
         }
 
-        [HttpGet]
+        [HttpGet("get_all")]
         public async Task<IActionResult> GetAll(int page = 1, int pageSize = 5)
         {
             return Ok(await _service.GetAllInvoiceDetail(page, pageSize));
         }
 
-        //[HttpGet("GetByInvoiceNum/Notdone")]
-        //public async Task<IActionResult> FindByInvoiceNum(string InvoiceNum)
-        //{
-        //    return Ok();
-        //}
-        [HttpPost]
+        [HttpGet("get_by_invoiceNum")]
+        public async Task<IActionResult> FindByInvoiceNum(string InvoiceNum)
+        {
+            return Ok(await _service.findInvoiceDetailByINumber(InvoiceNum));
+        }
+        [HttpPost("do_create")]
         public async Task<IActionResult> CreateInvoiceDetail(CreateInvoiceDetail CID)
         {
             return Ok ( await _service.CreateInvoiceDetail(CID));
         }
 
-        [HttpDelete]
+        [HttpDelete("do_delete")]
         public async Task<IActionResult> DeleteInvoiceDetail(int id)
         {
             return Ok ( await _service.Delete(id));
