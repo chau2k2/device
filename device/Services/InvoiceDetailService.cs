@@ -6,7 +6,6 @@ using device.Response;
 using device.Validation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.ComponentModel.DataAnnotations;
 
 namespace device.Services
 {
@@ -31,6 +30,7 @@ namespace device.Services
                 var result = await _context.Set<InvoiceDetail>()!
                     .Include(l => l.Laptop)
                     .Include(i => i.invoices)
+                    .Where( l => l.IsDelete == false)
                     .Take(page).Skip((page - 1) * pageSize)
                     .ToListAsync();
 

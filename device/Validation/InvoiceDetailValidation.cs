@@ -10,7 +10,7 @@ namespace device.Validation
         public InvoiceDetailValidation(LaptopDbContext context) 
         {
             _context = context;       
-         
+            RuleFor( detail => detail.Quantity).InclusiveBetween(0,50).WithMessage("so luong khong vuot qua 0 va 50");
         }
     }
 }

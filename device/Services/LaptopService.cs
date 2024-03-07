@@ -6,8 +6,6 @@ using device.Response;
 using device.Validation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.VisualBasic;
-using NuGet.Packaging;
 
 namespace device.Services
 {
@@ -31,7 +29,7 @@ namespace device.Services
             {
                 var result = await _context.Set<Laptop>()!
                     .Include(s => s.Producer)
-                    .Where(c => c.SoldPrice > 1)
+                    .Where(c => c.IsDelete == false)
                     .Take(page).Skip((page - 1) * pageSize)
                     .ToListAsync();
 
