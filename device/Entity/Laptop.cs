@@ -14,6 +14,9 @@ namespace device.Models
         [Required]
         public int ProducerId { get; set; }
         public decimal CostPrice { get; set; }
+        /// <summary>
+        /// 
+        /// </summary>
         [Required]
         [Range(0, 10000000)]
         public decimal SoldPrice { get; set; }

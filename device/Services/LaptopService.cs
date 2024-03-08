@@ -95,20 +95,20 @@ namespace device.Services
         }
         public async Task<ActionResult<Laptop>> CreateLaptop(CreateLaptop crl)
         {
-            int maxId = await _context.laptops.MaxAsync(p => (int?)p.Id) ?? 0;
-            int next = maxId + 1;
-
-            Laptop laptop = new Laptop()
-            {
-                Id = next,
-                Name = crl.Name,
-                ProducerId = crl.IdProducer,
-                CostPrice = crl.CostPrice,
-                SoldPrice = crl.SoldPrice
-            };
-
             try
             {
+                int maxId = await _context.laptops.MaxAsync(p => (int?)p.Id) ?? 0;
+                int next = maxId + 1;
+
+                Laptop laptop = new Laptop()
+                {
+                    Id = next,
+                    Name = crl.Name,
+                    ProducerId = crl.IdProducer,
+                    CostPrice = crl.CostPrice,
+                    SoldPrice = crl.SoldPrice
+                };
+            
                 var validate = _validate.Validate(laptop);
                 if (!validate.IsValid)
                 {

@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace device.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/laptop-detail")]
     [ApiController]
     public class LaptopDetailController : ControllerBase
     {
