@@ -30,7 +30,7 @@ namespace device.Services
                 var result = await _context.Set<Laptop>()!
                     .Include(s => s.Producer)
                     .Where(c => c.IsDelete == false)
-                    .Take(page).Skip((page - 1) * pageSize)
+                    .Take(pageSize).Skip((page - 1) * pageSize)
                     .ToListAsync();
 
                 List<LaptopResponse> laptopResponse = new List<LaptopResponse>();
