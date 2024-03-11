@@ -2,7 +2,7 @@
 {
     public class Constants
     {
-        public const int MAX_LENGTH_NAME = 100;
+        public const int MAX_LENGTH_NAME = 50;
         public const int MAX_LENGTH_PUBLIC = 50;
         public const int MAX_LENGTH_HARD_DRIVER = 50;
         public const int MAX_WEIGHT = 30;

@@ -1,8 +1,7 @@
 ﻿using device.Data;
 using device.DTO.Ram;
 using device.IRepository;
-using device.Models;
-using device.Validation;
+using device.Entity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -13,14 +12,12 @@ namespace device.Services
         private readonly ILogger<RamService> _logger;
         private readonly IAllRepository<Ram> _repo;
         private readonly LaptopDbContext _context;
-        private readonly RamValidate _validate;
 
         public RamService( IAllRepository<Ram> repo, ILogger<RamService> logger, LaptopDbContext context) 
         {
             this._logger = logger;
             _repo = repo;
             _context = context;
-            _validate = new RamValidate();
         }
         public async Task<IEnumerable<Ram>> GetAll(int page, int pageSize)
         {
@@ -57,11 +54,6 @@ namespace device.Services
 
             try
             {
-                var validate = _validate.Validate(ram);
-                if (!validate.IsValid)
-                {
-                    throw new Exception(string.Join(", ", validate.Errors));
-                }
                 var result = await _repo.AddOneAsync(ram);
                 return result;
             }
@@ -87,12 +79,6 @@ namespace device.Services
 
             try
             {
-                var validate = _validate.Validate(ram);
-                if (!validate.IsValid)
-                {
-                    throw new Exception(string.Join(",", validate.Errors));
-                }
-
                 var result = await _repo.UpdateOneAsyns(ram);
                 return result;
             }
@@ -108,7 +94,7 @@ namespace device.Services
                 var ram = await _repo.GetAsyncById(id);
                 if (ram == null)
                 {
-                    throw new Exception("not found Producer");
+                    throw new Exception("Not found Producer");
                 }
                 ram.IsDelete = true;
                 var del = await _repo.DeleteOneAsync(ram);
@@ -116,7 +102,7 @@ namespace device.Services
             }
             catch (Exception)
             {
-                throw new Exception("cant delete this producer");
+                throw new Exception("Can't delete this producer");
             }
         }
     }

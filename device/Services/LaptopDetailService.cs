@@ -1,7 +1,7 @@
 ﻿using device.Data;
 using device.DTO.LaptopDetail;
 using device.IRepository;
-using device.Models;
+using device.Entity;
 using device.Response;
 using device.Validation;
 using Microsoft.AspNetCore.Mvc;

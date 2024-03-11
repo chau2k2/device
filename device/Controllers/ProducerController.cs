@@ -1,13 +1,13 @@
 ﻿using device.Data;
 using device.DTO.Producer;
 using device.IRepository;
-using device.Models;
+using device.Entity;
 using device.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace device.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/producer")]
     [ApiController]
     public class ProducerController : ControllerBase
     {
@@ -18,19 +18,19 @@ namespace device.Controllers
             _service = new ProducerService(repos,logger, context);
         }
 
-        [HttpGet("get_all_producer")]
+        [HttpGet("get-all")]
         public async Task<ActionResult> GetAll(int page = 1, int pageSize = 5)
         {
             return Ok(await _service.GetAll(page, pageSize));
         }
 
-        [HttpGet("get_producer_by_id")]
+        [HttpGet("get-by-id")]
         public async Task<ActionResult> FindById(int id)
         {
             return Ok(await _service.GetProducerById(id));
         }
 
-        [HttpPut("do_update_producer")]
+        [HttpPut("do-update")]
         public async Task< ActionResult> Update(int id, [FromBody] UpdateProducer Upd)
         {
             if (!ModelState.IsValid)
@@ -40,7 +40,7 @@ namespace device.Controllers
             return Ok(await _service.UpdateProducer(id, Upd));
         }
 
-        [HttpPost("create_producer")]
+        [HttpPost("create")]
         public async Task<ActionResult> CreateProducer([FromBody]CreateProducer cpr)
         {
             if (!ModelState.IsValid)
@@ -50,7 +50,7 @@ namespace device.Controllers
             return Ok(await _service.CreateProducer(cpr));
         }
 
-        [HttpDelete("delete_producer")]
+        [HttpDelete("delete")]
         public async Task<IActionResult> delete(int id)
         {
             return Ok (await _service.DeleteProducer(id));

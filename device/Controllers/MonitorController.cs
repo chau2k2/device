@@ -1,13 +1,13 @@
 ﻿using device.Data;
 using device.DTO.Monitor;
 using device.IRepository;
-using device.Models;
+using device.Entity;
 using device.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace device.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/monitor")]
     [ApiController]
     public class MonitorController : ControllerBase
     {
@@ -17,25 +17,25 @@ namespace device.Controllers
             _service = new MonitorService(repos, logger, context);
         }
 
-        [HttpGet("get_all_monitor")]
+        [HttpGet("get-all")]
         public async Task<IActionResult> GetAll(int page = 1, int pageSize = 5)
         {
             return Ok(await _service.GetAll(page, pageSize));
         }
 
-        [HttpPut("update_monitor")]
+        [HttpPut("update")]
         public async Task<IActionResult> Update(int id, [FromBody] UpdateMonitor UMn)
         {
             return Ok (await _service.Update(id, UMn));
         }
 
-        [HttpGet("get_by_id")]
+        [HttpGet("get-by-id")]
         public async Task<IActionResult> FindById(int id)
         {
             return Ok ( await _service.GetById(id));
         }
 
-        [HttpPost("create_monitor")]
+        [HttpPost("create-monitor")]
         public async Task<IActionResult> Create([FromBody] CreateMonitor CMn)
         {
             return Ok (await _service.Create(CMn));

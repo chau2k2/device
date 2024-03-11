@@ -22,7 +22,7 @@ namespace device.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("device.Models.Invoice", b =>
+            modelBuilder.Entity("device.Entity.Invoice", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -51,7 +51,7 @@ namespace device.Migrations
                     b.ToTable("invoices");
                 });
 
-            modelBuilder.Entity("device.Models.InvoiceDetail", b =>
+            modelBuilder.Entity("device.Entity.InvoiceDetail", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -83,7 +83,7 @@ namespace device.Migrations
                     b.ToTable("InvoicesDetail");
                 });
 
-            modelBuilder.Entity("device.Models.Laptop", b =>
+            modelBuilder.Entity("device.Entity.Laptop", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -115,7 +115,7 @@ namespace device.Migrations
                     b.ToTable("laptops");
                 });
 
-            modelBuilder.Entity("device.Models.LaptopDetail", b =>
+            modelBuilder.Entity("device.Entity.LaptopDetail", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -184,7 +184,7 @@ namespace device.Migrations
                     b.ToTable("laptopsDetail");
                 });
 
-            modelBuilder.Entity("device.Models.MonitorM", b =>
+            modelBuilder.Entity("device.Entity.MonitorM", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -208,7 +208,7 @@ namespace device.Migrations
                     b.ToTable("monitors");
                 });
 
-            modelBuilder.Entity("device.Models.Producer", b =>
+            modelBuilder.Entity("device.Entity.Producer", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -232,7 +232,7 @@ namespace device.Migrations
                     b.ToTable("producers");
                 });
 
-            modelBuilder.Entity("device.Models.Ram", b =>
+            modelBuilder.Entity("device.Entity.Ram", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -255,7 +255,7 @@ namespace device.Migrations
                     b.ToTable("ram");
                 });
 
-            modelBuilder.Entity("device.Models.Storage", b =>
+            modelBuilder.Entity("device.Entity.Storage", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -283,7 +283,7 @@ namespace device.Migrations
                     b.ToTable("storages");
                 });
 
-            modelBuilder.Entity("device.Models.Vga", b =>
+            modelBuilder.Entity("device.Entity.Vga", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -307,15 +307,15 @@ namespace device.Migrations
                     b.ToTable("vgas");
                 });
 
-            modelBuilder.Entity("device.Models.InvoiceDetail", b =>
+            modelBuilder.Entity("device.Entity.InvoiceDetail", b =>
                 {
-                    b.HasOne("device.Models.Invoice", "invoices")
+                    b.HasOne("device.Entity.Invoice", "invoices")
                         .WithMany("invoiceDetail")
                         .HasForeignKey("InvoiceId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("device.Models.Laptop", "Laptop")
+                    b.HasOne("device.Entity.Laptop", "Laptop")
                         .WithMany("InvoiceDetails")
                         .HasForeignKey("LaptopId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -326,9 +326,9 @@ namespace device.Migrations
                     b.Navigation("invoices");
                 });
 
-            modelBuilder.Entity("device.Models.Laptop", b =>
+            modelBuilder.Entity("device.Entity.Laptop", b =>
                 {
-                    b.HasOne("device.Models.Producer", "Producer")
+                    b.HasOne("device.Entity.Producer", "Producer")
                         .WithMany("Laptops")
                         .HasForeignKey("ProducerId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -337,27 +337,27 @@ namespace device.Migrations
                     b.Navigation("Producer");
                 });
 
-            modelBuilder.Entity("device.Models.LaptopDetail", b =>
+            modelBuilder.Entity("device.Entity.LaptopDetail", b =>
                 {
-                    b.HasOne("device.Models.Laptop", "Laptops")
+                    b.HasOne("device.Entity.Laptop", "Laptops")
                         .WithMany("LaptopDetail")
                         .HasForeignKey("LaptopId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("device.Models.MonitorM", "Monitor")
+                    b.HasOne("device.Entity.MonitorM", "Monitor")
                         .WithMany("LaptopDetail")
                         .HasForeignKey("MonitorId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("device.Models.Ram", "Rams")
+                    b.HasOne("device.Entity.Ram", "Rams")
                         .WithMany("LaptopDetail")
                         .HasForeignKey("RamId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("device.Models.Vga", "Vga")
+                    b.HasOne("device.Entity.Vga", "Vga")
                         .WithMany("laptopDetail")
                         .HasForeignKey("VgaId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -372,51 +372,51 @@ namespace device.Migrations
                     b.Navigation("Vga");
                 });
 
-            modelBuilder.Entity("device.Models.Storage", b =>
+            modelBuilder.Entity("device.Entity.Storage", b =>
                 {
-                    b.HasOne("device.Models.LaptopDetail", "LaptopDetail")
+                    b.HasOne("device.Entity.LaptopDetail", "LaptopDetail")
                         .WithOne("Storage")
-                        .HasForeignKey("device.Models.Storage", "LaptopDetailId")
+                        .HasForeignKey("device.Entity.Storage", "LaptopDetailId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("LaptopDetail");
                 });
 
-            modelBuilder.Entity("device.Models.Invoice", b =>
+            modelBuilder.Entity("device.Entity.Invoice", b =>
                 {
                     b.Navigation("invoiceDetail");
                 });
 
-            modelBuilder.Entity("device.Models.Laptop", b =>
+            modelBuilder.Entity("device.Entity.Laptop", b =>
                 {
                     b.Navigation("InvoiceDetails");
 
                     b.Navigation("LaptopDetail");
                 });
 
-            modelBuilder.Entity("device.Models.LaptopDetail", b =>
+            modelBuilder.Entity("device.Entity.LaptopDetail", b =>
                 {
                     b.Navigation("Storage")
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("device.Models.MonitorM", b =>
+            modelBuilder.Entity("device.Entity.MonitorM", b =>
                 {
                     b.Navigation("LaptopDetail");
                 });
 
-            modelBuilder.Entity("device.Models.Producer", b =>
+            modelBuilder.Entity("device.Entity.Producer", b =>
                 {
                     b.Navigation("Laptops");
                 });
 
-            modelBuilder.Entity("device.Models.Ram", b =>
+            modelBuilder.Entity("device.Entity.Ram", b =>
                 {
                     b.Navigation("LaptopDetail");
                 });
 
-            modelBuilder.Entity("device.Models.Vga", b =>
+            modelBuilder.Entity("device.Entity.Vga", b =>
                 {
                     b.Navigation("laptopDetail");
                 });

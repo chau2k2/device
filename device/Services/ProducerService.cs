@@ -1,8 +1,7 @@
 ﻿using device.Data;
 using device.DTO.Producer;
 using device.IRepository;
-using device.Models;
-using device.Validation;
+using device.Entity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -12,14 +11,12 @@ namespace device.Services
     {
         private readonly ILogger<ProducerService> _logger;
         private readonly IAllRepository<Producer> _repos;
-        private readonly ProducerValidate _validate;
         private readonly LaptopDbContext _context;
 
         public ProducerService(IAllRepository<Producer> repos, ILogger<ProducerService> logger, LaptopDbContext context)
         {
             this._logger = logger;
             _repos = repos;
-            _validate = new ProducerValidate();
             _context = context;
         }
 
@@ -59,11 +56,6 @@ namespace device.Services
             };
             try
             {
-                var validate = _validate.Validate(producer);
-                if (!validate.IsValid)
-                {
-                    throw new Exception(string.Join(", ", validate.Errors));
-                }
                 var result = await _repos.UpdateOneAsyns(producer);
                 return result;
             }
@@ -86,11 +78,6 @@ namespace device.Services
 
             try
             {
-                var validate = _validate.Validate(producer);
-                if (!validate.IsValid)
-                {
-                    throw new Exception(string.Join(", ", validate.Errors));
-                }
                     var result = await _repos.AddOneAsync(producer);
                 return result;
             }

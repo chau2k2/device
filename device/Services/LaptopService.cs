@@ -1,9 +1,8 @@
 ﻿using device.Data;
 using device.DTO.Laptop;
 using device.IRepository;
-using device.Models;
+using device.Entity;
 using device.Response;
-using device.Validation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -13,14 +12,13 @@ namespace device.Services
     {
         private readonly ILogger<LaptopService> _logger;
         private readonly IAllRepository<Laptop> _repos;
-        private readonly LaptopValidate _validate;
+ 
         private readonly LaptopDbContext _context;
 
         public LaptopService(IAllRepository<Laptop> repos, ILogger<LaptopService> logger, LaptopDbContext context)
         {
             this._logger = logger;
             _repos = repos;
-            _validate = new LaptopValidate();
             _context = context;
         }
         public async Task<IEnumerable<LaptopResponse>> GetAllLaptop(int page = 1, int pageSize = 5)
@@ -55,19 +53,27 @@ namespace device.Services
         }
         public async Task<ActionResult<Laptop>> GetLaptopById(int id)
         {
-            var result = await _repos.GetAsyncById(id);
-            if (result == null)
+            try
             {
-                return new NotFoundResult();
+                var result = await _repos.GetAsyncById(id);
+                if (result == null)
+                {
+                    return new NotFoundResult();
+                }
+                return result;
             }
-            return result;
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            
         }
         public async Task<ActionResult<Laptop>> Updatelaptop(int id, UpdateLaptop Upd)
         {
             var findId = await _repos.GetAsyncById(id);
             if (findId == null)
             {
-                throw new Exception("not found Producer");
+                throw new Exception("Not found Producer");
             }
 
             Laptop laptop = new Laptop()
@@ -80,11 +86,6 @@ namespace device.Services
             };
             try
             {
-                var validate = _validate.Validate(laptop);
-                if (!validate.IsValid)
-                {
-                    throw new Exception(string.Join(", ", validate.Errors));
-                }
                 var result = await _repos.UpdateOneAsyns(laptop);
                 return result;
             }
@@ -108,12 +109,7 @@ namespace device.Services
                     CostPrice = crl.CostPrice,
                     SoldPrice = crl.SoldPrice
                 };
-            
-                var validate = _validate.Validate(laptop);
-                if (!validate.IsValid)
-                {
-                    throw new Exception(string.Join(", ", validate.Errors));
-                }
+
                 var result = await _repos.AddOneAsync(laptop);
                 return result;
             }
@@ -129,7 +125,7 @@ namespace device.Services
                 var laptop = await _repos.GetAsyncById(id);
                 if (laptop == null)
                 {
-                    throw new Exception("not found Producer");
+                    throw new Exception("Not found Producer");
                 }
                 laptop.IsDelete = true;
                 var del = await _repos.DeleteOneAsync(laptop);
@@ -137,7 +133,7 @@ namespace device.Services
             }
             catch (Exception)
             {
-                throw new Exception("cant delete this producer");
+                throw new Exception("Can't delete this producer");
             }
         }
     }

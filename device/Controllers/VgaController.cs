@@ -1,7 +1,7 @@
 ﻿using device.Data;
 using device.DTO.Vga;
 using device.IRepository;
-using device.Models;
+using device.Entity;
 using device.Services;
 using Microsoft.AspNetCore.Mvc;
 

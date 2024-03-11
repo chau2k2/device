@@ -2,7 +2,7 @@
 using device.DTO.Ram;
 using device.DTO.Vga;
 using device.IRepository;
-using device.Models;
+using device.Entity;
 using device.Validation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;

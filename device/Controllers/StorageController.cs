@@ -1,129 +1,46 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using device.Data;
+using device.DTO.Storage;
+using device.IRepository;
+using device.Entity;
+using device.Services;
+using Microsoft.AspNetCore.Mvc;
 
 namespace device.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/storage")]
     [ApiController]
     public class StorageController : ControllerBase
     {
-        //private readonly LaptopDbContext _context;
-        //private readonly P<Storage> _service;
-        //private readonly StorageValidate _StorageValidate;
-        //public StorageController(ILogger<StorageController> logger, IAllService<Storage> service, LaptopDbContext context)
-        //{
-        //    _context = context;
-        //    _service = service;
-        //    _StorageValidate = new StorageValidate();
-        //}
-        //[HttpGet("GetAllInvoiceDetail")]
-        //public async Task<IActionResult> GetAllInvoiceDetail(int page = 1, int pageSize = 5)
-        //{
-        //    var result = await _service.GetAllInvoiceDetail(page, pageSize);
-        //    return Ok(result);
-        //}
-        //[HttpPut]
-        //public async Task<IActionResult> Update(int id, [FromBody] UpdateStorage USt)
-        //{
-        //    Storage storage = new Storage()
-        //    {
-        //        Id = id,
-        //        LaptopDetailId = USt.LaptopDetailId,
-        //        ImportNumber = USt.InserNumber,
-        //        SoldNumber = USt.SaleNumber
-        //    };
+        private readonly StorageService _service;
 
-        //    try
-        //    {
-        //        var validate = _StorageValidate.Validate(storage);
-        //        if (!validate.IsValid)
-        //        {
-        //            return BadRequest(validate.Errors);
-        //        }
-        //        var result = await _service.Update(id, storage);
-        //        return Ok(result);
-        //    }
-        //    catch (DbUpdateException ex)
-        //    {
-        //        if (ex.InnerException is Npgsql.PostgresException postgresException)
-        //        {
-        //            string message = postgresException.MessageText;
-        //            string constraintName = postgresException.ConstraintName;
-
-        //            return BadRequest($"Error: {message}. Constraint: {constraintName}");
-        //        }
-        //        return StatusCode(500, "An error occurred while processing your request. Please try again later.");
-        //    }
-        //}
-        //[HttpGet("Get/{id}")]
-        //public async Task<IActionResult> FindById(int id)
-        //{
-        //    var result = await _service.GetById(id);
-        //    if (result == null) { return NotFound(); }
-        //    return Ok(result);
-        //}
-        //[HttpPost]
-        //public async Task<IActionResult> Add([FromBody] CreateStorage Cst)
-        //{
-        //    var maxId = await _context.storages.MaxAsync(s => (int?)s.Id) ?? 0;
-        //    var nextId = maxId +1;
-
-        //    Storage storage = new Storage()
-        //    {
-        //        Id = nextId,
-        //        LaptopDetailId = Cst.LaptopDetailId,
-        //        ImportNumber = Cst.InserNumber,
-        //        SoldNumber = Cst.SaleNumber
-        //    };
-            
-        //    try
-        //    {
-        //        var validate = _StorageValidate.Validate(storage);
-        //        if (!validate.IsValid)
-        //        {
-        //            return BadRequest(validate.Errors);
-        //        }
-        //        var result = await _service.Add(storage);
-        //        return Ok(result);
-        //    }
-        //    catch (DbUpdateException ex)
-        //    {
-        //        if (ex.InnerException is Npgsql.PostgresException postgresException)
-        //        {
-        //            string message = postgresException.MessageText;
-        //            string constraintName = postgresException.ConstraintName;
-
-        //            return BadRequest($"Error: {message}. Constraint: {constraintName}");
-        //        }
-        //        return StatusCode(500, "An error occurred while processing your request. Please try again later.");
-        //    }
-        //}
-        //[HttpDelete]
-        //public async Task<IActionResult> delete(int id)
-        //{
-        //    try
-        //    {
-        //        var del = await _service.Delete(id);
-        //        if (del == null)
-        //        {
-        //            return NotFound();
-        //        }
-        //        return NoContent();
-        //    }
-        //    catch (DbUpdateException ex)
-        //    {
-        //        if (ex.InnerException is Npgsql.PostgresException postgresException)
-        //        {
-        //            string message = postgresException.MessageText;
-        //            string constraintName = postgresException.ConstraintName;
-
-        //            return BadRequest($"Error: {message}. Constraint: {constraintName}");
-        //        }
-        //        return StatusCode(500, "An error occurred while processing your request. Please try again later.");
-        //    }
-        //    catch (Exception)
-        //    {
-        //        return StatusCode(500, "An error occurred while processing your request. Please try again later.");
-        //    }
-        //}
+        public StorageController(ILogger<StorageService> logger, LaptopDbContext context, IAllRepository<Storage> repo)
+        {
+            _service = new StorageService(repo, logger, context);
+        }
+        [HttpGet("get-all")]
+        public async Task<IActionResult> GetAllInvoiceDetail(int page = 1, int pageSize = 5)
+        {
+            return Ok( await _service.GetAll(page, pageSize));
+        }
+        [HttpPut("do-update")]
+        public async Task<IActionResult> Update(int id, [FromBody] UpdateStorage USt)
+        {
+            return Ok(await _service.Update(id, USt));
+        }
+        [HttpGet("get-by-{id}")]
+        public async Task<IActionResult> FindById(int id)
+        {
+            return Ok(await _service.GetById(id));
+        }
+        [HttpPost("create")]
+        public async Task<IActionResult> Add([FromBody] CreateStorage Cst)
+        {
+            return Ok (await _service.Create(Cst));
+        }
+        [HttpDelete]
+        public async Task<IActionResult> delete(int id)
+        {
+            return Ok ( await _service.delete(id));
+        }
     }
 }

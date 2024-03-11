@@ -1,9 +1,8 @@
 ﻿using device.Data;
 using device.DTO.HDonDetail;
 using device.IRepository;
-using device.Models;
+using device.Entity;
 using device.Response;
-using device.Validation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -14,14 +13,12 @@ namespace device.Services
         private readonly ILogger<InvoiceDetailService> _logger;
         private readonly IAllRepository<InvoiceDetail> _repo;
         private readonly LaptopDbContext _context;
-        private readonly InvoiceDetailValidation _validate;
 
         public InvoiceDetailService(IAllRepository<InvoiceDetail> repo, ILogger<InvoiceDetailService> logger, LaptopDbContext context)
         {
             this._logger = logger;
             _repo = repo;
             _context = context;
-            _validate = new InvoiceDetailValidation(context);
         }
         public async Task<IEnumerable<InvoiceDetailResponse>> GetAllInvoiceDetail(int page = 1, int pageSize = 5)
         {
@@ -41,8 +38,8 @@ namespace device.Services
                     InvoiceDetailResponse.Add(new InvoiceDetailResponse()
                     {
                         Id = invoiceDetail.Id,
-                        IdLaptop = invoiceDetail.LaptopId,
-                        IdInvoice = invoiceDetail.InvoiceId,
+                        LaptopId = invoiceDetail.LaptopId,
+                        InvoiceId = invoiceDetail.InvoiceId,
                         LaptopName = invoiceDetail.Laptop.Name,
                         InvoiceNumber = invoiceDetail.invoices.InvoiceNumber,
                         Quantity = invoiceDetail.Quantity,
@@ -75,11 +72,6 @@ namespace device.Services
                 var laptop = _context.laptops.FirstOrDefault(l => l.Id == CID.IdLaptop);
                 if (laptop != null) { detail.Price = laptop.SoldPrice; }
 
-                var val = _validate.Validate(detail);
-                if (!val.IsValid)
-                { 
-                    throw new Exception(string.Join(", ", val.Errors)); 
-                }
                 var result = await _repo.AddOneAsync(detail); 
                 return result;
             }

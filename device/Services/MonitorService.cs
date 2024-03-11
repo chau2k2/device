@@ -1,8 +1,7 @@
 ﻿using device.Data;
 using device.DTO.Monitor;
 using device.IRepository;
-using device.Models;
-using device.Validation;
+using device.Entity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -12,14 +11,12 @@ namespace device.Services
     {
         private readonly ILogger<MonitorService> _logger;
         private readonly IAllRepository<MonitorM> _repos;
-        private readonly MonitorValidate _validate;
         private readonly LaptopDbContext _context;
 
         public MonitorService(IAllRepository<MonitorM> repos, ILogger<MonitorService> logger, LaptopDbContext context)
         {
             this._logger = logger;
             _repos = repos;
-            _validate = new MonitorValidate();
             _context = context;
         }
 
@@ -59,12 +56,6 @@ namespace device.Services
             };
             try
             {
-                var validate = _validate.Validate(monitor);
-                if (!validate.IsValid)
-                {
-                    throw new Exception(string.Join(", ", validate.Errors));
-                }
-
                 var result = await _repos.UpdateOneAsyns(monitor);
                 return result;
             }
@@ -87,11 +78,6 @@ namespace device.Services
 
             try
             {
-                var validate = _validate.Validate(monitor);
-                if (!validate.IsValid)
-                {
-                    throw new Exception(string.Join(", ", validate.Errors));
-                }
                 var result = await _repos.AddOneAsync(monitor);
                 return result;
             }

@@ -1,9 +1,7 @@
 ﻿using device.Data;
 using device.DTO.Storage;
-using device.DTO.Vga;
 using device.IRepository;
-using device.Models;
-using device.Validation;
+using device.Entity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -14,14 +12,12 @@ namespace device.Services
         private readonly ILogger<StorageService> _logger;
         private readonly IAllRepository<Storage> _repo;
         private readonly LaptopDbContext _context;
-        private readonly StorageValidate _validate;
 
         public StorageService(IAllRepository<Storage> repo, ILogger<StorageService> logger, LaptopDbContext context)
         {
             this._logger = logger;
             _repo = repo;
             _context = context;
-            _validate = new StorageValidate();
         }
         public async Task<IEnumerable<Storage>> GetAll(int page, int pageSize)
         {
@@ -59,11 +55,6 @@ namespace device.Services
 
             try
             {
-                var validate = _validate.Validate(storage);
-                if (!validate.IsValid)
-                {
-                    throw new Exception(string.Join(", ", validate.Errors));
-                }
                 var result = await _repo.AddOneAsync(storage);
                 return result;
             }
@@ -90,12 +81,6 @@ namespace device.Services
 
             try
             {
-                var validate = _validate.Validate(storage);
-                if (!validate.IsValid)
-                {
-                    throw new Exception(string.Join(",", validate.Errors));
-                }
-
                 var result = await _repo.UpdateOneAsyns(storage);
                 return result;
             }
@@ -111,7 +96,7 @@ namespace device.Services
                 var storage = await _repo.GetAsyncById(id);
                 if (storage == null)
                 {
-                    throw new Exception("not found Vga");
+                    throw new Exception("Not found Vga");
                 }
                 storage.IsDelete = true;
                 var del = await _repo.DeleteOneAsync(storage);
@@ -119,7 +104,7 @@ namespace device.Services
             }
             catch (Exception)
             {
-                throw new Exception("cant delete this vga");
+                throw new Exception("Can't delete this vga");
             }
         }
     }

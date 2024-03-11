@@ -1,4 +1,4 @@
-﻿using device.Models;
+﻿using device.Entity;
 using Microsoft.EntityFrameworkCore;
 
 namespace device.Data

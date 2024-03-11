@@ -1,8 +1,7 @@
 ﻿using device.Data;
 using device.DTO.HoaDon;
 using device.IRepository;
-using device.Models;
-using device.Validation;
+using device.Entity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -13,14 +12,12 @@ namespace device.Services
         private readonly ILogger<InvoiceService> _logger;
         private readonly IAllRepository<Invoice> _repo;
         private readonly LaptopDbContext _context;
-        private readonly InvoiceValidate _validate;
 
         public InvoiceService(IAllRepository<Invoice> repo, ILogger<InvoiceService> logger, LaptopDbContext context)
         {
             this._logger = logger;
             _repo = repo;
             _context = context;
-            _validate = new InvoiceValidate();
         }
         public async Task<IEnumerable<Invoice>> GetAll(int page, int pageSize)
         {
@@ -70,11 +67,6 @@ namespace device.Services
 
             try
             {
-                var validate = _validate.Validate(invoice);
-                if (!validate.IsValid)
-                {
-                    throw new Exception(string.Join(",", validate.Errors));
-                }
                 var result = await _repo.AddOneAsync(invoice);
                 return result;
             }
@@ -95,11 +87,6 @@ namespace device.Services
 
             try
             {
-                var validate = _validate.Validate(invoice);
-                if (!validate.IsValid)
-                {
-                    throw new Exception(string.Join(",", validate.Errors));
-                }
                 var result = await _repo.UpdateOneAsyns(invoice);
                 return result;
             }
@@ -115,7 +102,7 @@ namespace device.Services
                 var invoice = await _repo.GetAsyncById(id);
                 if (invoice == null)
                 {
-                    throw new Exception("not found invoice");
+                    throw new Exception("Not found invoice");
                 }
                 invoice.IsDelete = true;
                 var del = await _repo.DeleteOneAsync(invoice);
@@ -123,7 +110,7 @@ namespace device.Services
             }
             catch (Exception)
             {
-                throw new Exception("cant delete this invoice");
+                throw new Exception("Can't delete this invoice");
             }
         }
     }
