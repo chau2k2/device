@@ -15,6 +15,7 @@ namespace device.Repository
             _dbContext = dbContext;
             Entities = _dbContext.Set<T>();
         }
+
         public async Task<T> AddOneAsync(T entity)
         {
             await this.Entities.AddAsync(entity);

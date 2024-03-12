@@ -1,13 +1,14 @@
 ﻿using device.Data;
-using device.DTO.Ram;
 using device.IRepository;
 using device.Entity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using device.ModelResponse;
+using device.IServices;
 
 namespace device.Services
 {
-    public class RamService
+    public class RamService : IRamService
     {
         private readonly ILogger<RamService> _logger;
         private readonly IAllRepository<Ram> _repo;
@@ -40,7 +41,7 @@ namespace device.Services
             }
             return result;
         }
-        public async Task<ActionResult<Ram>> Create (CreateRam CrR)
+        public async Task<ActionResult<Ram>> Create (RamResponse CrR)
         {
             int maxId = await _context.ram.MaxAsync(r => (int?)r.Id) ?? 0;
             int nextId = maxId + 1;
@@ -62,7 +63,7 @@ namespace device.Services
                 throw ex;
             }
         }
-        public async Task<ActionResult<Ram>> Update (int id, UpdateRam UpR)
+        public async Task<ActionResult<Ram>> Update (int id, RamResponse UpR)
         {
             var findId = await _context.ram.FindAsync(id);
             if (findId == null)

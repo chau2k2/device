@@ -1,9 +1,6 @@
-﻿using device.Data;
-using device.DTO.Ram;
-using device.IRepository;
-using device.Entity;
-using device.Services;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
+using device.ModelResponse;
+using device.IServices;
 
 namespace device.Controllers
 {
@@ -11,11 +8,11 @@ namespace device.Controllers
     [ApiController]
     public class RamController : ControllerBase
     {
-        private readonly RamService _service;
+        private readonly IRamService _service;
 
-        public RamController(ILogger<RamService> logger, LaptopDbContext context, IAllRepository<Ram> repo)
+        public RamController(IRamService service)
         {
-            _service = new RamService(repo, logger, context);
+            _service = service;
         }
 
         [HttpGet("get-all")]
@@ -25,7 +22,7 @@ namespace device.Controllers
         }
 
         [HttpPut("do-update")]
-        public async Task<IActionResult> Update(int id, [FromBody] UpdateRam udR)
+        public async Task<IActionResult> Update(int id, [FromBody] RamResponse udR)
         {
             return Ok (await _service.Update(id, udR));
         }
@@ -37,12 +34,12 @@ namespace device.Controllers
         }
 
         [HttpPost("create")]
-        public async Task<IActionResult> Create([FromBody] CreateRam CrR)
+        public async Task<IActionResult> Create([FromBody] RamResponse CrR)
         {
             return Ok (await _service.Create(CrR)); 
         }
 
-        [HttpDelete]
+        [HttpDelete("delete")]
         public async Task<IActionResult> delete(int id)
         {
             return Ok (await _service.delete(id));

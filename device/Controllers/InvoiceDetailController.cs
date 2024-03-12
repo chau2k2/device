@@ -1,9 +1,9 @@
 ﻿using device.Data;
-using device.DTO.HDonDetail;
 using device.IRepository;
 using device.Entity;
 using device.Services;
 using Microsoft.AspNetCore.Mvc;
+using device.Response;
 
 namespace device.Controllers
 {
@@ -29,7 +29,7 @@ namespace device.Controllers
             return Ok(await _service.findInvoiceDetailByINumber(InvoiceNum));
         }
         [HttpPost("do-create")]
-        public async Task<IActionResult> CreateInvoiceDetail(CreateInvoiceDetail CID)
+        public async Task<IActionResult> CreateInvoiceDetail(InvoiceDetailResponse CID)
         {
             return Ok ( await _service.CreateInvoiceDetail(CID));
         }

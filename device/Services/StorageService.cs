@@ -1,13 +1,14 @@
 ﻿using device.Data;
-using device.DTO.Storage;
 using device.IRepository;
 using device.Entity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using device.ModelResponse;
+using device.IServices;
 
 namespace device.Services
 {
-    public class StorageService
+    public class StorageService : IStorageService
     {
         private readonly ILogger<StorageService> _logger;
         private readonly IAllRepository<Storage> _repo;
@@ -40,7 +41,7 @@ namespace device.Services
             }
             return result;
         }
-        public async Task<ActionResult<Storage>> Create(CreateStorage CrS)
+        public async Task<ActionResult<Storage>> Create(StorageResponse CrS)
         {
             int maxId = await _context.storages.MaxAsync(r => (int?)r.Id) ?? 0;
             int nextId = maxId + 1;
@@ -48,9 +49,9 @@ namespace device.Services
             Storage storage = new Storage()
             {
                 Id = nextId,
-                LaptopDetailId = CrS.idDetail,
-                ImportNumber = CrS.InserNumber,
-                SoldNumber = CrS.SaleNumber
+                LaptopDetailId = CrS.LaptopDetailId,
+                ImportNumber = CrS.ImportNumber,
+                SoldNumber = CrS.SoldNumber
             };
 
             try
@@ -63,7 +64,7 @@ namespace device.Services
                 throw ex;
             }
         }
-        public async Task<ActionResult<Storage>> Update(int id, UpdateStorage UpS)
+        public async Task<ActionResult<Storage>> Update(int id, StorageResponse UpS)
         {
             var findId = await _context.ram.FindAsync(id);
             if (findId == null)
@@ -74,9 +75,9 @@ namespace device.Services
             Storage storage = new Storage()
             {
                 Id = id,
-                LaptopDetailId = UpS.idDetail,
-                ImportNumber = UpS.InserNumber,
-                SoldNumber = UpS.SaleNumber
+                LaptopDetailId = UpS.LaptopDetailId,
+                ImportNumber = UpS.ImportNumber,
+                SoldNumber = UpS.SoldNumber
             };
 
             try

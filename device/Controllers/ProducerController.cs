@@ -1,9 +1,10 @@
 ﻿using device.Data;
-using device.DTO.Producer;
 using device.IRepository;
 using device.Entity;
 using device.Services;
 using Microsoft.AspNetCore.Mvc;
+using device.ModelResponse;
+using device.IServices;
 
 namespace device.Controllers
 {
@@ -11,11 +12,11 @@ namespace device.Controllers
     [ApiController]
     public class ProducerController : ControllerBase
     {
-        private readonly ProducerService _service;
+        private readonly IProducerService _service;
 
-        public ProducerController( LaptopDbContext context, IAllRepository<Producer> repos, ILogger<ProducerService> logger)
+        public ProducerController( IProducerService service)
         {
-            _service = new ProducerService(repos,logger, context);
+            _service = service;
         }
 
         [HttpGet("get-all")]
@@ -31,7 +32,7 @@ namespace device.Controllers
         }
 
         [HttpPut("do-update")]
-        public async Task< ActionResult> Update(int id, [FromBody] UpdateProducer Upd)
+        public async Task< ActionResult> Update(int id, [FromBody] ProducerResponse Upd)
         {
             if (!ModelState.IsValid)
             {
@@ -41,7 +42,7 @@ namespace device.Controllers
         }
 
         [HttpPost("create")]
-        public async Task<ActionResult> CreateProducer([FromBody]CreateProducer cpr)
+        public async Task<ActionResult> CreateProducer([FromBody] ProducerResponse cpr)
         {
             if (!ModelState.IsValid)
             {

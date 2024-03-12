@@ -1,13 +1,14 @@
 ﻿using device.Data;
-using device.DTO.Producer;
 using device.IRepository;
 using device.Entity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using device.ModelResponse;
+using device.IServices;
 
 namespace device.Services
 {
-    public class ProducerService 
+    public class ProducerService : IProducerService
     {
         private readonly ILogger<ProducerService> _logger;
         private readonly IAllRepository<Producer> _repos;
@@ -41,12 +42,12 @@ namespace device.Services
             }
             return result;
         }
-        public async Task<ActionResult<Producer>> UpdateProducer (int id, UpdateProducer Upd)
+        public async Task<ActionResult<Producer>> UpdateProducer (int id, ProducerResponse Upd)
         {
             var findId = await _repos.GetAsyncById(id);
             if (findId == null)
             {
-                throw new Exception("not found Producer");
+                throw new Exception("Not found Producer");
             }
             Producer producer = new Producer()
             {
@@ -64,7 +65,7 @@ namespace device.Services
                 throw ex;
             }
         }
-        public async Task<ActionResult<Producer>> CreateProducer (CreateProducer cpr)
+        public async Task<ActionResult<Producer>> CreateProducer (ProducerResponse cpr)
         {
             int maxId = await _context.producers.MaxAsync(p => (int?)p.Id) ?? 0;
             int next = maxId + 1;
@@ -93,7 +94,7 @@ namespace device.Services
                 var producer = await _repos.GetAsyncById(id);
                 if (producer == null)
                 {
-                    throw new Exception("not found Producer");
+                    throw new Exception("Not found Producer");
                 }
                 producer.IsDelete = true;
                 var del = await _repos.DeleteOneAsync(producer);
@@ -101,7 +102,7 @@ namespace device.Services
             }
             catch (Exception)
             {
-                throw new Exception("cant delete this producer");
+                throw new Exception("Can't delete this producer");
             }
         }
     }

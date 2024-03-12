@@ -1,9 +1,9 @@
 ﻿using device.Data;
-using device.DTO.Laptop;
 using device.IRepository;
 using device.Entity;
 using device.Services;
 using Microsoft.AspNetCore.Mvc;
+using device.Response;
 
 namespace device.Controllers
 {
@@ -31,13 +31,13 @@ namespace device.Controllers
         }
 
         [HttpPost("create-laptop")]
-        public async Task<IActionResult> Create([FromBody] CreateLaptop CrL)
+        public async Task<IActionResult> Create([FromBody] LaptopResponse CrL)
         {
            return Ok(await _service.CreateLaptop(CrL));
         }
 
         [HttpPost("update-id")]
-        public async Task<IActionResult> Update(int id,[FromBody] UpdateLaptop upl)
+        public async Task<IActionResult> Update(int id,[FromBody] LaptopResponse upl)
         {
             return Ok(await _service.Updatelaptop(id, upl));
         }

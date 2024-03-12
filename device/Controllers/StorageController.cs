@@ -1,9 +1,6 @@
-﻿using device.Data;
-using device.DTO.Storage;
-using device.IRepository;
-using device.Entity;
-using device.Services;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
+using device.ModelResponse;
+using device.IServices;
 
 namespace device.Controllers
 {
@@ -11,11 +8,11 @@ namespace device.Controllers
     [ApiController]
     public class StorageController : ControllerBase
     {
-        private readonly StorageService _service;
+        private readonly IStorageService _service;
 
-        public StorageController(ILogger<StorageService> logger, LaptopDbContext context, IAllRepository<Storage> repo)
+        public StorageController(IStorageService storageService)
         {
-            _service = new StorageService(repo, logger, context);
+            _service = storageService;
         }
         [HttpGet("get-all")]
         public async Task<IActionResult> GetAllInvoiceDetail(int page = 1, int pageSize = 5)
@@ -23,7 +20,7 @@ namespace device.Controllers
             return Ok( await _service.GetAll(page, pageSize));
         }
         [HttpPut("do-update")]
-        public async Task<IActionResult> Update(int id, [FromBody] UpdateStorage USt)
+        public async Task<IActionResult> Update(int id, [FromBody] StorageResponse USt)
         {
             return Ok(await _service.Update(id, USt));
         }
@@ -33,11 +30,11 @@ namespace device.Controllers
             return Ok(await _service.GetById(id));
         }
         [HttpPost("create")]
-        public async Task<IActionResult> Add([FromBody] CreateStorage Cst)
+        public async Task<IActionResult> Add([FromBody] StorageResponse Cst)
         {
             return Ok (await _service.Create(Cst));
         }
-        [HttpDelete]
+        [HttpDelete("delete-vga")]
         public async Task<IActionResult> delete(int id)
         {
             return Ok ( await _service.delete(id));

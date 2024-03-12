@@ -1,9 +1,9 @@
 ﻿using device.Data;
-using device.DTO.HoaDon;
 using device.IRepository;
 using device.Entity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using device.ModelResponse;
 
 namespace device.Services
 {
@@ -40,7 +40,7 @@ namespace device.Services
             }
             return findNum;
         }
-        public async Task<ActionResult<Invoice>> Create(CreateInvoice CrI)
+        public async Task<ActionResult<Invoice>> Create(InvoiceResponse CrI)
         {
             int maxId = await _context.invoices.MaxAsync(e => (int?)e.Id) ?? 0;
             int nextId = maxId + 1;
@@ -75,7 +75,7 @@ namespace device.Services
                 throw ex;
             }
         }
-        public async Task<ActionResult<Invoice>> Update(int id, UpdateInvoice UpI)
+        public async Task<ActionResult<Invoice>> Update(int id, InvoiceResponse UpI)
         {
             Invoice invoice = new Invoice()
             {

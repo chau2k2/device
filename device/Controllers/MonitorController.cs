@@ -1,9 +1,6 @@
-﻿using device.Data;
-using device.DTO.Monitor;
-using device.IRepository;
-using device.Entity;
-using device.Services;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
+using device.ModelResponse;
+using device.IServices;
 
 namespace device.Controllers
 {
@@ -11,10 +8,10 @@ namespace device.Controllers
     [ApiController]
     public class MonitorController : ControllerBase
     {
-        private readonly MonitorService _service;
-        public MonitorController(ILogger<MonitorService> logger, LaptopDbContext context, IAllRepository<MonitorM> repos)
+        private readonly IMonitorService _service;
+        public MonitorController(IMonitorService service)
         {
-            _service = new MonitorService(repos, logger, context);
+            _service = service;
         }
 
         [HttpGet("get-all")]
@@ -24,7 +21,7 @@ namespace device.Controllers
         }
 
         [HttpPut("update")]
-        public async Task<IActionResult> Update(int id, [FromBody] UpdateMonitor UMn)
+        public async Task<IActionResult> Update(int id, [FromBody] MonitorResponse UMn)
         {
             return Ok (await _service.Update(id, UMn));
         }
@@ -36,7 +33,7 @@ namespace device.Controllers
         }
 
         [HttpPost("create-monitor")]
-        public async Task<IActionResult> Create([FromBody] CreateMonitor CMn)
+        public async Task<IActionResult> Create([FromBody] MonitorResponse CMn)
         {
             return Ok (await _service.Create(CMn));
         }

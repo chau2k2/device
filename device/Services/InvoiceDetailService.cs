@@ -1,5 +1,4 @@
 ﻿using device.Data;
-using device.DTO.HDonDetail;
 using device.IRepository;
 using device.Entity;
 using device.Response;
@@ -54,7 +53,7 @@ namespace device.Services
             }
         }
 
-        public async Task<ActionResult<InvoiceDetail>> CreateInvoiceDetail(CreateInvoiceDetail CID)
+        public async Task<ActionResult<InvoiceDetail>> CreateInvoiceDetail(InvoiceDetailResponse CID)
         {
             try
             {
@@ -64,12 +63,12 @@ namespace device.Services
                 InvoiceDetail detail = new InvoiceDetail()
                 {
                     Id = nextId,
-                    LaptopId = CID.IdLaptop,
-                    InvoiceId = CID.IdInvoice,
+                    LaptopId = CID.LaptopId,
+                    InvoiceId = CID.InvoiceId,
                     Quantity = CID.Quantity
                 };
 
-                var laptop = _context.laptops.FirstOrDefault(l => l.Id == CID.IdLaptop);
+                var laptop = _context.laptops.FirstOrDefault(l => l.Id == CID.LaptopId);
                 if (laptop != null) { detail.Price = laptop.SoldPrice; }
 
                 var result = await _repo.AddOneAsync(detail); 
@@ -88,7 +87,7 @@ namespace device.Services
                 var invoiceDetail = await _repo.GetAsyncById(id);
                 if (invoiceDetail == null)
                 {
-                    throw new Exception("not found this Invoice Detail");
+                    throw new Exception("Not found this Invoice Detail");
                 }
                 invoiceDetail.IsDelete = true;
                 return await _repo.UpdateOneAsyns(invoiceDetail);

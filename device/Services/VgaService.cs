@@ -1,27 +1,24 @@
 ﻿using device.Data;
-using device.DTO.Ram;
-using device.DTO.Vga;
 using device.IRepository;
 using device.Entity;
-using device.Validation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using device.ModelResponse;
+using device.IServices;
 
 namespace device.Services
 {
-    public class VgaService
+    public class VgaService : IVgaService
     {
         private readonly ILogger<VgaService> _logger;
         private readonly IAllRepository<Vga> _repo;
         private readonly LaptopDbContext _context;
-        private readonly VgaValidate _validate;
 
         public VgaService(IAllRepository<Vga> repo, ILogger<VgaService> logger, LaptopDbContext context)
         {
             this._logger = logger;
             _repo = repo;
             _context = context;
-            _validate = new VgaValidate();
         }
         public async Task<IEnumerable<Vga>> GetAll(int page, int pageSize)
         {
@@ -44,7 +41,7 @@ namespace device.Services
             }
             return result;
         }
-        public async Task<ActionResult<Vga>> Create(CreateVga CrV)
+        public async Task<ActionResult<Vga>> Create(VgaResponse CrV)
         {
             int maxId = await _context.vgas.MaxAsync(r => (int?)r.Id) ?? 0;
             int nextId = maxId + 1;
@@ -58,11 +55,6 @@ namespace device.Services
 
             try
             {
-                var validate = _validate.Validate(vga);
-                if (!validate.IsValid)
-                {
-                    throw new Exception(string.Join(", ", validate.Errors));
-                }
                 var result = await _repo.AddOneAsync(vga);
                 return result;
             }
@@ -71,7 +63,7 @@ namespace device.Services
                 throw ex;
             }
         }
-        public async Task<ActionResult<Vga>> Update(int id, UpdateVga UpV)
+        public async Task<ActionResult<Vga>> Update(int id, VgaResponse UpV)
         {
             var findId = await _context.ram.FindAsync(id);
             if (findId == null)
@@ -88,12 +80,6 @@ namespace device.Services
 
             try
             {
-                var validate = _validate.Validate(vga);
-                if (!validate.IsValid)
-                {
-                    throw new Exception(string.Join(",", validate.Errors));
-                }
-
                 var result = await _repo.UpdateOneAsyns(vga);
                 return result;
             }
@@ -109,7 +95,7 @@ namespace device.Services
                 var vga = await _repo.GetAsyncById(id);
                 if (vga == null)
                 {
-                    throw new Exception("not found Vga");
+                    throw new Exception("Not found Vga");
                 }
                 vga.IsDelete = true;
                 var del = await _repo.UpdateOneAsyns(vga);
@@ -117,7 +103,7 @@ namespace device.Services
             }
             catch (Exception)
             {
-                throw new Exception("cant delete this vga");
+                throw new Exception("Can't delete this vga");
             }
         }
     }

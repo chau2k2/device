@@ -1,9 +1,9 @@
 ﻿using device.Data;
-using device.DTO.HoaDon;
 using device.IRepository;
 using device.Entity;
 using device.Services;
 using Microsoft.AspNetCore.Mvc;
+using device.ModelResponse;
 
 namespace device.Controllers
 {
@@ -31,13 +31,13 @@ namespace device.Controllers
         }
 
         [HttpPost("do-create")]
-        public async Task<IActionResult> CreateInvoice([FromBody] CreateInvoice civ)
+        public async Task<IActionResult> CreateInvoice([FromBody] InvoiceResponse civ)
         {
             return Ok ( await _service.Create(civ));
         }
 
         [HttpPut("do-update")]
-        public async Task<IActionResult> UpdateInvoice(int id, UpdateInvoice upI)
+        public async Task<IActionResult> UpdateInvoice(int id, InvoiceResponse upI)
         {
             return Ok (await _service.Update(id, upI));
         }

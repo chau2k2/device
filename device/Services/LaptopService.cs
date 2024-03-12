@@ -1,5 +1,4 @@
 ﻿using device.Data;
-using device.DTO.Laptop;
 using device.IRepository;
 using device.Entity;
 using device.Response;
@@ -21,10 +20,13 @@ namespace device.Services
             _repos = repos;
             _context = context;
         }
-        public async Task<IEnumerable<LaptopResponse>> GetAllLaptop(int page = 1, int pageSize = 5)
+        public async Task<TPaging<LaptopResponse>> GetAllLaptop(int page = 1, int pageSize = 5)
         {
             try
             {
+                int totalCount = await _context.Set<Laptop>().CountAsync();
+                int totalPage = (int)Math.Ceiling((double)totalCount / pageSize);
+
                 var result = await _context.Set<Laptop>()!
                     .Include(s => s.Producer)
                     .Where(c => c.IsDelete == false)
@@ -39,12 +41,19 @@ namespace device.Services
                     {
                         Id = laptop.Id,
                         Name = laptop.Name,
-                        Profit = laptop.SoldPrice - laptop.CostPrice,
                         ProducerName = laptop.Producer!.Name,
-                        CostPrice = laptop.CostPrice
+                        CostPrice = laptop.CostPrice,
+                        SoldPrice = laptop.SoldPrice,
+                        ProducerId = laptop.ProducerId
                     });
                 }
-                return laptopResponse;
+
+                return new TPaging<LaptopResponse>
+                {
+                    numberPage = page,
+                    totalRecord = totalCount,
+                    Data = laptopResponse
+                };
             }
             catch (Exception ex)
             {
@@ -68,7 +77,7 @@ namespace device.Services
             }
             
         }
-        public async Task<ActionResult<Laptop>> Updatelaptop(int id, UpdateLaptop Upd)
+        public async Task<ActionResult<Laptop>> Updatelaptop(int id, LaptopResponse Upd)
         {
             var findId = await _repos.GetAsyncById(id);
             if (findId == null)
@@ -80,7 +89,7 @@ namespace device.Services
             {
                 Id = id,
                 Name = Upd.Name,
-                ProducerId = Upd.IdProducer,
+                ProducerId = Upd.ProducerId,
                 CostPrice = Upd.CostPrice,
                 SoldPrice = Upd.SoldPrice
             };
@@ -94,7 +103,7 @@ namespace device.Services
                 throw ex;
             }
         }
-        public async Task<ActionResult<Laptop>> CreateLaptop(CreateLaptop crl)
+        public async Task<ActionResult<Laptop>> CreateLaptop(LaptopResponse crl)
         {
             try
             {
@@ -105,7 +114,7 @@ namespace device.Services
                 {
                     Id = next,
                     Name = crl.Name,
-                    ProducerId = crl.IdProducer,
+                    ProducerId = crl.ProducerId,
                     CostPrice = crl.CostPrice,
                     SoldPrice = crl.SoldPrice
                 };

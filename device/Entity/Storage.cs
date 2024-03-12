@@ -22,14 +22,14 @@ namespace device.Entity
         [Range(0, 1000, ErrorMessage ="nhap gia tri trong khoang 0 den 1000")]
         public int ImportNumber { get; set; }
         /// <summary>
+        /// khóa ngoại liên kết với bảng Laptop Detail
+        /// </summary>
+        public int LaptopDetailId { get; set; }
+        /// <summary>
         /// trường xóa
         /// </summary>
         [JsonIgnore] 
         public bool IsDelete { get; set; }
-        /// <summary>
-        /// khóa ngoại liên kết với bảng Laptop Detail
-        /// </summary>
-        public int LaptopDetailId { get; set; }
         /// <summary>
         /// liên kết với bảng laptop detail
         /// </summary>

@@ -1,21 +1,19 @@
-﻿using device.Data;
-using device.DTO.Vga;
-using device.IRepository;
-using device.Entity;
-using device.Services;
+﻿using device.Entity;
 using Microsoft.AspNetCore.Mvc;
+using device.ModelResponse;
+using device.IServices;
 
 namespace device.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/vga")]
     [ApiController]
     public class VgaController : ControllerBase
     {
-        private readonly VgaService _service;
+        private readonly IVgaService _service;
 
-        public VgaController(ILogger<VgaService> logger, IAllRepository<Vga> repo, LaptopDbContext context) 
+        public VgaController(IVgaService vgaService) 
         {
-            _service = new VgaService(repo,logger, context);
+            _service = vgaService;
         }
 
         [HttpGet("get_all")]
@@ -25,13 +23,13 @@ namespace device.Controllers
         }
 
         [HttpPost("do_create")]
-        public async Task<ActionResult<Vga>> CreateVga(CreateVga vgs)
+        public async Task<ActionResult<Vga>> CreateVga(VgaResponse vgs)
         {
             return Ok(await _service.Create(vgs));
         }
 
         [HttpPut("do_update")]
-        public async Task<ActionResult<Vga>> UpdateVga(int id, UpdateVga Uvga)
+        public async Task<ActionResult<Vga>> UpdateVga(int id, VgaResponse Uvga)
         {
             return Ok (await _service .Update(id, Uvga));
         }
