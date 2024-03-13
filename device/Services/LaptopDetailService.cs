@@ -4,10 +4,11 @@ using device.Entity;
 using device.Response;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using device.IServices;
 
 namespace device.Services
 {
-    public class LaptopDetailService
+    public class LaptopDetailService : ILaptopDetailService
     {
         private readonly ILogger<LaptopDetailService> _logger;
         private readonly IAllRepository<LaptopDetail> _repos;
@@ -20,10 +21,13 @@ namespace device.Services
             _context = context;
         }
 
-        public async Task<IEnumerable<LaptopDetailResponse>> GetAll(int page, int pageSize)
+        public async Task<TPaging<LaptopDetailResponse>> GetAll(int page, int pageSize)
         {
             try
             {
+                int totalCount = await _context.Set<LaptopDetail>().CountAsync();
+                int totalPage = (int)Math.Ceiling((double)totalCount / pageSize);
+
                 var result = await _context.Set<LaptopDetail>()!
                     .Include(l => l.Laptops)
                     .Include(r => r.Rams)
@@ -56,7 +60,12 @@ namespace device.Services
                         IsDelete = laptopDetail.IsDelete
                     }) ;
                 }
-                return laptopDetailResponse;
+                return new TPaging<LaptopDetailResponse>
+                {
+                    numberPage = page,
+                    totalRecord = totalCount,
+                    Data = laptopDetailResponse
+                };
             }
             catch (Exception ex)
             {

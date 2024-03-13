@@ -4,10 +4,11 @@ using device.Entity;
 using device.Response;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using device.IServices;
 
 namespace device.Services
 {
-    public class LaptopService
+    public class LaptopService :ILaptopService
     {
         private readonly ILogger<LaptopService> _logger;
         private readonly IAllRepository<Laptop> _repos;
@@ -20,7 +21,7 @@ namespace device.Services
             _repos = repos;
             _context = context;
         }
-        public async Task<TPaging<LaptopResponse>> GetAllLaptop(int page = 1, int pageSize = 5)
+        public async Task<TPaging<LaptopResponse>> GetAllLaptop(int page, int pageSize)
         {
             try
             {

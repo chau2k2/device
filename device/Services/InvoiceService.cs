@@ -4,10 +4,11 @@ using device.Entity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using device.ModelResponse;
+using device.IServices;
 
 namespace device.Services
 {
-    public class InvoiceService
+    public class InvoiceService : IInvoiceService
     {
         private readonly ILogger<InvoiceService> _logger;
         private readonly IAllRepository<Invoice> _repo;

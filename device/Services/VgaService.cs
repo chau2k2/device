@@ -43,18 +43,18 @@ namespace device.Services
         }
         public async Task<ActionResult<Vga>> Create(VgaResponse CrV)
         {
-            int maxId = await _context.vgas.MaxAsync(r => (int?)r.Id) ?? 0;
-            int nextId = maxId + 1;
-
-            Vga vga = new Vga()
-            {
-                Id = nextId,
-                Name = CrV.Name,
-                Price = CrV.Price
-            };
-
             try
             {
+                int maxId = await _context.vgas.MaxAsync(r => (int?)r.Id) ?? 0;
+                int nextId = maxId + 1;
+
+                Vga vga = new Vga()
+                {
+                    Id = nextId,
+                    Name = CrV.Name,
+                    Price = CrV.Price
+                };
+
                 var result = await _repo.AddOneAsync(vga);
                 return result;
             }

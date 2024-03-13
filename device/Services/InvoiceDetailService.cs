@@ -4,10 +4,11 @@ using device.Entity;
 using device.Response;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using device.IServices;
 
 namespace device.Services
 {
-    public class InvoiceDetailService
+    public class InvoiceDetailService : IInvoiceDetailService
     {
         private readonly ILogger<InvoiceDetailService> _logger;
         private readonly IAllRepository<InvoiceDetail> _repo;
@@ -19,7 +20,7 @@ namespace device.Services
             _repo = repo;
             _context = context;
         }
-        public async Task<IEnumerable<InvoiceDetailResponse>> GetAllInvoiceDetail(int page = 1, int pageSize = 5)
+        public async Task<IEnumerable<InvoiceDetailResponse>> GetAllInvoiceDetail(int page, int pageSize)
         {
             try
             {
@@ -98,7 +99,7 @@ namespace device.Services
             }
         }
 
-        public async Task< IEnumerable<InvoiceDetail>> findInvoiceDetailByINumber (string invoiceNumber)
+        public async Task<IEnumerable<InvoiceDetail>> findInvoiceDetailByINumber (string invoiceNumber)
         {
             try
             {

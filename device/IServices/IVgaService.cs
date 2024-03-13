@@ -1,5 +1,6 @@
 ﻿using device.Entity;
 using device.ModelResponse;
+using device.Response;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 

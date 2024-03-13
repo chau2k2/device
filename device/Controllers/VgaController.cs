@@ -39,5 +39,10 @@ namespace device.Controllers
         {
             return Ok (await _service.delete(id));
         }
+        [HttpGet("get-by-id")]
+        public async Task<ActionResult<Vga>> GetById (int id)
+        {
+            return 
+        }
     }
 }
