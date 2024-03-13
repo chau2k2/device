@@ -8,8 +8,8 @@ namespace device.IServices
     public interface IInvoiceDetailService
     {
         Task<TPaging<InvoiceDetailResponse>> GetAllInvoiceDetail(int page, int pageSize);
-        Task<ActionResult<InvoiceDetail>> CreateInvoiceDetail(InvoiceDetailResponse CID);
-        Task<ActionResult<InvoiceDetail>> Delete(int id);
-        Task<IEnumerable<InvoiceDetail>> findInvoiceDetailByINumber(string invoiceNumber);
+        Task<ActionResult<BaseResponse<InvoiceDetail>>> CreateInvoiceDetail(InvoiceDetailResponse CID);
+        Task<ActionResult<BaseResponse<InvoiceDetail>>> Delete(int id);
+        Task<BaseResponse<InvoiceDetailResponse>> findInvoiceDetailByINumber(string invoiceNumber);
     }
 }

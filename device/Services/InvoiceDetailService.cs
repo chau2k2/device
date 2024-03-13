@@ -5,6 +5,7 @@ using device.Response;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using device.IServices;
+using System.Xml.Schema;
 
 namespace device.Services
 {
@@ -22,7 +23,7 @@ namespace device.Services
         {
             try
             {
-                int totalCount = await _context.Set<InvoiceDetail>().CountAsync();  
+                int totalCount = await _context.Set<InvoiceDetail>().CountAsync(I => I.IsDelete == false);  
 
                 var result = await _context.Set<InvoiceDetail>()!
                     .Include(l => l.Laptop)
@@ -43,7 +44,8 @@ namespace device.Services
                         LaptopName = invoiceDetail.Laptop.Name,
                         InvoiceNumber = invoiceDetail.invoices.InvoiceNumber,
                         Quantity = invoiceDetail.Quantity,
-                        Price = invoiceDetail.Price
+                        Price = invoiceDetail.Price,
+                        IsDelete = invoiceDetail.IsDelete
                     });
                 }
 
@@ -122,19 +124,35 @@ namespace device.Services
             }
         }
 
-        public async Task<ActionResult<BaseResponse<InvoiceDetail>>> findInvoiceDetailByINumber (string invoiceNumber)
+        public async Task<TPaging<InvoiceDetailResponse>> findInvoiceDetailByINumber (string invoiceNumber)
         {
             try
             {
-                var invoiceDetail = await _context.InvoicesDetail
+                var invoiceDetail = await _context.Set<InvoiceDetail>()
                     .Include(i => i.invoices)
-                    .Where(i => i.invoices.InvoiceNumber == invoiceNumber)
+                    .Where(i => i.IsDelete == false)
                     .ToListAsync();
 
-                return new BaseResponse<InvoiceDetail>
+                List<InvoiceDetailResponse> InvoiceDetail = new List<InvoiceDetailResponse>();
+
+                foreach (var detail in invoiceDetail)
                 {
-                    success = true,
-                    message = "Successfull!!!"
+                    InvoiceDetail.Add(new InvoiceDetailResponse()
+                    {
+                        Id = detail.Id,
+                        LaptopId = detail.LaptopId,
+                        LaptopName = detail.Laptop.Name,
+                        InvoiceId = detail.InvoiceId,
+                        InvoiceNumber = detail.invoices.InvoiceNumber,
+                        Price = detail.Price,
+                        Quantity = detail.Quantity, 
+                        IsDelete = detail.IsDelete
+                    });
+                }
+
+                return new TPaging<InvoiceDetailResponse>
+                {
+                    
                 };
             }
             catch (Exception ex)
