@@ -9,10 +9,12 @@ namespace device.Controllers
     public class RamController : ControllerBase
     {
         private readonly IRamService _service;
+        private readonly ILogger<RamController> _logger;
 
-        public RamController(IRamService service)
+        public RamController(IRamService service, ILogger<RamController> logger)
         {
             _service = service;
+            _logger = logger;
         }
 
         [HttpGet("get-all")]

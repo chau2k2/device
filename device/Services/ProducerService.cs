@@ -5,104 +5,153 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using device.ModelResponse;
 using device.IServices;
+using device.Response;
 
 namespace device.Services
 {
     public class ProducerService : IProducerService
     {
-        private readonly ILogger<ProducerService> _logger;
         private readonly IAllRepository<Producer> _repos;
         private readonly LaptopDbContext _context;
 
-        public ProducerService(IAllRepository<Producer> repos, ILogger<ProducerService> logger, LaptopDbContext context)
+        public ProducerService(IAllRepository<Producer> repos, LaptopDbContext context)
         {
-            this._logger = logger;
             _repos = repos;
             _context = context;
         }
 
-        public async Task<IEnumerable<Producer>> GetAll(int page = 1, int pageSize = 5)
+        public async Task<TPaging<Producer>> GetAll(int page, int pageSize)
         {
             try
             {
+                int totalCount = await _context.Set<Producer>().CountAsync();
+
                 var result = await _repos.GetAllAsync(page, pageSize);
-                return result;
+
+                return new TPaging<Producer>
+                {
+                    numberPage = page,
+                    totalRecord = totalCount,
+                    Data = result
+                };
             }
             catch (Exception ex)
             {
                 throw ex;
             }
         }
-        public async Task<ActionResult<Producer>> GetProducerById( int id)
+        public async Task<ActionResult<BaseResponse<Producer>>> GetProducerById( int id)
         {
-            var result = await _repos.GetAsyncById(id);
-            if (result == null)
-            {
-                return new NotFoundResult();
-            }
-            return result;
-        }
-        public async Task<ActionResult<Producer>> UpdateProducer (int id, ProducerResponse Upd)
-        {
-            var findId = await _repos.GetAsyncById(id);
-            if (findId == null)
-            {
-                throw new Exception("Not found Producer");
-            }
-            Producer producer = new Producer()
-            {
-                Id = id,
-                Name = Upd.Name,
-                IsActive = Upd.IsActive
-            };
             try
             {
+                var result = await _repos.GetAsyncById(id);
+                if (result == null)
+                {
+                    return new BaseResponse<Producer>
+                    {
+                        success = false,
+                        message = "NotFound!!!"
+                    };
+                }
+                return new BaseResponse<Producer>
+                {
+                    success = true,
+                    message = "Successfull!!!",
+                    data = result
+                };
+            }
+            catch (Exception ex) 
+            { 
+                throw ex; 
+            }
+        }
+        public async Task<ActionResult<BaseResponse<Producer>>> UpdateProducer (int id, ProducerResponse Upd)
+        {
+            try
+            {
+                var findId = await _repos.GetAsyncById(id);
+
+                if (findId == null)
+                {
+                    return new BaseResponse<Producer>
+                    {
+                        success = false,
+                        message = "NotFound!!!"
+                    };
+                }
+                Producer producer = new Producer()
+                {
+                    Id = id,
+                    Name = Upd.Name,
+                    IsActive = Upd.IsActive
+                };
+            
                 var result = await _repos.UpdateOneAsyns(producer);
-                return result;
+
+                return new BaseResponse<Producer>
+                {
+                    success = true,
+                    message = "Successfull!!!",
+                    data = result
+                };
             }
             catch (Exception ex)
             {
                 throw ex;
             }
         }
-        public async Task<ActionResult<Producer>> CreateProducer (ProducerResponse cpr)
+        public async Task<ActionResult<BaseResponse<Producer>>> CreateProducer (ProducerResponse cpr)
         {
-            int maxId = await _context.producers.MaxAsync(p => (int?)p.Id) ?? 0;
-            int next = maxId + 1;
-
-            Producer producer = new Producer()
-            {
-                Id = next,
-                Name = cpr.Name,
-                IsActive = cpr.IsActive
-            };
-
             try
             {
-                    var result = await _repos.AddOneAsync(producer);
-                return result;
+                int maxId = await _context.producers.MaxAsync(p => (int?)p.Id) ?? 0;
+                int next = maxId + 1;
+
+                Producer producer = new Producer()
+                {
+                    Id = next,
+                    Name = cpr.Name,
+                    IsActive = cpr.IsActive
+                };
+
+                var result = await _repos.AddOneAsync(producer);
+
+                return new BaseResponse<Producer>
+                {
+                    success = true,
+                    message = "Successfull!!!",
+                    data = result
+                };
             }
             catch (Exception ex)
             {
                 throw ex;
             }
         }
-        public async Task<ActionResult<Producer>> DeleteProducer(int id)
+        public async Task<ActionResult<BaseResponse<Producer>>> DeleteProducer(int id)
         {
             try
             {
                 var producer = await _repos.GetAsyncById(id);
+
                 if (producer == null)
                 {
                     throw new Exception("Not found Producer");
                 }
                 producer.IsDelete = true;
+
                 var del = await _repos.DeleteOneAsync(producer);
-                return del;
+
+                return new BaseResponse<Producer>
+                {
+                    success = true,
+                    message = "Successfull!!!",
+                    data = del
+                };
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                throw new Exception("Can't delete this producer");
+                throw ex;
             }
         }
     }

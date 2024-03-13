@@ -10,31 +10,32 @@ namespace device.Controllers
     public class VgaController : ControllerBase
     {
         private readonly IVgaService _service;
-
-        public VgaController(IVgaService vgaService) 
+        private readonly ILogger<VgaController> _logger;
+        public VgaController(IVgaService vgaService, ILogger<VgaController> logger) 
         {
             _service = vgaService;
+            _logger = logger;
         }
 
-        [HttpGet("get_all")]
+        [HttpGet("get-all")]
         public async Task<ActionResult<IEnumerable<Vga>>> SelectAllVga(int page = 1, int pageSize = 5)
         {
             return Ok(await _service.GetAll(page, pageSize));
         }
 
-        [HttpPost("do_create")]
+        [HttpPost("do-create")]
         public async Task<ActionResult<Vga>> CreateVga(VgaResponse vgs)
         {
             return Ok(await _service.Create(vgs));
         }
 
-        [HttpPut("do_update")]
+        [HttpPut("do-update")]
         public async Task<ActionResult<Vga>> UpdateVga(int id, VgaResponse Uvga)
         {
             return Ok (await _service .Update(id, Uvga));
         }
 
-        [HttpDelete("do_delete")]
+        [HttpDelete("do-delete")]
         public async Task<IActionResult> DeleteVga(int id)
         {
             return Ok (await _service.delete(id));
@@ -42,7 +43,7 @@ namespace device.Controllers
         [HttpGet("get-by-id")]
         public async Task<ActionResult<Vga>> GetById (int id)
         {
-            return 
+            return Ok ( await _service.GetById(id));
         }
     }
 }

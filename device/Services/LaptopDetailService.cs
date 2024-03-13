@@ -10,13 +10,11 @@ namespace device.Services
 {
     public class LaptopDetailService : ILaptopDetailService
     {
-        private readonly ILogger<LaptopDetailService> _logger;
         private readonly IAllRepository<LaptopDetail> _repos;
         private readonly LaptopDbContext _context;
 
-        public LaptopDetailService(IAllRepository<LaptopDetail> repos, ILogger<LaptopDetailService> logger, LaptopDbContext context)
+        public LaptopDetailService(IAllRepository<LaptopDetail> repos, LaptopDbContext context)
         {
-            this._logger = logger;
             _repos = repos;
             _context = context;
         }
@@ -72,98 +70,148 @@ namespace device.Services
                 throw ex;
             }
         }
-        public async Task<ActionResult<LaptopDetail>> GetById(int id)
+        public async Task<ActionResult<BaseResponse<LaptopDetail>>> GetById(int id)
         {
-            var result = await _repos.GetAsyncById(id);
-            if (result == null)
-            {
-                return new NotFoundResult();
-            }
-            return result;
-        }
-        public async Task<ActionResult<LaptopDetail>> Update(int id, LaptopDetailResponse UpLD)
-        {
-            var findId = await _repos.GetAsyncById(id);
-            if (findId == null)
-            {
-                throw new Exception("Not found LaptopDetail");
-            }
-            LaptopDetail laptopDetail = new LaptopDetail()
-            {
-                Id = id,
-                Cpu = UpLD.Cpu,
-                Seri = UpLD.Seri,
-                VgaId = UpLD.VgaId,
-                RamId = UpLD.RamId,
-                HardDriver = UpLD.HardDriver,
-                MonitorId = UpLD.MonitorId,
-                Webcam = UpLD.Webcam,
-                Weight = UpLD.Weight,
-                Height = UpLD.Height,
-                Width = UpLD.Width,
-                Length = UpLD.Length,
-                BatteryCapacity = UpLD.BatteryCapacity,
-                LaptopId = UpLD.LaptopId
-            };
             try
             {
+                var result = await _repos.GetAsyncById(id);
+
+                if (result == null && result!.IsDelete == true)
+                {
+                    return new BaseResponse<LaptopDetail>
+                    {
+                        success = false,
+                        message = "NotFound!!!"
+                    };
+                }
+
+                return new BaseResponse<LaptopDetail>
+                {
+                    success = true,
+                    message = "Successfull!!!",
+                    data = result
+                };
+            }
+            catch( Exception ex)
+            {
+                throw ex;
+            }
+            
+        }
+        public async Task<ActionResult<BaseResponse<LaptopDetail>>> Update(int id, LaptopDetailResponse UpLD)
+        {
+            try
+            {
+                var detail = await _repos.GetAsyncById(id);
+
+                if (detail == null && detail!.IsDelete == true)
+                {
+                    return new BaseResponse<LaptopDetail>
+                    {
+                        success = false,
+                        message = "NotFound!!!"
+                    };
+                }
+
+                LaptopDetail laptopDetail = new LaptopDetail()
+                {
+                    Id = id,
+                    Cpu = UpLD.Cpu,
+                    Seri = UpLD.Seri,
+                    VgaId = UpLD.VgaId,
+                    RamId = UpLD.RamId,
+                    HardDriver = UpLD.HardDriver,
+                    MonitorId = UpLD.MonitorId,
+                    Webcam = UpLD.Webcam,
+                    Weight = UpLD.Weight,
+                    Height = UpLD.Height,
+                    Width = UpLD.Width,
+                    Length = UpLD.Length,
+                    BatteryCapacity = UpLD.BatteryCapacity,
+                    LaptopId = UpLD.LaptopId
+                };
+            
                 var result = await _repos.UpdateOneAsyns(laptopDetail);
-                return result;
+
+                return new BaseResponse<LaptopDetail>
+                {
+                    success = true,
+                    message = "Successfull!!!",
+                    data = result
+                };
             }
             catch (Exception ex)
             {
                 throw ex;
             }
         }
-        public async Task<ActionResult<LaptopDetail>> Create(LaptopDetailResponse CrLD)
+        public async Task<ActionResult<BaseResponse<LaptopDetail>>> Create(LaptopDetailResponse CrLD)
         {
-            int maxId = await _context.laptopsDetail.MaxAsync(p => (int?)p.Id) ?? 0;
-            int next = maxId + 1;
-
-            LaptopDetail laptopDetail = new LaptopDetail()
-            {
-                Id = next,
-                Cpu = CrLD.Cpu,
-                Seri = CrLD.Seri,
-                VgaId = CrLD.VgaId,
-                RamId = CrLD.RamId,
-                HardDriver = CrLD.HardDriver,
-                MonitorId = CrLD.MonitorId,
-                Webcam = CrLD.Webcam,
-                Weight = CrLD.Weight,
-                Height = CrLD.Height,
-                Width = CrLD.Width,
-                Length = CrLD.Length,
-                BatteryCapacity = CrLD.BatteryCapacity,
-                LaptopId = CrLD.LaptopId
-            };
-
             try
             {
+                int maxId = await _context.laptopsDetail.MaxAsync(p => (int?)p.Id) ?? 0;
+                int next = maxId + 1;
+
+                LaptopDetail laptopDetail = new LaptopDetail()
+                {
+                    Id = next,
+                    Cpu = CrLD.Cpu,
+                    Seri = CrLD.Seri,
+                    VgaId = CrLD.VgaId,
+                    RamId = CrLD.RamId,
+                    HardDriver = CrLD.HardDriver,
+                    MonitorId = CrLD.MonitorId,
+                    Webcam = CrLD.Webcam,
+                    Weight = CrLD.Weight,
+                    Height = CrLD.Height,
+                    Width = CrLD.Width,
+                    Length = CrLD.Length,
+                    BatteryCapacity = CrLD.BatteryCapacity,
+                    LaptopId = CrLD.LaptopId
+                };
+
                 var result = await _repos.AddOneAsync(laptopDetail);
-                return result;
+
+                return new BaseResponse<LaptopDetail>
+                {
+                    success = true,
+                    message = "Successfull!!!",
+                    data = result
+                };
             }
             catch (Exception ex)
             {
                 throw ex;
             }
         }
-        public async Task<ActionResult<LaptopDetail>> Delete(int id)
+        public async Task<ActionResult<BaseResponse<LaptopDetail>>> Delete(int id)
         {
             try
             {
                 var laptopDetail = await _repos.GetAsyncById(id);
-                if (laptopDetail == null)
+
+                if (laptopDetail == null && laptopDetail!.IsDelete == true)
                 {
-                    throw new Exception("Not found Laptop Detail");
+                    return new BaseResponse<LaptopDetail>
+                    {
+                        success = false,
+                        message = "NotFound!!!"
+                    };
                 }
                 laptopDetail.IsDelete = true;
+
                 var del = await _repos.DeleteOneAsync(laptopDetail);
-                return del;
+
+                return new BaseResponse<LaptopDetail>
+                {
+                    success = true,
+                    message = "Successfull!!!",
+                    data = del
+                };
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                throw new Exception("Can't delete this laptop detail");
+                throw ex;
             }
         }
     }

@@ -12,10 +12,12 @@ namespace device.Controllers
     public class LaptopController : ControllerBase
     {
         private readonly LaptopService _service;
+        private readonly ILogger<LaptopController> _logger;
 
-        public LaptopController(LaptopDbContext context, IAllRepository<Laptop> repos, ILogger<LaptopService> logger)
+        public LaptopController(LaptopDbContext context, IAllRepository<Laptop> repos, ILogger<LaptopController> logger)
         {
-            _service = new LaptopService(repos, logger, context);
+            _service = new LaptopService(repos, context);
+            _logger = logger;
         }
 
         [HttpGet("get-all")]
@@ -41,6 +43,7 @@ namespace device.Controllers
         {
             return Ok(await _service.Updatelaptop(id, upl));
         }
+
         [HttpDelete("delete-laptop")]
         public async Task<IActionResult> Delete(int id)
         {

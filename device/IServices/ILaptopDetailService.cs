@@ -7,9 +7,9 @@ namespace device.IServices
     public interface ILaptopDetailService
     {
         Task<TPaging<LaptopDetailResponse>> GetAll(int page, int pageSize);
-        Task<ActionResult<LaptopDetail>> GetById(int id);
-        Task<ActionResult<LaptopDetail>> Update(int id, LaptopDetailResponse UpLD);
-        Task<ActionResult<LaptopDetail>> Create(LaptopDetailResponse CrLD);
-        Task<ActionResult<LaptopDetail>> Delete(int id);
+        Task<ActionResult<BaseResponse<LaptopDetail>>> GetById(int id);
+        Task<ActionResult<BaseResponse<LaptopDetail>>> Update(int id, LaptopDetailResponse UpLD);
+        Task<ActionResult<BaseResponse<LaptopDetail>>> Create(LaptopDetailResponse CrLD);
+        Task<ActionResult<BaseResponse<LaptopDetail>>> Delete(int id);
     }
 }

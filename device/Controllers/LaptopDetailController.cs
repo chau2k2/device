@@ -1,9 +1,6 @@
-﻿using device.Data;
-using device.IRepository;
-using device.Entity;
-using device.Services;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using device.Response;
+using device.IServices;
 
 namespace device.Controllers
 {
@@ -11,11 +8,13 @@ namespace device.Controllers
     [ApiController]
     public class LaptopDetailController : ControllerBase
     {
-        private readonly LaptopDetailService _service;
+        private readonly ILaptopDetailService _service;
+        private readonly ILogger<LaptopDetailController> _logger;
 
-        public LaptopDetailController( LaptopDbContext dbContext, ILogger<LaptopDetailService> logger, IAllRepository<LaptopDetail> repos)
+        public LaptopDetailController(ILogger<LaptopDetailController> logger, ILaptopDetailService service)
         {
-            _service = new LaptopDetailService(repos, logger, dbContext);
+            _service = service;
+            _logger = logger;
         }
 
         [HttpGet("get-all")]

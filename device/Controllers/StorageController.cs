@@ -9,10 +9,12 @@ namespace device.Controllers
     public class StorageController : ControllerBase
     {
         private readonly IStorageService _service;
+        private readonly ILogger<StorageController> _logger;
 
-        public StorageController(IStorageService storageService)
+        public StorageController(IStorageService storageService, ILogger<StorageController> logger)
         {
             _service = storageService;
+            _logger = logger;
         }
         [HttpGet("get-all")]
         public async Task<IActionResult> GetAllInvoiceDetail(int page = 1, int pageSize = 5)

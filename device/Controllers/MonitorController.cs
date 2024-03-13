@@ -9,9 +9,11 @@ namespace device.Controllers
     public class MonitorController : ControllerBase
     {
         private readonly IMonitorService _service;
-        public MonitorController(IMonitorService service)
+        private readonly ILogger<MonitorController> _logger;
+        public MonitorController(IMonitorService service, ILogger<MonitorController> logger)
         {
             _service = service;
+            _logger = logger;
         }
 
         [HttpGet("get-all")]
@@ -38,7 +40,7 @@ namespace device.Controllers
             return Ok (await _service.Create(CMn));
         }
 
-        [HttpDelete]
+        [HttpDelete("delete")]
         public async Task<IActionResult> delete(int id)
         {
             return Ok ( await _service.Delete(id));

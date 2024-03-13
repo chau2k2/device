@@ -1,9 +1,6 @@
-﻿using device.Data;
-using device.IRepository;
-using device.Entity;
-using device.Services;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using device.Response;
+using device.IServices;
 
 namespace device.Controllers
 {
@@ -11,10 +8,13 @@ namespace device.Controllers
     [ApiController]
     public class InvoiceDetailController : ControllerBase
     {
-        private readonly InvoiceDetailService _service;
-        public InvoiceDetailController(IAllRepository<InvoiceDetail> repo, LaptopDbContext context, ILogger<InvoiceDetailService> logger)
+        private readonly IInvoiceDetailService _service;
+        private readonly ILogger<InvoiceController> _logger;
+
+        public InvoiceDetailController(IInvoiceDetailService service, ILogger<InvoiceController> logger)
         {
-            _service = new InvoiceDetailService(repo, logger, context);
+            _service = service;
+            _logger = logger;
         }
 
         [HttpGet("get-all")]

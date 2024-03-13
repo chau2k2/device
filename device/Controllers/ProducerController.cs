@@ -1,8 +1,4 @@
-﻿using device.Data;
-using device.IRepository;
-using device.Entity;
-using device.Services;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using device.ModelResponse;
 using device.IServices;
 
@@ -13,10 +9,12 @@ namespace device.Controllers
     public class ProducerController : ControllerBase
     {
         private readonly IProducerService _service;
+        private readonly ILogger<ProducerController> _logger;
 
-        public ProducerController( IProducerService service)
+        public ProducerController( IProducerService service, ILogger<ProducerController> logger)
         {
             _service = service;
+            _logger = logger;
         }
 
         [HttpGet("get-all")]

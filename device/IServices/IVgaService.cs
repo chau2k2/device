@@ -2,16 +2,15 @@
 using device.ModelResponse;
 using device.Response;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace device.IServices
 {
     public interface IVgaService 
     {
-        Task<ActionResult<Vga>> GetById(int id);
-        Task<IEnumerable<Vga>> GetAll(int page, int pageSize);
-        Task<ActionResult<Vga>> Create(VgaResponse CrV);
-        Task<ActionResult<Vga>> Update(int id, VgaResponse UpV);
-        Task<ActionResult<Vga>> delete(int id);
+        Task<ActionResult<BaseResponse<Vga>>> GetById(int id);
+        Task<TPaging<VgaResponse>> GetAll(int page, int pageSize);
+        Task<ActionResult<BaseResponse<Vga>>> Create(VgaResponse CrV);
+        Task<ActionResult<BaseResponse<Vga>>> Update(int id, VgaResponse UpV);
+        Task<ActionResult<BaseResponse<Vga>>> delete(int id);
     }
 }

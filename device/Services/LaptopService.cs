@@ -10,14 +10,11 @@ namespace device.Services
 {
     public class LaptopService :ILaptopService
     {
-        private readonly ILogger<LaptopService> _logger;
         private readonly IAllRepository<Laptop> _repos;
- 
         private readonly LaptopDbContext _context;
 
-        public LaptopService(IAllRepository<Laptop> repos, ILogger<LaptopService> logger, LaptopDbContext context)
+        public LaptopService(IAllRepository<Laptop> repos, LaptopDbContext context)
         {
-            this._logger = logger;
             _repos = repos;
             _context = context;
         }
@@ -26,7 +23,6 @@ namespace device.Services
             try
             {
                 int totalCount = await _context.Set<Laptop>().CountAsync();
-                int totalPage = (int)Math.Ceiling((double)totalCount / pageSize);
 
                 var result = await _context.Set<Laptop>()!
                     .Include(s => s.Producer)
@@ -61,16 +57,27 @@ namespace device.Services
                 throw ex;
             }
         }
-        public async Task<ActionResult<Laptop>> GetLaptopById(int id)
+        public async Task<ActionResult<BaseResponse<Laptop>>> GetLaptopById(int id)
         {
             try
             {
                 var result = await _repos.GetAsyncById(id);
-                if (result == null)
+
+                if (result == null && result!.IsDelete == true)
                 {
-                    return new NotFoundResult();
+                    return new BaseResponse<Laptop>
+                    {
+                        success = false,
+                        message = "Not found!!!"
+                    };
                 }
-                return result;
+
+                return new BaseResponse<Laptop>
+                {
+                    success = true,
+                    message = "Successfull!!!",
+                    data = result
+                };
             }
             catch (Exception ex)
             {
@@ -78,33 +85,45 @@ namespace device.Services
             }
             
         }
-        public async Task<ActionResult<Laptop>> Updatelaptop(int id, LaptopResponse Upd)
+        public async Task<ActionResult<BaseResponse<Laptop>>> Updatelaptop(int id, LaptopResponse Upd)
         {
-            var findId = await _repos.GetAsyncById(id);
-            if (findId == null)
-            {
-                throw new Exception("Not found Producer");
-            }
-
-            Laptop laptop = new Laptop()
-            {
-                Id = id,
-                Name = Upd.Name,
-                ProducerId = Upd.ProducerId,
-                CostPrice = Upd.CostPrice,
-                SoldPrice = Upd.SoldPrice
-            };
             try
             {
+                var lap = await _repos.GetAsyncById(id);
+
+                if (lap == null && lap!.IsDelete == true)
+                {
+                    return new BaseResponse<Laptop>
+                    {
+                        success = false,
+                        message = "Not found!!!"
+                    };
+                }
+
+                Laptop laptop = new Laptop()
+                {
+                    Id = id,
+                    Name = Upd.Name,
+                    ProducerId = Upd.ProducerId,
+                    CostPrice = Upd.CostPrice,
+                    SoldPrice = Upd.SoldPrice
+                };
+            
                 var result = await _repos.UpdateOneAsyns(laptop);
-                return result;
+
+                return new BaseResponse<Laptop>
+                {
+                    success = true,
+                    message = "Successfull!!!",
+                    data = result
+                };
             }
             catch (Exception ex)
             {
                 throw ex;
             }
         }
-        public async Task<ActionResult<Laptop>> CreateLaptop(LaptopResponse crl)
+        public async Task<ActionResult<BaseResponse<Laptop>>> CreateLaptop(LaptopResponse crl)
         {
             try
             {
@@ -121,29 +140,46 @@ namespace device.Services
                 };
 
                 var result = await _repos.AddOneAsync(laptop);
-                return result;
+                return new BaseResponse<Laptop> 
+                { 
+                    success = true, 
+                    message = "Successfull!!!", 
+                    data = result 
+                };
             }
             catch (Exception ex)
             {
                 throw ex;
             }
         }
-        public async Task<ActionResult<Laptop>> DeleteLaptop(int id)
+        public async Task<ActionResult<BaseResponse<Laptop>>> DeleteLaptop(int id)
         {
             try
             {
                 var laptop = await _repos.GetAsyncById(id);
-                if (laptop == null)
+
+                if (laptop == null && laptop!.IsDelete == true)
                 {
-                    throw new Exception("Not found Producer");
+                    return new BaseResponse<Laptop>
+                    {
+                        success = false,
+                        message = "Not found!!!"
+                    };
                 }
                 laptop.IsDelete = true;
+
                 var del = await _repos.DeleteOneAsync(laptop);
-                return del;
+
+                return new BaseResponse<Laptop>
+                {
+                    success = true,
+                    message = "Successfull!!!",
+                    data = del
+                };
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                throw new Exception("Can't delete this producer");
+                throw ex;
             }
         }
     }

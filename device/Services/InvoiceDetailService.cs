@@ -10,20 +10,20 @@ namespace device.Services
 {
     public class InvoiceDetailService : IInvoiceDetailService
     {
-        private readonly ILogger<InvoiceDetailService> _logger;
         private readonly IAllRepository<InvoiceDetail> _repo;
         private readonly LaptopDbContext _context;
 
-        public InvoiceDetailService(IAllRepository<InvoiceDetail> repo, ILogger<InvoiceDetailService> logger, LaptopDbContext context)
+        public InvoiceDetailService(IAllRepository<InvoiceDetail> repo, LaptopDbContext context)
         {
-            this._logger = logger;
             _repo = repo;
             _context = context;
         }
-        public async Task<IEnumerable<InvoiceDetailResponse>> GetAllInvoiceDetail(int page, int pageSize)
+        public async Task<TPaging<InvoiceDetailResponse>> GetAllInvoiceDetail(int page, int pageSize)
         {
             try
             {
+                int totalCount = await _context.Set<InvoiceDetail>().CountAsync();  
+
                 var result = await _context.Set<InvoiceDetail>()!
                     .Include(l => l.Laptop)
                     .Include(i => i.invoices)
@@ -46,7 +46,13 @@ namespace device.Services
                         Price = invoiceDetail.Price
                     });
                 }
-                return InvoiceDetailResponse;
+
+                return new TPaging<InvoiceDetailResponse>
+                {
+                    numberPage = page,
+                    totalRecord = totalCount,
+                    Data = InvoiceDetailResponse
+                };
             }
             catch (Exception ex)
             {
@@ -54,7 +60,7 @@ namespace device.Services
             }
         }
 
-        public async Task<ActionResult<InvoiceDetail>> CreateInvoiceDetail(InvoiceDetailResponse CID)
+        public async Task<ActionResult<BaseResponse<InvoiceDetail>>> CreateInvoiceDetail(InvoiceDetailResponse CID)
         {
             try
             {
@@ -73,7 +79,13 @@ namespace device.Services
                 if (laptop != null) { detail.Price = laptop.SoldPrice; }
 
                 var result = await _repo.AddOneAsync(detail); 
-                return result;
+
+                return new BaseResponse<InvoiceDetail>
+                {
+                    success = true,
+                    message = "Successfull!!!",
+                    data = result
+                };
             }
             catch (Exception ex)
             {
@@ -81,17 +93,28 @@ namespace device.Services
             }
         }
 
-        public async Task<ActionResult<InvoiceDetail>> Delete (int id)
+        public async Task<ActionResult<BaseResponse<InvoiceDetail>>> Delete (int id)
         {
             try
             {
                 var invoiceDetail = await _repo.GetAsyncById(id);
-                if (invoiceDetail == null)
+
+                if (invoiceDetail == null && invoiceDetail!.IsDelete == true)
                 {
-                    throw new Exception("Not found this Invoice Detail");
+                    return new BaseResponse<InvoiceDetail>
+                    {
+                        success = false,
+                        message = "NotFound!!!"
+                    };
                 }
                 invoiceDetail.IsDelete = true;
-                return await _repo.UpdateOneAsyns(invoiceDetail);
+
+                return new BaseResponse<InvoiceDetail>
+                {
+                    success = true,
+                    message = "Successfull!!!",
+                    data = invoiceDetail
+                };
             }
             catch (Exception ex)
             {
@@ -99,7 +122,7 @@ namespace device.Services
             }
         }
 
-        public async Task<IEnumerable<InvoiceDetail>> findInvoiceDetailByINumber (string invoiceNumber)
+        public async Task<ActionResult<BaseResponse<InvoiceDetail>>> findInvoiceDetailByINumber (string invoiceNumber)
         {
             try
             {
@@ -107,8 +130,14 @@ namespace device.Services
                     .Include(i => i.invoices)
                     .Where(i => i.invoices.InvoiceNumber == invoiceNumber)
                     .ToListAsync();
-                return invoiceDetail;
-            }catch (Exception ex)
+
+                return new BaseResponse<InvoiceDetail>
+                {
+                    success = true,
+                    message = "Successfull!!!"
+                };
+            }
+            catch (Exception ex)
             {
                 throw ex;
             }

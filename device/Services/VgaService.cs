@@ -5,43 +5,86 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using device.ModelResponse;
 using device.IServices;
+using device.Response;
 
 namespace device.Services
 {
     public class VgaService : IVgaService
     {
-        private readonly ILogger<VgaService> _logger;
         private readonly IAllRepository<Vga> _repo;
         private readonly LaptopDbContext _context;
 
-        public VgaService(IAllRepository<Vga> repo, ILogger<VgaService> logger, LaptopDbContext context)
+        public VgaService(IAllRepository<Vga> repo, LaptopDbContext context)
         {
-            this._logger = logger;
             _repo = repo;
             _context = context;
         }
-        public async Task<IEnumerable<Vga>> GetAll(int page, int pageSize)
+        public async Task<TPaging<VgaResponse>> GetAll(int page, int pageSize)
         {
             try
             {
-                var result = await _repo.GetAllAsync(page, pageSize);
-                return result;
+                int totalCount = await _context.Set<Vga>().CountAsync();
+
+                var result = await _context.Set<Vga>()!
+                    .Include( v => v.laptopDetail)
+                    .Where( v => v.IsDelete == false)
+                    .Take(pageSize).Skip((page - 1) * pageSize)
+                    .ToListAsync();
+
+                List<VgaResponse> vgaResponses = new List<VgaResponse>();
+
+                foreach (var vga in result)
+                {
+                    vgaResponses.Add(new VgaResponse() 
+                    {
+                        Id = vga.Id,
+                        Name = vga.Name,
+                        Price = vga.Price,
+                        IsDelete = vga.IsDelete
+                    });
+                }
+
+                return new TPaging<VgaResponse>()
+                {
+                    numberPage = page,
+                    totalRecord = totalCount,
+                    Data = vgaResponses
+                };
             }
             catch (Exception ex)
             {
                 throw ex;
             }
         }
-        public async Task<ActionResult<Vga>> GetById(int id)
+        public async Task<ActionResult<BaseResponse<Vga>>> GetById(int id)
         {
-            var result = await _repo.GetAsyncById(id);
-            if (result == null)
+            try
             {
-                return new NotFoundResult();
+                var result = await _repo.GetAsyncById(id);
+
+                if (result == null && result!.IsDelete == true)
+                {
+                    return new BaseResponse<Vga>
+                    {
+                        success = false,
+                        message = "Not found!!!"
+                    };
+                }
+
+                return new BaseResponse<Vga>
+                {
+                    success = true,
+                    message = "Sucessfull!!!",
+                    data = result
+                };
             }
-            return result;
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            
         }
-        public async Task<ActionResult<Vga>> Create(VgaResponse CrV)
+        public async Task<ActionResult<BaseResponse<Vga>>> Create(VgaResponse CrV)
         {
             try
             {
@@ -56,19 +99,30 @@ namespace device.Services
                 };
 
                 var result = await _repo.AddOneAsync(vga);
-                return result;
+
+                return new BaseResponse<Vga>
+                {
+                    success = true,
+                    message = "Sucessfull!!!",
+                    data = result
+                };
             }
             catch (Exception ex)
             {
                 throw ex;
             }
         }
-        public async Task<ActionResult<Vga>> Update(int id, VgaResponse UpV)
+        public async Task<ActionResult<BaseResponse<Vga>>> Update(int id, VgaResponse UpV)
         {
             var findId = await _context.ram.FindAsync(id);
+
             if (findId == null)
             {
-                return new NotFoundResult();
+                return new BaseResponse<Vga>
+                {
+                    success = false,
+                    message = "Not found!!!"
+                };
             }
 
             Vga vga = new Vga()
@@ -81,29 +135,48 @@ namespace device.Services
             try
             {
                 var result = await _repo.UpdateOneAsyns(vga);
-                return result;
+
+                return new BaseResponse<Vga> 
+                { 
+                    success = true, 
+                    message = "Sucessfull!!!", 
+                    data = result 
+                };
             }
             catch (Exception ex)
             {
                 throw ex;
             }
         }
-        public async Task<ActionResult<Vga>> delete(int id)
+        public async Task<ActionResult<BaseResponse<Vga>>> delete(int id)
         {
             try
             {
                 var vga = await _repo.GetAsyncById(id);
+
                 if (vga == null)
                 {
-                    throw new Exception("Not found Vga");
+                    return new BaseResponse<Vga>
+                    {
+                        success = false,
+                        message = "Not found!!!"
+                    };
                 }
+
                 vga.IsDelete = true;
+
                 var del = await _repo.UpdateOneAsyns(vga);
-                return del;
+
+                return new BaseResponse<Vga>
+                {
+                    success = true,
+                    message = "Sucessfull!!!",
+                    data = del
+                };
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                throw new Exception("Can't delete this vga");
+                throw ex;
             }
         }
     }
