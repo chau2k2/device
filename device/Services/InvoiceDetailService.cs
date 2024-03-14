@@ -124,35 +124,26 @@ namespace device.Services
             }
         }
 
-        public async Task<TPaging<InvoiceDetailResponse>> findInvoiceDetailByINumber (string invoiceNumber)
+        public async Task<ActionResult<BaseResponse<InvoiceDetail>>> findById (int id)
         {
             try
             {
-                var invoiceDetail = await _context.Set<InvoiceDetail>()
-                    .Include(i => i.invoices)
-                    .Where(i => i.IsDelete == false)
-                    .ToListAsync();
+                var invoiceDetail = await _repo.GetAsyncById(id);
 
-                List<InvoiceDetailResponse> InvoiceDetail = new List<InvoiceDetailResponse>();
-
-                foreach (var detail in invoiceDetail)
+                if (invoiceDetail == null && invoiceDetail!.IsDelete == true)
                 {
-                    InvoiceDetail.Add(new InvoiceDetailResponse()
+                    return new BaseResponse<InvoiceDetail>
                     {
-                        Id = detail.Id,
-                        LaptopId = detail.LaptopId,
-                        LaptopName = detail.Laptop.Name,
-                        InvoiceId = detail.InvoiceId,
-                        InvoiceNumber = detail.invoices.InvoiceNumber,
-                        Price = detail.Price,
-                        Quantity = detail.Quantity, 
-                        IsDelete = detail.IsDelete
-                    });
+                        success = false,
+                        message = "Not found!!!"
+                    };
                 }
 
-                return new TPaging<InvoiceDetailResponse>
+                return new BaseResponse<InvoiceDetail>
                 {
-                    
+                    success = true,
+                    message = "Successfull!!!",
+                    data = invoiceDetail
                 };
             }
             catch (Exception ex)

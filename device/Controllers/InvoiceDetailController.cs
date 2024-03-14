@@ -23,10 +23,10 @@ namespace device.Controllers
             return Ok(await _service.GetAllInvoiceDetail(page, pageSize));
         }
 
-        [HttpGet("get-by-invoice-number")]
-        public async Task<IActionResult> FindByInvoiceNum(string InvoiceNum)
+        [HttpGet("get-by-id")]
+        public async Task<IActionResult> FindByInvoiceNum(int id)
         {
-            return Ok(await _service.findInvoiceDetailByINumber(InvoiceNum));
+            return Ok(await _service.findById(id));
         }
         [HttpPost("do-create")]
         public async Task<IActionResult> CreateInvoiceDetail(InvoiceDetailResponse CID)
