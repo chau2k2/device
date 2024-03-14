@@ -5,7 +5,6 @@ using device.Response;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using device.IServices;
-using System.Xml.Schema;
 
 namespace device.Services
 {
