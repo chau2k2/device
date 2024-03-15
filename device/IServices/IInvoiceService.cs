@@ -1,15 +1,17 @@
 ﻿using device.Entity;
 using device.ModelResponse;
+using device.Models;
+using device.Response;
 using Microsoft.AspNetCore.Mvc;
 
 namespace device.IServices
 {
     public interface IInvoiceService
     {
-        Task<IEnumerable<Invoice>> GetAll(int page, int pageSize);
-        Task<ActionResult<Invoice>> GetByInvoiceNum(string invoiceNum);
-        Task<ActionResult<Invoice>> Create(InvoiceResponse CrI);
-        Task<ActionResult<Invoice>> Update(int id, InvoiceResponse UpI);
-        Task<ActionResult<Invoice>> delete(int id);
+        Task<TPaging<InvoiceResponse>> GetAll(int page, int pageSize);
+        Task<ActionResult<BaseResponse<Invoice>>> GetByInvoiceNum(string invoiceNum);
+        Task<ActionResult<BaseResponse<Invoice>>> Create(InvoiceModel CrI);
+        Task<ActionResult<BaseResponse<Invoice>>> Update(int id, InvoiceModel UpI);
+        Task<ActionResult<BaseResponse<Invoice>>> delete(int id);
     }
 }

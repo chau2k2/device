@@ -2,8 +2,8 @@
 {
     public class TPaging<T>
     {
-        public int numberPage { get; set; }
-        public int totalRecord { get; set; }
+        public int NumberPage { get; set; }
+        public int TotalRecord { get; set; }
         public IEnumerable<T> Data { get; set;}
     }
 }

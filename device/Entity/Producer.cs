@@ -13,7 +13,7 @@ namespace device.Entity
         /// <summary>
         /// tên nhà sản xuất
         /// </summary>
-        [Required, MaxLength(50, ErrorMessage ="Length of name is not greater than 100")]
+        [Required, MaxLength(50)]
         public string Name { get; set; }
         /// <summary>
         /// trạng thái hoạt động của nhà sản xuất

@@ -108,6 +108,9 @@ namespace device.Migrations
                     b.Property<decimal>("SoldPrice")
                         .HasColumnType("numeric");
 
+                    b.Property<int>("inventory")
+                        .HasColumnType("integer");
+
                     b.HasKey("Id");
 
                     b.HasIndex("ProducerId");
@@ -197,8 +200,8 @@ namespace device.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
 
                     b.Property<decimal>("Price")
                         .HasColumnType("numeric");
@@ -224,8 +227,8 @@ namespace device.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("varchar");
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
 
                     b.HasKey("Id");
 
@@ -245,7 +248,8 @@ namespace device.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("varchar(100)");
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
 
                     b.Property<decimal>("Price")
                         .HasColumnType("numeric");
@@ -269,7 +273,7 @@ namespace device.Migrations
                     b.Property<bool>("IsDelete")
                         .HasColumnType("boolean");
 
-                    b.Property<int>("LaptopDetailId")
+                    b.Property<int>("LaptopId")
                         .HasColumnType("integer");
 
                     b.Property<int>("SoldNumber")
@@ -277,7 +281,7 @@ namespace device.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("LaptopDetailId")
+                    b.HasIndex("LaptopId")
                         .IsUnique();
 
                     b.ToTable("storages");
@@ -374,13 +378,13 @@ namespace device.Migrations
 
             modelBuilder.Entity("device.Entity.Storage", b =>
                 {
-                    b.HasOne("device.Entity.LaptopDetail", "LaptopDetail")
+                    b.HasOne("device.Entity.Laptop", "Laptop")
                         .WithOne("Storage")
-                        .HasForeignKey("device.Entity.Storage", "LaptopDetailId")
+                        .HasForeignKey("device.Entity.Storage", "LaptopId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("LaptopDetail");
+                    b.Navigation("Laptop");
                 });
 
             modelBuilder.Entity("device.Entity.Invoice", b =>
@@ -393,10 +397,7 @@ namespace device.Migrations
                     b.Navigation("InvoiceDetails");
 
                     b.Navigation("LaptopDetail");
-                });
 
-            modelBuilder.Entity("device.Entity.LaptopDetail", b =>
-                {
                     b.Navigation("Storage")
                         .IsRequired();
                 });

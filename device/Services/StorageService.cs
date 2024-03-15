@@ -23,11 +23,10 @@ namespace device.Services
         {
             try
             {
-                int totalCount = await _context.Set<Storage>().CountAsync();
+                int totalCount = await _context.Set<Storage>().CountAsync(i => i.IsDelete == false);
 
                 var result = await _context.Set<Storage>()
-                    .Include(s => s.LaptopDetail)
-                        .ThenInclude(s => s.Laptops)
+                    .Include(s => s.Laptop)
                     .Where( s => s.IsDelete == false)
                     .Take(pageSize).Skip((page - 1) * pageSize)
                     .ToListAsync();
@@ -40,17 +39,17 @@ namespace device.Services
                     {
                         Id = storage.Id,
                         ImportNumber = storage.ImportNumber,
-                        LaptopDetailId = storage.LaptopDetailId,
+                        LaptopId = storage.LaptopId,
                         SoldNumber = storage.SoldNumber,
-                        nameLaptop = storage.LaptopDetail.Laptops.Name,
+                        nameLaptop = storage.Laptop.Name,
                         IsDelete = storage.IsDelete
                     });
                 }
 
                 return new TPaging<StorageResponse>
                 {
-                    numberPage = page,
-                    totalRecord = totalCount,
+                    NumberPage = page,
+                    TotalRecord = totalCount,
                     Data = storageResponses
                 };
             }
@@ -63,21 +62,21 @@ namespace device.Services
         {
             try
             {
-                var result = await _repo.GetAsyncById(id);
+                var storage = await _repo.GetAsyncById(id);
 
-                if (result == null)
+                if (storage == null || storage.IsDelete == true)
                 {
                     return new BaseResponse<Storage>
                     {
-                        success = false,
-                        message = "Not found!!!"
+                        Success = false,
+                        Message = "Not found!!!"
                     };
                 }
                 return new BaseResponse<Storage>
                 {
-                    success = true,
-                    message = "Successfull!!!",
-                    data = result
+                    Success = true,
+                    Message = "Successfull!!!",
+                    Data = storage
                 };
             }
             catch (Exception ex) 
@@ -95,18 +94,23 @@ namespace device.Services
                 Storage storage = new Storage()
                 {
                     Id = nextId,
-                    LaptopDetailId = CrS.LaptopDetailId,
+                    LaptopId = CrS.LaptopId,
                     ImportNumber = CrS.ImportNumber,
                     SoldNumber = CrS.SoldNumber
                 };
 
+                var laptop = await _context.laptops.FirstOrDefaultAsync( s => s.Id == CrS.LaptopId );
+                if (laptop != null)
+                {
+                    laptop.inventory = CrS.ImportNumber - CrS.SoldNumber;
+                }
                 var result = await _repo.AddOneAsync(storage);
 
                 return new BaseResponse<Storage>
                 {
-                    success = true,
-                    message = "Successfull!!!",
-                    data = result
+                    Success = true,
+                    Message = "Successfull!!!",
+                    Data = result
                 };
             }
             catch (Exception ex)
@@ -118,9 +122,9 @@ namespace device.Services
         {
             try
             {
-                var findId = await _context.ram.FindAsync(id);
+                var storages = await _context.storages.FindAsync(id);
 
-                if (findId == null)
+                if (storages == null || storages.IsDelete == true)
                 {
                     return new NotFoundResult();
                 }
@@ -128,18 +132,18 @@ namespace device.Services
                 Storage storage = new Storage()
                 {
                     Id = id,
-                    LaptopDetailId = UpS.LaptopDetailId,
+                    LaptopId = UpS.LaptopId,
                     ImportNumber = UpS.ImportNumber,
                     SoldNumber = UpS.SoldNumber
                 };
 
-                var result = await _repo.UpdateOneAsyns(storage);
+                var result = await _repo.UpdateOneAsyns(storages);
 
                 return new BaseResponse<Storage>
                 {
-                    success = true,
-                    message = "Successfull!!!",
-                    data = result
+                    Success = true,
+                    Message = "Successfull!!!",
+                    Data = result
                 };
             }
             catch (Exception ex)
@@ -157,8 +161,8 @@ namespace device.Services
                 {
                     return new BaseResponse<Storage>
                     {
-                        success = false,
-                        message = "Not found!!!"
+                        Success = false,
+                        Message = "Not found!!!"
                     };
                 }
 
@@ -168,9 +172,9 @@ namespace device.Services
 
                 return new BaseResponse<Storage>
                 {
-                    success = true,
-                    message = "Successfull!!!",
-                    data = del
+                    Success = true,
+                    Message = "Successfull!!!",
+                    Data = del
                 };
             }
             catch (Exception ex)

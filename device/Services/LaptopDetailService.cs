@@ -23,7 +23,8 @@ namespace device.Services
         {
             try
             {
-                int totalCount = await _context.Set<LaptopDetail>().CountAsync();
+                int totalCount = await _context.Set<LaptopDetail>().CountAsync(i => i.IsDelete == false);
+
                 int totalPage = (int)Math.Ceiling((double)totalCount / pageSize);
 
                 var result = await _context.Set<LaptopDetail>()!
@@ -31,7 +32,6 @@ namespace device.Services
                     .Include(r => r.Rams)
                     .Include(m => m.Monitor)
                     .Include(v => v.Vga)
-                    .Include(s => s.Storage)
                     .Take(page).Skip((page - 1) * pageSize)
                     .ToListAsync();
 
@@ -55,13 +55,17 @@ namespace device.Services
                         Length = laptopDetail.Length,
                         BatteryCapacity = laptopDetail.BatteryCapacity,
                         LaptopName = laptopDetail.Laptops.Name,
-                        IsDelete = laptopDetail.IsDelete
+                        IsDelete = laptopDetail.IsDelete,
+                        LaptopId = laptopDetail.Laptops.Id,
+                        MonitorId = laptopDetail.Monitor.Id,
+                        RamId = laptopDetail.Rams.Id,
+                        VgaId = laptopDetail.Vga.Id
                     }) ;
                 }
                 return new TPaging<LaptopDetailResponse>
                 {
-                    numberPage = page,
-                    totalRecord = totalCount,
+                    NumberPage = page,
+                    TotalRecord = totalCount,
                     Data = laptopDetailResponse
                 };
             }
@@ -76,20 +80,20 @@ namespace device.Services
             {
                 var result = await _repos.GetAsyncById(id);
 
-                if (result == null && result!.IsDelete == true)
+                if (result == null || result!.IsDelete == true)
                 {
                     return new BaseResponse<LaptopDetail>
                     {
-                        success = false,
-                        message = "NotFound!!!"
+                        Success = false,
+                        Message = "NotFound!!!"
                     };
                 }
 
                 return new BaseResponse<LaptopDetail>
                 {
-                    success = true,
-                    message = "Successfull!!!",
-                    data = result
+                    Success = true,
+                    Message = "Successfull!!!",
+                    Data = result
                 };
             }
             catch( Exception ex)
@@ -104,12 +108,12 @@ namespace device.Services
             {
                 var detail = await _repos.GetAsyncById(id);
 
-                if (detail == null && detail!.IsDelete == true)
+                if (detail == null || detail!.IsDelete == true)
                 {
                     return new BaseResponse<LaptopDetail>
                     {
-                        success = false,
-                        message = "NotFound!!!"
+                        Success = false,
+                        Message = "NotFound!!!"
                     };
                 }
 
@@ -135,9 +139,9 @@ namespace device.Services
 
                 return new BaseResponse<LaptopDetail>
                 {
-                    success = true,
-                    message = "Successfull!!!",
-                    data = result
+                    Success = true,
+                    Message = "Successfull!!!",
+                    Data = result
                 };
             }
             catch (Exception ex)
@@ -167,16 +171,17 @@ namespace device.Services
                     Width = CrLD.Width,
                     Length = CrLD.Length,
                     BatteryCapacity = CrLD.BatteryCapacity,
-                    LaptopId = CrLD.LaptopId
+                    LaptopId = CrLD.LaptopId,
+                    IsDelete = CrLD.IsDelete
                 };
 
                 var result = await _repos.AddOneAsync(laptopDetail);
 
                 return new BaseResponse<LaptopDetail>
                 {
-                    success = true,
-                    message = "Successfull!!!",
-                    data = result
+                    Success = true,
+                    Message = "Successfull!!!",
+                    Data = result
                 };
             }
             catch (Exception ex)
@@ -190,12 +195,12 @@ namespace device.Services
             {
                 var laptopDetail = await _repos.GetAsyncById(id);
 
-                if (laptopDetail == null && laptopDetail!.IsDelete == true)
+                if (laptopDetail == null || laptopDetail!.IsDelete == true)
                 {
                     return new BaseResponse<LaptopDetail>
                     {
-                        success = false,
-                        message = "NotFound!!!"
+                        Success = false,
+                        Message = "NotFound!!!"
                     };
                 }
                 laptopDetail.IsDelete = true;
@@ -204,9 +209,9 @@ namespace device.Services
 
                 return new BaseResponse<LaptopDetail>
                 {
-                    success = true,
-                    message = "Successfull!!!",
-                    data = del
+                    Success = true,
+                    Message = "Successfull!!!",
+                    Data = del
                 };
             }
             catch (Exception ex)

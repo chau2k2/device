@@ -8,7 +8,5 @@ namespace device.Response
         public string? RamName { get; set; }
         public string? VgaName { get; set; }
         public string? MonitorName { get; set; }
-        public decimal? SoldPrice { get; set; }
-        public decimal? CostPrice { get; set; }
     }
 }

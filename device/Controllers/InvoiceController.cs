@@ -1,9 +1,7 @@
-﻿using device.Data;
-using device.IRepository;
-using device.Entity;
-using device.Services;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using device.ModelResponse;
+using device.IServices;
+using device.Models;
 
 namespace device.Controllers
 {
@@ -11,11 +9,13 @@ namespace device.Controllers
     [ApiController]
     public class InvoiceController : ControllerBase
     {
-        private readonly InvoiceService _service;
+        private readonly IInvoiceService _service;
+        private readonly ILogger<InvoiceController> _logger;
 
-        public InvoiceController(IAllRepository<Invoice> repo, LaptopDbContext context, ILogger<InvoiceService> logger)
+        public InvoiceController(IInvoiceService service, ILogger<InvoiceController> logger)
         {
-            _service = new InvoiceService(repo, logger, context);
+            _service = service;
+            _logger = logger;
         }
 
         [HttpGet("get-all")]
@@ -31,7 +31,7 @@ namespace device.Controllers
         }
 
         [HttpPost("do-create")]
-        public async Task<IActionResult> CreateInvoice([FromBody] InvoiceResponse civ)
+        public async Task<IActionResult> CreateInvoice([FromBody] InvoiceModel civ)
         {
             return Ok ( await _service.Create(civ));
         }

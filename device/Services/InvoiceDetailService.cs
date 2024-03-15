@@ -50,8 +50,8 @@ namespace device.Services
 
                 return new TPaging<InvoiceDetailResponse>
                 {
-                    numberPage = page,
-                    totalRecord = totalCount,
+                    NumberPage = page,
+                    TotalRecord = totalCount,
                     Data = InvoiceDetailResponse
                 };
             }
@@ -76,16 +76,35 @@ namespace device.Services
                     Quantity = CID.Quantity
                 };
 
-                var laptop = _context.laptops.FirstOrDefault(l => l.Id == CID.LaptopId);
-                if (laptop != null) { detail.Price = laptop.SoldPrice; }
+                var laptop = await _context.laptops.Include(l => l.Storage).FirstOrDefaultAsync(l => l.Id == CID.LaptopId);
+
+                if (laptop != null || laptop.inventory >= CID.Quantity) 
+                { 
+                    detail.Price = laptop.SoldPrice;
+
+                    laptop.Storage.SoldNumber = laptop.Storage.SoldNumber + CID.Quantity;
+
+                    laptop.inventory = laptop.inventory - CID.Quantity;
+
+                    var laptopValue = detail.Quantity * detail.Price;
+
+                    var invoice = await _context.invoices.FirstOrDefaultAsync(i => i.Id == CID.InvoiceId);
+
+                    if (invoice != null)
+                    {
+                        invoice.TotalPrice += laptopValue;
+
+                        invoice.TotalQuantity += CID.Quantity;
+                    }
+                }
 
                 var result = await _repo.AddOneAsync(detail); 
 
                 return new BaseResponse<InvoiceDetail>
                 {
-                    success = true,
-                    message = "Successfull!!!",
-                    data = result
+                    Success = true,
+                    Message = "Successfull!!!",
+                    Data = result
                 };
             }
             catch (Exception ex)
@@ -100,21 +119,21 @@ namespace device.Services
             {
                 var invoiceDetail = await _repo.GetAsyncById(id);
 
-                if (invoiceDetail == null && invoiceDetail!.IsDelete == true)
+                if (invoiceDetail == null || invoiceDetail!.IsDelete == true)
                 {
                     return new BaseResponse<InvoiceDetail>
                     {
-                        success = false,
-                        message = "NotFound!!!"
+                        Success = false,
+                        Message = "NotFound!!!"
                     };
                 }
                 invoiceDetail.IsDelete = true;
 
                 return new BaseResponse<InvoiceDetail>
                 {
-                    success = true,
-                    message = "Successfull!!!",
-                    data = invoiceDetail
+                    Success = true,
+                    Message = "Successfull!!!",
+                    Data = invoiceDetail
                 };
             }
             catch (Exception ex)
@@ -129,20 +148,20 @@ namespace device.Services
             {
                 var invoiceDetail = await _repo.GetAsyncById(id);
 
-                if (invoiceDetail == null && invoiceDetail!.IsDelete == true)
+                if (invoiceDetail == null || invoiceDetail!.IsDelete == true)
                 {
                     return new BaseResponse<InvoiceDetail>
                     {
-                        success = false,
-                        message = "Not found!!!"
+                        Success = false,
+                        Message = "Not found!!!"
                     };
                 }
 
                 return new BaseResponse<InvoiceDetail>
                 {
-                    success = true,
-                    message = "Successfull!!!",
-                    data = invoiceDetail
+                    Success = true,
+                    Message = "Successfull!!!",
+                    Data = invoiceDetail
                 };
             }
             catch (Exception ex)

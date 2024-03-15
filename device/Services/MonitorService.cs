@@ -24,14 +24,14 @@ namespace device.Services
         {
             try
             {
-                int totalCount = _context.Set<MonitorM>().Count();
+                int totalCount = _context.Set<MonitorM>().Count(i => i.IsDelete == false);
 
                 var result = await _repos.GetAllAsync(page, pageSize);
 
                 return new TPaging<MonitorM>
                 {
-                    numberPage = page,
-                    totalRecord = totalCount,
+                    NumberPage = page,
+                    TotalRecord = totalCount,
                     Data = result
                 };
             }
@@ -49,15 +49,15 @@ namespace device.Services
                 {
                     return new BaseResponse<MonitorM>
                     {
-                        success = false,
-                        message = "NotFound!!!"
+                        Success = false,
+                        Message = "NotFound!!!"
                     };
                 }
                 return new BaseResponse<MonitorM>
                 {
-                    success = true,
-                    message = "Successfull!!!",
-                    data = result
+                    Success = true,
+                    Message = "Successfull!!!",
+                    Data = result
                 };
             }
             catch(Exception ex)
@@ -75,8 +75,8 @@ namespace device.Services
                 {
                     return new BaseResponse<MonitorM>
                     {
-                        success = false,
-                        message = "NotFound!!!"
+                        Success = false,
+                        Message = "NotFound!!!"
                     };
                 }
 
@@ -91,9 +91,9 @@ namespace device.Services
 
                 return new BaseResponse<MonitorM>
                 {
-                    success = true,
-                    message = "Successfull!!!",
-                    data = result
+                    Success = true,
+                    Message = "Successfull!!!",
+                    Data = result
                 };
             }
             catch (Exception ex)
@@ -120,9 +120,9 @@ namespace device.Services
 
                 return new BaseResponse<MonitorM>
                 {
-                    success = true,
-                    message = "Successfull!!!",
-                    data = result
+                    Success = true,
+                    Message = "Successfull!!!",
+                    Data = result
                 };
             }
             catch (Exception ex)
@@ -140,8 +140,8 @@ namespace device.Services
                 {
                     return new BaseResponse<MonitorM>
                     {
-                        success = false,
-                        message = "NotFound!!!"
+                        Success = false,
+                        Message = "NotFound!!!"
                     };
                 }
 
@@ -151,9 +151,9 @@ namespace device.Services
 
                 return new BaseResponse<MonitorM>
                 {
-                    success = true,
-                    message = "Successfull!!!",
-                    data = del
+                    Success = true,
+                    Message = "Successfull!!!",
+                    Data = del
                 };
             }
             catch (Exception ex)

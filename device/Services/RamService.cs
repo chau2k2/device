@@ -24,14 +24,14 @@ namespace device.Services
         {
             try
             {
-                int totalCount = await _context.Set<Ram>().CountAsync();
+                int totalCount = await _context.Set<Ram>().CountAsync(i => i.IsDelete == false);
 
                 var result = await _repo.GetAllAsync(page, pageSize);
 
                 return new TPaging<Ram>
                 {
-                    numberPage = page,
-                    totalRecord = totalCount,
+                    NumberPage = page,
+                    TotalRecord = totalCount,
                     Data = result
                 };
             }
@@ -45,19 +45,19 @@ namespace device.Services
             try
             {
                 var result = await _repo.GetAsyncById(id);
-                if (result == null)
+                if (result == null || result.IsDelete == true)
                 {
                     return new BaseResponse<Ram>
                     {
-                        success = false,
-                        message = "NotFound!!!"
+                        Success = false,
+                        Message = "NotFound!!!"
                     };
                 }
                 return new BaseResponse<Ram>
                 {
-                    success = true,
-                    message = "Successfull!!!",
-                    data = result
+                    Success = true,
+                    Message = "Successfull!!!",
+                    Data = result
                 };
             }
             catch (Exception ex)
@@ -83,9 +83,9 @@ namespace device.Services
 
                 return new BaseResponse<Ram>
                 {
-                    success = true,
-                    message = "Successfull!!!",
-                    data = result
+                    Success = true,
+                    Message = "Successfull!!!",
+                    Data = result
                 };
             }
             catch (Exception ex)
@@ -97,14 +97,14 @@ namespace device.Services
         {
             try
             {
-                var findId = await _context.ram.FindAsync(id);
+                var ram_id = await _context.ram.FindAsync(id);
 
-                if (findId == null)
+                if (ram_id == null || ram_id.IsDelete == true)
                 {
                     return new BaseResponse<Ram>
                     {
-                        success = false,
-                        message = "NotFound!!!"
+                        Success = false,
+                        Message = "NotFound!!!"
                     };
                 }
 
@@ -119,9 +119,9 @@ namespace device.Services
 
                 return new BaseResponse<Ram>
                 {
-                    success = true,
-                    message = "Successfull!!!",
-                    data = result
+                    Success = true,
+                    Message = "Successfull!!!",
+                    Data = result
                 };
             }
             catch (Exception ex)
@@ -135,12 +135,12 @@ namespace device.Services
             {
                 var ram = await _repo.GetAsyncById(id);
 
-                if (ram == null)
+                if (ram == null || ram.IsDelete == false)
                 {
                     return new BaseResponse<Ram>
                     {
-                        success = false,
-                        message = "NotFound!!!"
+                        Success = false,
+                        Message = "NotFound!!!"
                     };
                 }
 
@@ -150,9 +150,9 @@ namespace device.Services
 
                 return new BaseResponse<Ram>
                 {
-                    success = true,
-                    message = "Successfull!!!",
-                    data = del
+                    Success = true,
+                    Message = "Successfull!!!",
+                    Data = del
                 };
             }
             catch (Exception ex)

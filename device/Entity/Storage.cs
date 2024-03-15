@@ -24,16 +24,16 @@ namespace device.Entity
         /// <summary>
         /// khóa ngoại liên kết với bảng Laptop Detail
         /// </summary>
-        public int LaptopDetailId { get; set; }
+        public int LaptopId { get; set; }
         /// <summary>
         /// trường xóa
         /// </summary>
         [JsonIgnore] 
         public bool IsDelete { get; set; }
         /// <summary>
-        /// liên kết với bảng laptop detail
+        /// liên kết với bảng laptop
         /// </summary>
         [JsonIgnore]
-        public virtual LaptopDetail LaptopDetail { get; set; }
+        public virtual Laptop Laptop { get; set; }
     }
 }

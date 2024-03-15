@@ -18,11 +18,12 @@ namespace device.Services
             _repos = repos;
             _context = context;
         }
+
         public async Task<TPaging<LaptopResponse>> GetAllLaptop(int page, int pageSize)
         {
             try
             {
-                int totalCount = await _context.Set<Laptop>().CountAsync();
+                int totalCount = await _context.Set<Laptop>().CountAsync(l => l.IsDelete == false);
 
                 var result = await _context.Set<Laptop>()!
                     .Include(s => s.Producer)
@@ -38,17 +39,19 @@ namespace device.Services
                     {
                         Id = laptop.Id,
                         Name = laptop.Name,
-                        ProducerName = laptop.Producer!.Name,
+                        ProducerName = laptop.Producer?.Name,
                         CostPrice = laptop.CostPrice,
                         SoldPrice = laptop.SoldPrice,
-                        ProducerId = laptop.ProducerId
-                    });
+                        ProducerId = laptop.ProducerId,
+                        inventory = laptop.inventory,
+                        IsDelete = laptop.IsDelete
+                    }) ;
                 }
 
                 return new TPaging<LaptopResponse>
                 {
-                    numberPage = page,
-                    totalRecord = totalCount,
+                    NumberPage = page,
+                    TotalRecord = totalCount,
                     Data = laptopResponse
                 };
             }
@@ -57,26 +60,27 @@ namespace device.Services
                 throw ex;
             }
         }
+
         public async Task<ActionResult<BaseResponse<Laptop>>> GetLaptopById(int id)
         {
             try
             {
                 var result = await _repos.GetAsyncById(id);
 
-                if (result == null && result!.IsDelete == true)
+                if (result == null || result!.IsDelete == true)
                 {
                     return new BaseResponse<Laptop>
                     {
-                        success = false,
-                        message = "Not found!!!"
+                        Success = false,
+                        Message = "Not found!!!"
                     };
                 }
 
                 return new BaseResponse<Laptop>
                 {
-                    success = true,
-                    message = "Successfull!!!",
-                    data = result
+                    Success = true,
+                    Message = "Successfull!!!",
+                    Data = result
                 };
             }
             catch (Exception ex)
@@ -91,12 +95,12 @@ namespace device.Services
             {
                 var lap = await _repos.GetAsyncById(id);
 
-                if (lap == null && lap!.IsDelete == true)
+                if (lap == null || lap!.IsDelete == true)
                 {
                     return new BaseResponse<Laptop>
                     {
-                        success = false,
-                        message = "Not found!!!"
+                        Success = false,
+                        Message = "Not found!!!"
                     };
                 }
 
@@ -106,16 +110,18 @@ namespace device.Services
                     Name = Upd.Name,
                     ProducerId = Upd.ProducerId,
                     CostPrice = Upd.CostPrice,
-                    SoldPrice = Upd.SoldPrice
+                    SoldPrice = Upd.SoldPrice,
+                    inventory = Upd.inventory,
+                    IsDelete = Upd.IsDelete
                 };
             
                 var result = await _repos.UpdateOneAsyns(laptop);
 
                 return new BaseResponse<Laptop>
                 {
-                    success = true,
-                    message = "Successfull!!!",
-                    data = result
+                    Success = true,
+                    Message = "Successfull!!!",
+                    Data = result
                 };
             }
             catch (Exception ex)
@@ -142,9 +148,9 @@ namespace device.Services
                 var result = await _repos.AddOneAsync(laptop);
                 return new BaseResponse<Laptop> 
                 { 
-                    success = true, 
-                    message = "Successfull!!!", 
-                    data = result 
+                    Success = true, 
+                    Message = "Successfull!!!", 
+                    Data = result 
                 };
             }
             catch (Exception ex)
@@ -158,23 +164,24 @@ namespace device.Services
             {
                 var laptop = await _repos.GetAsyncById(id);
 
-                if (laptop == null && laptop!.IsDelete == true)
+                if (laptop == null || laptop!.IsDelete == true)
                 {
                     return new BaseResponse<Laptop>
                     {
-                        success = false,
-                        message = "Not found!!!"
+                        Success = false,
+                        Message = "Not found!!!"
                     };
                 }
+
                 laptop.IsDelete = true;
 
                 var del = await _repos.DeleteOneAsync(laptop);
 
                 return new BaseResponse<Laptop>
                 {
-                    success = true,
-                    message = "Successfull!!!",
-                    data = del
+                    Success = true,
+                    Message = "Successfull!!!",
+                    Data = del
                 };
             }
             catch (Exception ex)

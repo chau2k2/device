@@ -26,6 +26,7 @@ namespace device.Entity
         [JsonIgnore] 
         public bool IsDelete { get; set; }
         /// <summary>
+        ///  
         /// liên kết 1- n với bảng laptop detail
         /// </summary>
         [JsonIgnore]

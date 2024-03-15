@@ -11,7 +11,7 @@ namespace device.Models
         [Required]
         [Range(0, 1000, ErrorMessage = "nhap gia tri trong khoang 0 den 1000")]
         public int ImportNumber { get; set; }
-        public int LaptopDetailId { get; set; }
+        public int LaptopId { get; set; }
         [JsonIgnore]
         public bool IsDelete { get; set; }
     }

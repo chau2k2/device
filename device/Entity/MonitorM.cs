@@ -14,7 +14,7 @@ namespace device.Entity
         /// tên màn
         /// </summary>
         [Required]
-        [MaxLength(50, ErrorMessage ="length of name must not be greater than 50")]
+        [MaxLength(50)]
         public string Name { get; set; }
         /// <summary>
         /// giá của màn hình ( monitor)

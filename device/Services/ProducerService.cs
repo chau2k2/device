@@ -24,14 +24,14 @@ namespace device.Services
         {
             try
             {
-                int totalCount = await _context.Set<Producer>().CountAsync();
+                int totalCount = await _context.Set<Producer>().CountAsync(i => i.IsDelete == false);
 
                 var result = await _repos.GetAllAsync(page, pageSize);
 
                 return new TPaging<Producer>
                 {
-                    numberPage = page,
-                    totalRecord = totalCount,
+                    NumberPage = page,
+                    TotalRecord = totalCount,
                     Data = result
                 };
             }
@@ -45,19 +45,19 @@ namespace device.Services
             try
             {
                 var result = await _repos.GetAsyncById(id);
-                if (result == null)
+                if (result == null || result.IsDelete == true)
                 {
                     return new BaseResponse<Producer>
                     {
-                        success = false,
-                        message = "NotFound!!!"
+                        Success = false,
+                        Message = "NotFound!!!"
                     };
                 }
                 return new BaseResponse<Producer>
                 {
-                    success = true,
-                    message = "Successfull!!!",
-                    data = result
+                    Success = true,
+                    Message = "Successfull!!!",
+                    Data = result
                 };
             }
             catch (Exception ex) 
@@ -69,14 +69,14 @@ namespace device.Services
         {
             try
             {
-                var findId = await _repos.GetAsyncById(id);
+                var produce = await _repos.GetAsyncById(id);
 
-                if (findId == null)
+                if (produce == null || produce.IsDelete == true)
                 {
                     return new BaseResponse<Producer>
                     {
-                        success = false,
-                        message = "NotFound!!!"
+                        Success = false,
+                        Message = "NotFound!!!"
                     };
                 }
                 Producer producer = new Producer()
@@ -90,9 +90,9 @@ namespace device.Services
 
                 return new BaseResponse<Producer>
                 {
-                    success = true,
-                    message = "Successfull!!!",
-                    data = result
+                    Success = true,
+                    Message = "Successfull!!!",
+                    Data = result
                 };
             }
             catch (Exception ex)
@@ -118,9 +118,9 @@ namespace device.Services
 
                 return new BaseResponse<Producer>
                 {
-                    success = true,
-                    message = "Successfull!!!",
-                    data = result
+                    Success = true,
+                    Message = "Successfull!!!",
+                    Data = result
                 };
             }
             catch (Exception ex)
@@ -134,9 +134,13 @@ namespace device.Services
             {
                 var producer = await _repos.GetAsyncById(id);
 
-                if (producer == null)
+                if (producer == null || producer.IsDelete == true)
                 {
-                    throw new Exception("Not found Producer");
+                    return new BaseResponse<Producer>
+                    {
+                        Success = false,
+                        Message = "NotFound!!!"
+                    };
                 }
                 producer.IsDelete = true;
 
@@ -144,9 +148,9 @@ namespace device.Services
 
                 return new BaseResponse<Producer>
                 {
-                    success = true,
-                    message = "Successfull!!!",
-                    data = del
+                    Success = true,
+                    Message = "Successfull!!!",
+                    Data = del
                 };
             }
             catch (Exception ex)

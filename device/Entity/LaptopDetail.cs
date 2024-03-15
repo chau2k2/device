@@ -96,10 +96,6 @@ namespace device.Entity
         /// </summary>
         [JsonIgnore]
         public virtual Laptop Laptops { get; set;}
-        /// <summary>
-        /// liên kết 1 - 1 vói bảng Kho hàng ( storage)
-        /// </summary>
-        [JsonIgnore]
-        public virtual Storage Storage { get; set; }
+
     }
 }

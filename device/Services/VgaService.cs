@@ -46,8 +46,8 @@ namespace device.Services
 
                 return new TPaging<VgaResponse>()
                 {
-                    numberPage = page,
-                    totalRecord = totalCount,
+                    NumberPage = page,
+                    TotalRecord = totalCount,
                     Data = vgaResponses
                 };
             }
@@ -62,20 +62,20 @@ namespace device.Services
             {
                 var result = await _repo.GetAsyncById(id);
 
-                if (result == null && result!.IsDelete == true)
+                if (result == null || result!.IsDelete == true)
                 {
                     return new BaseResponse<Vga>
                     {
-                        success = false,
-                        message = "Not found!!!"
+                        Success = false,
+                        Message = "Not found!!!"
                     };
                 }
 
                 return new BaseResponse<Vga>
                 {
-                    success = true,
-                    message = "Sucessfull!!!",
-                    data = result
+                    Success = true,
+                    Message = "Sucessfull!!!",
+                    Data = result
                 };
             }
             catch (Exception ex)
@@ -102,9 +102,9 @@ namespace device.Services
 
                 return new BaseResponse<Vga>
                 {
-                    success = true,
-                    message = "Sucessfull!!!",
-                    data = result
+                    Success = true,
+                    Message = "Sucessfull!!!",
+                    Data = result
                 };
             }
             catch (Exception ex)
@@ -120,8 +120,8 @@ namespace device.Services
             {
                 return new BaseResponse<Vga>
                 {
-                    success = false,
-                    message = "Not found!!!"
+                    Success = false,
+                    Message = "Not found!!!"
                 };
             }
 
@@ -138,9 +138,9 @@ namespace device.Services
 
                 return new BaseResponse<Vga> 
                 { 
-                    success = true, 
-                    message = "Sucessfull!!!", 
-                    data = result 
+                    Success = true, 
+                    Message = "Sucessfull!!!", 
+                    Data = result 
                 };
             }
             catch (Exception ex)
@@ -154,24 +154,24 @@ namespace device.Services
             {
                 var vga = await _repo.GetAsyncById(id);
 
-                if (vga == null)
+                if (vga == null || vga.IsDelete == true)
                 {
                     return new BaseResponse<Vga>
                     {
-                        success = false,
-                        message = "Not found!!!"
+                        Success = false,
+                        Message = "Notfound!!!"
                     };
                 }
-
+                
                 vga.IsDelete = true;
 
                 var del = await _repo.UpdateOneAsyns(vga);
 
                 return new BaseResponse<Vga>
                 {
-                    success = true,
-                    message = "Sucessfull!!!",
-                    data = del
+                    Success = true,
+                    Message = "Sucessfull!!!",
+                    Data = del
                 };
             }
             catch (Exception ex)
