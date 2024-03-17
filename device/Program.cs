@@ -17,7 +17,7 @@ builder.Services.AddScoped(typeof(IAllRepository<>), typeof(AllRepository<>));
 
 builder.Services.AddScoped(typeof(IVgaService), typeof(VgaService));
 builder.Services.AddScoped(typeof(IStorageService), typeof(StorageService));
-builder.Services.AddScoped(typeof( IRamService),typeof( RamService));
+builder.Services.AddScoped(typeof(IRamService),typeof( RamService));
 builder.Services.AddScoped(typeof(IProducerService), typeof(ProducerService));
 builder.Services.AddScoped(typeof(IMonitorService), typeof(MonitorService));  
 builder.Services.AddScoped(typeof(ILaptopService), typeof(LaptopService));

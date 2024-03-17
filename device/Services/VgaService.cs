@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using device.ModelResponse;
 using device.IServices;
 using device.Response;
+using device.Models;
 
 namespace device.Services
 {
@@ -84,7 +85,7 @@ namespace device.Services
             }
             
         }
-        public async Task<ActionResult<BaseResponse<Vga>>> Create(VgaResponse CrV)
+        public async Task<ActionResult<BaseResponse<Vga>>> Create(VgaModel CrV)
         {
             try
             {
@@ -112,7 +113,7 @@ namespace device.Services
                 throw ex;
             }
         }
-        public async Task<ActionResult<BaseResponse<Vga>>> Update(int id, VgaResponse UpV)
+        public async Task<ActionResult<BaseResponse<Vga>>> Update(int id, VgaModel UpV)
         {
             var findId = await _context.ram.FindAsync(id);
 

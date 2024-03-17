@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using device.ModelResponse;
 using device.IServices;
 using device.Response;
+using device.Models;
 
 namespace device.Services
 {
@@ -84,7 +85,7 @@ namespace device.Services
                 throw ex;
             }
         }
-        public async Task<ActionResult<BaseResponse<Storage>>> Create(StorageResponse CrS)
+        public async Task<ActionResult<BaseResponse<Storage>>> Create(StorageModel CrS)
         {
             try
             {
@@ -118,7 +119,7 @@ namespace device.Services
                 throw ex;
             }
         }
-        public async Task<ActionResult<BaseResponse<Storage>>> Update(int id, StorageResponse UpS)
+        public async Task<ActionResult<BaseResponse<Storage>>> Update(int id, StorageModel UpS)
         {
             try
             {

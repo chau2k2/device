@@ -5,6 +5,7 @@ using device.Response;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using device.IServices;
+using device.Models;
 
 namespace device.Services
 {
@@ -102,7 +103,7 @@ namespace device.Services
             }
             
         }
-        public async Task<ActionResult<BaseResponse<LaptopDetail>>> Update(int id, LaptopDetailResponse UpLD)
+        public async Task<ActionResult<BaseResponse<LaptopDetail>>> Update(int id, LaptopDetailModel UpLD)
         {
             try
             {
@@ -149,7 +150,7 @@ namespace device.Services
                 throw ex;
             }
         }
-        public async Task<ActionResult<BaseResponse<LaptopDetail>>> Create(LaptopDetailResponse CrLD)
+        public async Task<ActionResult<BaseResponse<LaptopDetail>>> Create(LaptopDetailModel CrLD)
         {
             try
             {
@@ -219,5 +220,6 @@ namespace device.Services
                 throw ex;
             }
         }
+       
     }
 }

@@ -190,9 +190,6 @@ namespace device.Services
                 throw ex;
             }
         }
-        public async Task<ActionResult<BaseResponse<Invoice>>> ValidateInvoice ( InvoiceModel invoice)
-        {
 
-        }
     }
 }
