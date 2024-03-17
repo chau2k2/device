@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using device.ModelResponse;
 using device.IServices;
 using device.Response;
+using device.Validator;
 
 namespace device.Services
 {
@@ -45,6 +46,7 @@ namespace device.Services
             try
             {
                 var result = await _repos.GetAsyncById(id);
+
                 if (result == null || result.IsDelete == true)
                 {
                     return new BaseResponse<Producer>
@@ -104,7 +106,9 @@ namespace device.Services
         {
             try
             {
+
                 int maxId = await _context.producers.MaxAsync(p => (int?)p.Id) ?? 0;
+
                 int next = maxId + 1;
 
                 Producer producer = new Producer()

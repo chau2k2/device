@@ -14,7 +14,7 @@ namespace device.Validator
         private readonly LaptopDbContext _context;
         private readonly CheckDuplicate _duplicate;
 
-        public LaptopDetailValidate( LaptopDbContext context, CheckDuplicate duplicate) 
+        public LaptopDetailValidate(LaptopDbContext context, CheckDuplicate duplicate)
         {
             _context = context;
             _duplicate = duplicate;
@@ -23,14 +23,45 @@ namespace device.Validator
         {
             var laptop = await _context.laptops.Include(i => i.Storage).FirstOrDefaultAsync(i => i.Id == laptopDetail.LaptopId);
 
-            if (laptopDetail.RamId == )
+            var ram = await _context.ram.FindAsync(laptopDetail.RamId);
+
+            var vga = await _context.vgas.FindAsync(laptopDetail.VgaId);
+
+            var monitor = await _context.monitors.FindAsync(laptopDetail.MonitorId);
+
+            if (monitor == null || monitor.IsDelete == true)
+            {
+                return new BaseResponse<LaptopDetailResponse>
+                {
+                    Success = false,
+                    Message = "Monitor khong ton tai hoac da bi xoa!!!"
+                };
+            }
+
+            if (vga == null || vga.IsDelete == true)
+            {
+                return new BaseResponse<LaptopDetailResponse>
+                {
+                    Success = false,
+                    Message = "Vga khong ton tai hoac da bi xoa"
+                };
+            }
+
+            if (ram == null || ram.IsDelete == true)
+            {
+                return new BaseResponse<LaptopDetailResponse>
+                {
+                    Success = false,
+                    Message = "Ram khong ton tai hoac da bi xoa!!!"
+                };
+            }
              
             if (laptop == null || laptop.IsDelete == true)
             {
                 return new BaseResponse<LaptopDetailResponse>
                 {
                     Success = false,
-                    Error = "Laptop khong ton tai!"
+                    Message = "Laptop khong ton tai!"
                 };
             }
 
@@ -48,7 +79,7 @@ namespace device.Validator
                 return new BaseResponse<LaptopDetailResponse>
                 {
                     Success = false,
-                    Error = "Vuot qua ki tu cho phep!!!"
+                    Message = "Vuot qua ki tu cho phep!!!"
                 };
             }
 
@@ -57,7 +88,7 @@ namespace device.Validator
                 return new BaseResponse<LaptopDetailResponse>
                 {
                     Success = false,
-                    Error = "Vuot qua ki tu cho phep !!!"
+                    Message = "Vuot qua ki tu cho phep !!!"
                 };
             }
 
@@ -66,7 +97,7 @@ namespace device.Validator
                 return new BaseResponse<LaptopDetailResponse>
                 {
                     Success = false,
-                    Error = "Khong spam!!!"
+                    Message = "Khong spam!!!"
                 };
             }
 
@@ -75,10 +106,9 @@ namespace device.Validator
                 return new BaseResponse<LaptopDetailResponse>
                 {
                     Success = false,
-                    Error = "Khong spam!!!"
+                    Message = "Khong spam!!!"
                 };
             }
-            
           
             return new BaseResponse<LaptopDetailResponse>
             {

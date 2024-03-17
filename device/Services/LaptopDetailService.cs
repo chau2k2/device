@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using device.IServices;
 using device.Models;
+using device.Validator;
 
 namespace device.Services
 {
@@ -154,6 +155,13 @@ namespace device.Services
         {
             try
             {
+                var validator = await _validate.RegexLaptopDetail(CrLD);
+
+                if (!validator.Value!.Success)
+                {
+                    return validator.Result!;
+                }
+
                 int maxId = await _context.laptopsDetail.MaxAsync(p => (int?)p.Id) ?? 0;
                 int next = maxId + 1;
 
@@ -220,6 +228,5 @@ namespace device.Services
                 throw ex;
             }
         }
-       
     }
 }
