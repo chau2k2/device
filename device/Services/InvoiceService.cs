@@ -94,6 +94,7 @@ namespace device.Services
                 int totalQuantity = 0;
 
                 List<InvoiceDetail> listdetail = new List<InvoiceDetail>();
+
                 foreach (var detail in listdetail)
                 {
                     totalPrice += detail.Price * detail.Quantity;
@@ -178,6 +179,7 @@ namespace device.Services
                 invoice.IsDelete = true;
 
                 var del = await _repo.DeleteOneAsync(invoice);
+
                 return new BaseResponse<Invoice>
                 {
                     Success = true,

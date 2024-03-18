@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using device.ModelResponse;
 using device.IServices;
+using device.Models;
 
 namespace device.Controllers
 {
@@ -30,7 +31,7 @@ namespace device.Controllers
         }
 
         [HttpPut("do-update")]
-        public async Task< ActionResult> Update(int id, [FromBody] ProducerResponse Upd)
+        public async Task< ActionResult> Update(int id, [FromBody] ProducerModel Upd)
         {
             if (!ModelState.IsValid)
             {
@@ -40,7 +41,7 @@ namespace device.Controllers
         }
 
         [HttpPost("create")]
-        public async Task<ActionResult> CreateProducer([FromBody] ProducerResponse cpr)
+        public async Task<ActionResult> CreateProducer([FromBody] ProducerModel cpr)
         {
             if (!ModelState.IsValid)
             {

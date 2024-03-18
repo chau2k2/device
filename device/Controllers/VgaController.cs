@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using device.ModelResponse;
 using device.IServices;
+using device.Models;
 
 namespace device.Controllers
 {
@@ -24,13 +25,13 @@ namespace device.Controllers
         }
 
         [HttpPost("do-create")]
-        public async Task<ActionResult<Vga>> CreateVga(VgaResponse vgs)
+        public async Task<ActionResult<Vga>> CreateVga(VgaModel vgs)
         {
             return Ok(await _service.Create(vgs));
         }
 
         [HttpPut("do-update")]
-        public async Task<ActionResult<Vga>> UpdateVga(int id, VgaResponse Uvga)
+        public async Task<ActionResult<Vga>> UpdateVga(int id, VgaModel Uvga)
         {
             return Ok (await _service .Update(id, Uvga));
         }

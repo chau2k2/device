@@ -101,6 +101,7 @@ namespace device.Services
                 };
 
                 var laptop = await _context.laptops.FirstOrDefaultAsync( s => s.Id == CrS.LaptopId );
+
                 if (laptop != null)
                 {
                     laptop.inventory = CrS.ImportNumber - CrS.SoldNumber;

@@ -1,11 +1,8 @@
-﻿using device.Cons;
-using device.Data;
+﻿using device.Data;
 using device.Entity;
 using device.Models;
 using device.Response;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.Formats.Asn1;
 
 namespace device.Validator
 {
@@ -19,7 +16,7 @@ namespace device.Validator
             _context = context;
             _duplicate = duplicate;
         }
-        public async Task<ActionResult<BaseResponse<LaptopDetailResponse>>> RegexLaptopDetail(LaptopDetailModel laptopDetail)
+        public async Task<BaseResponse<LaptopDetail>> RegexLaptopDetail(LaptopDetailModel laptopDetail)
         {
             var laptop = await _context.laptops.Include(i => i.Storage).FirstOrDefaultAsync(i => i.Id == laptopDetail.LaptopId);
 
@@ -29,88 +26,99 @@ namespace device.Validator
 
             var monitor = await _context.monitors.FindAsync(laptopDetail.MonitorId);
 
-            if (monitor == null || monitor.IsDelete == true)
+            var seri = await _context.laptopsDetail.FirstOrDefaultAsync( i => i.Seri == laptopDetail.Seri);
+            
+            if (seri != null)
             {
-                return new BaseResponse<LaptopDetailResponse>
+                return new BaseResponse<LaptopDetail>
                 {
                     Success = false,
-                    Message = "Monitor khong ton tai hoac da bi xoa!!!"
+                    Message = "Seri không trùng lặp!!!"
+                };
+            }
+
+            if (monitor == null || monitor.IsDelete == true)
+            {
+                return new BaseResponse<LaptopDetail>
+                {
+                    Success = false,
+                    Message = "Monitor không tồn tại hoặc đã bị xóa!!!"
                 };
             }
 
             if (vga == null || vga.IsDelete == true)
             {
-                return new BaseResponse<LaptopDetailResponse>
+                return new BaseResponse<LaptopDetail>
                 {
                     Success = false,
-                    Message = "Vga khong ton tai hoac da bi xoa"
+                    Message = "Vga không tồn tại hoặc đã bị xóa!!!"
                 };
             }
 
             if (ram == null || ram.IsDelete == true)
             {
-                return new BaseResponse<LaptopDetailResponse>
+                return new BaseResponse<LaptopDetail>
                 {
                     Success = false,
-                    Message = "Ram khong ton tai hoac da bi xoa!!!"
+                    Message = "Ram không tồn tại hoặc đã bị xóa!!!"
                 };
             }
              
             if (laptop == null || laptop.IsDelete == true)
             {
-                return new BaseResponse<LaptopDetailResponse>
+                return new BaseResponse<LaptopDetail>
                 {
                     Success = false,
-                    Message = "Laptop khong ton tai!"
+                    Message = "Laptop không tồn tại hoặc đã bị xóa!"
                 };
             }
 
             if (laptop.Storage.ImportNumber == laptop.Storage.SoldNumber)
             {
-                return new BaseResponse<LaptopDetailResponse>
+                return new BaseResponse<LaptopDetail>
                 {
                     Success = false,
-                    Message = "Laptop nay da het hang!!!"
+                    Message = "Laptop này đã hết hàng!!!"
                 };
             }
 
             if (laptopDetail.Cpu.Length >= 50)
             {
-                return new BaseResponse<LaptopDetailResponse>
+                return new BaseResponse<LaptopDetail>
                 {
                     Success = false,
-                    Message = "Vuot qua ki tu cho phep!!!"
+                    Message = "Vượt quá kí tự cho phép!!!"
                 };
             }
 
             if (laptopDetail.HardDriver.Length >= 50)
             {
-                return new BaseResponse<LaptopDetailResponse>
+                return new BaseResponse<LaptopDetail>
                 {
                     Success = false,
-                    Message = "Vuot qua ki tu cho phep !!!"
+                    Message = "Vượt quá kí tự cho phép!!!"
                 };
             }
 
             if (_duplicate.isValueName(laptopDetail.HardDriver))
             {
-                return new BaseResponse<LaptopDetailResponse>
+                return new BaseResponse<LaptopDetail>
                 {
                     Success = false,
-                    Message = "Khong spam!!!"
+                    Message = "Không spam!!!"
                 };
             }
 
             if (_duplicate.isValueName(laptopDetail.Cpu))
             {
-                return new BaseResponse<LaptopDetailResponse>
+                return new BaseResponse<LaptopDetail>
                 {
                     Success = false,
-                    Message = "Khong spam!!!"
+                    Message = "Không spam!!!"
                 };
             }
           
-            return new BaseResponse<LaptopDetailResponse>
+            return new BaseResponse<LaptopDetail>
             {
                 Success = true,
                 Message = ""

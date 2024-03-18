@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using device.ModelResponse;
 using device.IServices;
 using device.Response;
+using device.Models;
 
 namespace device.Services
 {
@@ -65,7 +66,7 @@ namespace device.Services
                 throw ex;
             }
         }
-        public async Task<ActionResult<BaseResponse<Ram>>> Create (RamResponse CrR)
+        public async Task<ActionResult<BaseResponse<Ram>>> Create (RamModel CrR)
         {
             try
             {
@@ -93,7 +94,7 @@ namespace device.Services
                 throw ex;
             }
         }
-        public async Task<ActionResult<BaseResponse<Ram>>> Update (int id, RamResponse UpR)
+        public async Task<ActionResult<BaseResponse<Ram>>> Update (int id, RamModel UpR)
         {
             try
             {

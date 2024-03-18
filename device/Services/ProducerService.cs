@@ -7,6 +7,7 @@ using device.ModelResponse;
 using device.IServices;
 using device.Response;
 using device.Validator;
+using device.Models;
 
 namespace device.Services
 {
@@ -67,7 +68,7 @@ namespace device.Services
                 throw ex; 
             }
         }
-        public async Task<ActionResult<BaseResponse<Producer>>> UpdateProducer (int id, ProducerResponse Upd)
+        public async Task<ActionResult<BaseResponse<Producer>>> UpdateProducer (int id, ProducerModel Upd)
         {
             try
             {
@@ -102,7 +103,7 @@ namespace device.Services
                 throw ex;
             }
         }
-        public async Task<ActionResult<BaseResponse<Producer>>> CreateProducer (ProducerResponse cpr)
+        public async Task<ActionResult<BaseResponse<Producer>>> CreateProducer (ProducerModel cpr)
         {
             try
             {

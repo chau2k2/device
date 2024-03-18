@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using device.ModelResponse;
 using device.IServices;
 using device.Response;
+using device.Models;
 
 namespace device.Services
 {
@@ -65,7 +66,7 @@ namespace device.Services
                 throw ex;
             }
         }
-        public async Task<ActionResult<BaseResponse<MonitorM>>> Update(int id,MonitorResponse UpM)
+        public async Task<ActionResult<BaseResponse<MonitorM>>> Update(int id, MonitorModel UpM)
         {
             try
             {
@@ -101,7 +102,7 @@ namespace device.Services
                 throw ex;
             }
         }
-        public async Task<ActionResult<BaseResponse<MonitorM>>> Create(MonitorResponse CrM)
+        public async Task<ActionResult<BaseResponse<MonitorM>>> Create(MonitorModel CrM)
         {
             try
             {

@@ -5,6 +5,7 @@ using device.Response;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using device.IServices;
+using device.Models;
 
 namespace device.Services
 {
@@ -89,7 +90,7 @@ namespace device.Services
             }
             
         }
-        public async Task<ActionResult<BaseResponse<Laptop>>> Updatelaptop(int id, LaptopResponse Upd)
+        public async Task<ActionResult<BaseResponse<Laptop>>> Updatelaptop(int id, LaptopModel Upd)
         {
             try
             {
@@ -111,7 +112,6 @@ namespace device.Services
                     ProducerId = Upd.ProducerId,
                     CostPrice = Upd.CostPrice,
                     SoldPrice = Upd.SoldPrice,
-                    inventory = Upd.inventory,
                     IsDelete = Upd.IsDelete
                 };
             
@@ -129,7 +129,7 @@ namespace device.Services
                 throw ex;
             }
         }
-        public async Task<ActionResult<BaseResponse<Laptop>>> CreateLaptop(LaptopResponse crl)
+        public async Task<ActionResult<BaseResponse<Laptop>>> CreateLaptop( LaptopModel crl)
         {
             try
             {

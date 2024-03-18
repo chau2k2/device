@@ -37,7 +37,7 @@ namespace device.Controllers
         }
 
         [HttpPut("do-update")]
-        public async Task<IActionResult> UpdateInvoice(int id, InvoiceResponse upI)
+        public async Task<IActionResult> UpdateInvoice(int id, InvoiceModel upI)
         {
             return Ok (await _service.Update(id, upI));
         }

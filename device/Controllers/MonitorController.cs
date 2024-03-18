@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using device.ModelResponse;
 using device.IServices;
+using device.Models;
 
 namespace device.Controllers
 {
@@ -23,7 +24,7 @@ namespace device.Controllers
         }
 
         [HttpPut("update")]
-        public async Task<IActionResult> Update(int id, [FromBody] MonitorResponse UMn)
+        public async Task<IActionResult> Update(int id, [FromBody] MonitorModel UMn)
         {
             return Ok (await _service.Update(id, UMn));
         }
@@ -35,7 +36,7 @@ namespace device.Controllers
         }
 
         [HttpPost("create-monitor")]
-        public async Task<IActionResult> Create([FromBody] MonitorResponse CMn)
+        public async Task<IActionResult> Create([FromBody] MonitorModel CMn)
         {
             return Ok (await _service.Create(CMn));
         }

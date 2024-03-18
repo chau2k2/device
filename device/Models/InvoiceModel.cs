@@ -6,6 +6,9 @@ namespace device.Models
     public class InvoiceModel
     {
         public int Id { get; set; }
+        /// <summary>
+        /// số hóa đơn
+        /// </summary>
         public string InvoiceNumber { get; set; }
         /// <summary>
         /// ngày giờ trong hóa đơn

@@ -14,11 +14,15 @@ namespace device.Services
     {
         private readonly IAllRepository<LaptopDetail> _repos;
         private readonly LaptopDbContext _context;
+        private readonly ILogger<LaptopDetailService> _logger;
+        private readonly LaptopDetailValidate _validate;
 
-        public LaptopDetailService(IAllRepository<LaptopDetail> repos, LaptopDbContext context)
+        public LaptopDetailService( IAllRepository<LaptopDetail> repos, LaptopDbContext context, ILogger<LaptopDetailService> logger)
         {
             _repos = repos;
             _context = context;
+            _validate = new LaptopDetailValidate(context,new CheckDuplicate());
+            _logger = logger;
         }
 
         public async Task<TPaging<LaptopDetailResponse>> GetAll(int page, int pageSize)
@@ -95,6 +99,7 @@ namespace device.Services
                 {
                     Success = true,
                     Message = "Successfull!!!",
+                    ErrorCode = ErrorCode.None,
                     Data = result
                 };
             }
@@ -115,7 +120,8 @@ namespace device.Services
                     return new BaseResponse<LaptopDetail>
                     {
                         Success = false,
-                        Message = "NotFound!!!"
+                        Message = "NotFound!!!",
+                        ErrorCode = ErrorCode.NotFound
                     };
                 }
 
@@ -136,7 +142,18 @@ namespace device.Services
                     BatteryCapacity = UpLD.BatteryCapacity,
                     LaptopId = UpLD.LaptopId
                 };
-            
+
+                var validator = await _validate.RegexLaptopDetail(UpLD);
+
+                if (!validator.Success)
+                {
+                    return new BaseResponse<LaptopDetail>
+                    {
+                        Message = validator.Message,
+                        ErrorCode = validator.ErrorCode
+                    };
+                }
+
                 var result = await _repos.UpdateOneAsyns(laptopDetail);
 
                 return new BaseResponse<LaptopDetail>
@@ -148,21 +165,20 @@ namespace device.Services
             }
             catch (Exception ex)
             {
-                throw ex;
+                return new BaseResponse<LaptopDetail>
+                {
+                    Success = false,
+                    ErrorCode = ErrorCode.Error,
+                    Message = ex.Message
+                };
             }
         }
         public async Task<ActionResult<BaseResponse<LaptopDetail>>> Create(LaptopDetailModel CrLD)
         {
             try
             {
-                var validator = await _validate.RegexLaptopDetail(CrLD);
-
-                if (!validator.Value!.Success)
-                {
-                    return validator.Result!;
-                }
-
                 int maxId = await _context.laptopsDetail.MaxAsync(p => (int?)p.Id) ?? 0;
+
                 int next = maxId + 1;
 
                 LaptopDetail laptopDetail = new LaptopDetail()
@@ -184,6 +200,16 @@ namespace device.Services
                     IsDelete = CrLD.IsDelete
                 };
 
+                var validator = await _validate.RegexLaptopDetail(CrLD);
+
+                if (!validator.Success)
+                {
+                    return new BaseResponse<LaptopDetail>
+                    {
+                        Message = validator.Message
+                    };
+                }
+
                 var result = await _repos.AddOneAsync(laptopDetail);
 
                 return new BaseResponse<LaptopDetail>
@@ -195,7 +221,12 @@ namespace device.Services
             }
             catch (Exception ex)
             {
-                throw ex;
+                return new BaseResponse<LaptopDetail>
+                {
+                    Success = false,
+                    ErrorCode = ErrorCode.Error,
+                    Message = ex.Message
+                };
             }
         }
         public async Task<ActionResult<BaseResponse<LaptopDetail>>> Delete(int id)
@@ -212,6 +243,7 @@ namespace device.Services
                         Message = "NotFound!!!"
                     };
                 }
+
                 laptopDetail.IsDelete = true;
 
                 var del = await _repos.DeleteOneAsync(laptopDetail);
