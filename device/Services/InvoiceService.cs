@@ -15,7 +15,7 @@ namespace device.Services
         private readonly IAllRepository<Invoice> _repo;
         private readonly LaptopDbContext _context;
 
-        public InvoiceService(IAllRepository<Invoice> repo,  LaptopDbContext context)
+        public InvoiceService(IAllRepository<Invoice> repo, LaptopDbContext context)
         {
             _repo = repo;
             _context = context;
@@ -24,9 +24,11 @@ namespace device.Services
         {
             try
             {
-                int totalCount = await _context.Set<Invoice>().CountAsync( i => i.IsDelete == false);
+                int totalCount = await _context.Set<Invoice>().CountAsync(i => i.IsDelete == false);
 
                 var invoices = await _context.Set<Invoice>()
+                    .Include(i => i.invoiceDetail)!
+                        .ThenInclude( l => l.Laptop)
                     .Where(i => i.IsDelete == false)
                     .Take(pageSize).Skip((page - 1) * pageSize)
                     .ToListAsync();
@@ -40,7 +42,19 @@ namespace device.Services
                         Id = invoice.Id,
                         DateInvoice = invoice.DateInvoice,
                         InvoiceNumber = invoice.InvoiceNumber,
-                        IsDelete = invoice.IsDelete
+                        IsDelete = invoice.IsDelete,
+                        InvoiceDetail = invoice.invoiceDetail!
+                            .Where(i => i.IsDelete == false)
+                            .Select(detail => new InvoiceDetailResponse
+                            {
+                                Id = detail.Id,
+                                LaptopId = detail.LaptopId,
+                                LaptopName = detail.Laptop.Name,
+                                InvoiceNumber = detail.invoices.InvoiceNumber,
+                                Quantity = detail.Quantity,
+                                Price = detail.Price,
+                                InvoiceId = invoice.Id
+                            }).ToList()
                     });
                 }
 
@@ -48,39 +62,75 @@ namespace device.Services
                 {
                     NumberPage = page,
                     TotalRecord = totalCount,
-                    Data = invoiceResponses
+                    Data = invoiceResponses,
+                    Message = "Successfull!!!"
                 };
             }
             catch (Exception ex)
             {
-                throw ex;
+                return new TPaging<InvoiceResponse>
+                {
+                    Message = ex.Message,
+                    Error = Error.Error
+                };
             }
         }
-        public async Task<ActionResult<BaseResponse<Invoice>>> GetByInvoiceNum(string invoiceNum)
+        public async Task<ActionResult<BaseResponse<InvoiceResponse>>> GetById(int id)
         {
             try
             {
-                var invoice = await _context.invoices.FirstOrDefaultAsync(i => i.InvoiceNumber == invoiceNum);
+                var invoice = await _context.Set<Invoice>()
+                    .Include(i => i.invoiceDetail)!
+                        .ThenInclude(l => l.Laptop)
+                    .Where(i => i.IsDelete == false)
+                    .FirstOrDefaultAsync(i => i.Id == id);
 
                 if (invoice == null)
                 {
-                    return new BaseResponse<Invoice>
+                    return new BaseResponse<InvoiceResponse>
                     {
                         Success = false,
-                        Message = "NotFound!!!"
+                        Message = "NotFound!!!",
+                        ErrorCode = ErrorCode.Error
                     };
                 }
 
-                return new BaseResponse<Invoice>
+                InvoiceResponse invoiceResponse = new InvoiceResponse()
+                {
+                    Id = invoice.Id,
+                    InvoiceNumber = invoice.InvoiceNumber,
+                    DateInvoice = invoice.DateInvoice,
+                    IsDelete = invoice.IsDelete,
+                    InvoiceDetail = invoice.invoiceDetail!
+                        .Where(i => i.IsDelete == false)
+                        .Select(detail => new InvoiceDetailResponse
+                        {
+                            Id = detail.Id,
+                            LaptopId = detail.LaptopId,
+                            LaptopName = detail.Laptop.Name,
+                            InvoiceNumber = detail.invoices.InvoiceNumber,
+                            Quantity = detail.Quantity,
+                            Price = detail.Price,
+                            InvoiceId = invoice.Id
+                        }).ToList()
+                };
+
+                return new BaseResponse<InvoiceResponse>
                 {
                     Success = true,
                     Message = "Successfull!!!",
-                    Data = invoice
+                    Data = invoiceResponse,
+                    ErrorCode = ErrorCode.None
                 };
             }
             catch (Exception ex)
             {
-                throw ex;
+                return new BaseResponse<InvoiceResponse>
+                {
+                    Success = false,
+                    Message = ex.Message,
+                    ErrorCode = ErrorCode.Error
+                };
             }
         }
         public async Task<ActionResult<BaseResponse<Invoice>>> Create(InvoiceModel CrI)
@@ -88,25 +138,14 @@ namespace device.Services
             try
             {
                 int maxId = await _context.invoices.MaxAsync(e => (int?)e.Id) ?? 0;
+
                 int nextId = maxId + 1;
-
-                decimal totalPrice = 0;
-                int totalQuantity = 0;
-
-                List<InvoiceDetail> listdetail = new List<InvoiceDetail>();
-
-                foreach (var detail in listdetail)
-                {
-                    totalPrice += detail.Price * detail.Quantity;
-                    totalQuantity += detail.Quantity;
-                }
 
                 Invoice invoice = new Invoice()
                 {
                     Id = nextId,
                     DateInvoice = CrI.DateInvoice,
-                    TotalQuantity = totalQuantity,
-                    TotalPrice = totalPrice
+                    IsDelete = CrI.IsDelete
                 };
 
                 invoice.InvoiceNumber = $"IV{invoice.Id:D4}";
@@ -122,7 +161,12 @@ namespace device.Services
             }
             catch (Exception ex)
             {
-                throw ex;
+                return new BaseResponse<Invoice>
+                {
+                    Success = false,
+                    Message = ex.Message,
+                    ErrorCode = ErrorCode.Error
+                };
             }
         }
         public async Task<ActionResult<BaseResponse<Invoice>>> Update(int id, InvoiceModel UpI)
@@ -158,10 +202,15 @@ namespace device.Services
             }
             catch (Exception ex)
             {
-                throw ex;
+                return new BaseResponse<Invoice>
+                {
+                    Success = false,
+                    Message = ex.Message,
+                    ErrorCode = ErrorCode.Error
+                };
             }
         }
-        public async Task<ActionResult<BaseResponse<Invoice>>> delete(int id)
+        public async Task<ActionResult<BaseResponse<Invoice>>> Delete(int id)
         {
             try
             {
@@ -178,7 +227,7 @@ namespace device.Services
 
                 invoice.IsDelete = true;
 
-                var del = await _repo.DeleteOneAsync(invoice);
+                var del = await _repo.UpdateOneAsyns(invoice);
 
                 return new BaseResponse<Invoice>
                 {
@@ -189,7 +238,12 @@ namespace device.Services
             }
             catch (Exception ex)
             {
-                throw ex;
+                return new BaseResponse<Invoice>
+                {
+                    Success = false,
+                    Message = ex.Message,
+                    ErrorCode = ErrorCode.Error
+                };
             }
         }
 

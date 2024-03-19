@@ -246,7 +246,7 @@ namespace device.Services
 
                 laptopDetail.IsDelete = true;
 
-                var del = await _repos.DeleteOneAsync(laptopDetail);
+                var del = await _repos.UpdateOneAsyns(laptopDetail);
 
                 return new BaseResponse<LaptopDetail>
                 {

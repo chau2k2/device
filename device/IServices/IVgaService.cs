@@ -12,6 +12,6 @@ namespace device.IServices
         Task<TPaging<VgaResponse>> GetAll(int page, int pageSize);
         Task<ActionResult<BaseResponse<Vga>>> Create(VgaModel CrV);
         Task<ActionResult<BaseResponse<Vga>>> Update(int id, VgaModel UpV);
-        Task<ActionResult<BaseResponse<Vga>>> delete(int id);
+        Task<ActionResult<BaseResponse<Vga>>> Delete(int id);
     }
 }

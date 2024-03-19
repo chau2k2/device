@@ -42,7 +42,7 @@ namespace device.Controllers
             return Ok (await _service.Update(id, UDL));
         }
 
-        [HttpDelete("do-delete")]
+        [HttpDelete("do-Delete")]
         public async Task<IActionResult> Delete(int id)
         {
             return Ok ( await _service.Delete(id));

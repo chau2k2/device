@@ -130,7 +130,7 @@ namespace device.Services
                 throw ex;
             }
         }
-        public async Task<ActionResult<BaseResponse<Ram>>> delete (int id)
+        public async Task<ActionResult<BaseResponse<Ram>>> Delete (int id)
         {
             try
             {

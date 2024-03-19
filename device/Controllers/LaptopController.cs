@@ -3,7 +3,6 @@ using device.IRepository;
 using device.Entity;
 using device.Services;
 using Microsoft.AspNetCore.Mvc;
-using device.Response;
 using device.Models;
 
 namespace device.Controllers

@@ -12,6 +12,6 @@ namespace device.IServices
         Task<ActionResult<BaseResponse<Storage>>> GetById(int id);
         Task<ActionResult<BaseResponse<Storage>>> Create(StorageModel CrS);
         Task<ActionResult<BaseResponse<Storage>>> Update(int id, StorageModel UpS);
-        Task<ActionResult<BaseResponse<Storage>>> delete(int id);
+        Task<ActionResult<BaseResponse<Storage>>> Delete(int id);
     }
 }

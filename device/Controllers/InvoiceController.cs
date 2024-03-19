@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using device.ModelResponse;
 using device.IServices;
 using device.Models;
 
@@ -24,10 +23,10 @@ namespace device.Controllers
             return Ok(await _service.GetAll(page, pageSize));
         }
 
-        [HttpGet("get-invoice-num")]
-        public async Task<IActionResult> FindByInvoiceNum(string invoiceNum)
+        [HttpGet("get-by-id")]
+        public async Task<IActionResult> FindById(int id)
         {
-            return Ok ( await _service.GetByInvoiceNum(invoiceNum));
+            return Ok ( await _service.GetById(id));
         }
 
         [HttpPost("do-create")]
@@ -45,7 +44,7 @@ namespace device.Controllers
         [HttpDelete("delete")]
         public async Task<IActionResult> DeleteInvoice(int id)
         {
-            return Ok ( await _service.delete(id));
+            return Ok ( await _service.Delete(id));
         }
     }
 }

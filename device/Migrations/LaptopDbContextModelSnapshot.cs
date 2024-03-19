@@ -40,12 +40,6 @@ namespace device.Migrations
                     b.Property<bool>("IsDelete")
                         .HasColumnType("boolean");
 
-                    b.Property<decimal>("TotalPrice")
-                        .HasColumnType("numeric");
-
-                    b.Property<int>("TotalQuantity")
-                        .HasColumnType("integer");
-
                     b.HasKey("Id");
 
                     b.ToTable("invoices");

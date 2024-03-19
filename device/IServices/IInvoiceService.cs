@@ -9,9 +9,9 @@ namespace device.IServices
     public interface IInvoiceService
     {
         Task<TPaging<InvoiceResponse>> GetAll(int page, int pageSize);
-        Task<ActionResult<BaseResponse<Invoice>>> GetByInvoiceNum(string invoiceNum);
+        Task<ActionResult<BaseResponse<InvoiceResponse>>> GetById(int id);
         Task<ActionResult<BaseResponse<Invoice>>> Create(InvoiceModel CrI);
         Task<ActionResult<BaseResponse<Invoice>>> Update(int id, InvoiceModel UpI);
-        Task<ActionResult<BaseResponse<Invoice>>> delete(int id);
+        Task<ActionResult<BaseResponse<Invoice>>> Delete(int id);
     }
 }

@@ -115,9 +115,9 @@ namespace device.Services
         }
         public async Task<ActionResult<BaseResponse<Vga>>> Update(int id, VgaModel UpV)
         {
-            var findId = await _context.ram.FindAsync(id);
+            var VgaModel = await _context.ram.FindAsync(id);
 
-            if (findId == null)
+            if (VgaModel == null)
             {
                 return new BaseResponse<Vga>
                 {
@@ -149,7 +149,7 @@ namespace device.Services
                 throw ex;
             }
         }
-        public async Task<ActionResult<BaseResponse<Vga>>> delete(int id)
+        public async Task<ActionResult<BaseResponse<Vga>>> Delete(int id)
         {
             try
             {

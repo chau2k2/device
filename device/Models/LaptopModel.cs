@@ -16,6 +16,10 @@ namespace device.Models
         [Required]
         [Range(0, 10000000)]
         public decimal SoldPrice { get; set; }
+        /// <summary>
+        /// số lượng hàng còn lại
+        /// </summary>
+        public int inventory { get; set; }
         [JsonIgnore]
         public bool IsDelete { get; set; }
     }

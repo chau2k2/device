@@ -41,12 +41,35 @@ namespace device.Validator
                 };
             }
 
-            if (invoiceDetail.Quantity > 0 || invoiceDetail.Quantity < Constants.MAX_QUANTITY)
+            var storage = await _context.storages.FirstOrDefaultAsync( s => s.LaptopId == invoiceDetail.LaptopId);
+
+            if (storage == null)
+            {
+                return new BaseResponse<InvoiceDetailModel>
+                {
+                    Success = false,
+                    Message = "Laptop này chưa được cập nhật số lượng!!!"
+                };
+            }
+
+            if (invoiceDetail.Quantity < 0 || invoiceDetail.Quantity > Constants.MAX_QUANTITY)
             {
                 return new BaseResponse<InvoiceDetailModel>
                 {
                     Success = false,
                     Message = $"Số lượng Laptop phải là số dương và nhỏ hơn {Constants.MAX_QUANTITY}"
+                };
+            }
+
+            var existLaptop = await _context.InvoicesDetail.FirstOrDefaultAsync( d => d.InvoiceId == invoiceDetail.InvoiceId & d.LaptopId == invoiceDetail.LaptopId);
+
+            if (existLaptop != null)
+            {
+                return new BaseResponse<InvoiceDetailModel>
+                {
+                    Success = false,
+                    Message = "Hóa đơn đã chứa laptop này",
+                    ErrorCode = ErrorCode.Error
                 };
             }
 

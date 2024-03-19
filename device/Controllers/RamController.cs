@@ -43,9 +43,9 @@ namespace device.Controllers
         }
 
         [HttpDelete("delete")]
-        public async Task<IActionResult> delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
-            return Ok (await _service.delete(id));
+            return Ok (await _service.Delete(id));
         }
     }
 }

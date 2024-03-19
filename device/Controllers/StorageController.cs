@@ -37,10 +37,10 @@ namespace device.Controllers
         {
             return Ok (await _service.Create(Cst));
         }
-        [HttpDelete("delete-vga")]
-        public async Task<IActionResult> delete(int id)
+        [HttpDelete("Delete-vga")]
+        public async Task<IActionResult> Delete(int id)
         {
-            return Ok ( await _service.delete(id));
+            return Ok ( await _service.Delete(id));
         }
     }
 }

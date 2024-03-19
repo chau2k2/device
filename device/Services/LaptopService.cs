@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using device.IServices;
 using device.Models;
+using device.Validator;
 
 namespace device.Services
 {
@@ -13,13 +14,14 @@ namespace device.Services
     {
         private readonly IAllRepository<Laptop> _repos;
         private readonly LaptopDbContext _context;
+        private readonly LaptopValidate _validate;
 
         public LaptopService(IAllRepository<Laptop> repos, LaptopDbContext context)
         {
             _repos = repos;
             _context = context;
+            _validate = new LaptopValidate(context, new CheckDuplicate());
         }
-
         public async Task<TPaging<LaptopResponse>> GetAllLaptop(int page, int pageSize)
         {
             try
@@ -44,8 +46,8 @@ namespace device.Services
                         CostPrice = laptop.CostPrice,
                         SoldPrice = laptop.SoldPrice,
                         ProducerId = laptop.ProducerId,
-                        inventory = laptop.inventory,
-                        IsDelete = laptop.IsDelete
+                        IsDelete = laptop.IsDelete,
+                        inventory = laptop.inventory
                     }) ;
                 }
 
@@ -58,39 +60,64 @@ namespace device.Services
             }
             catch (Exception ex)
             {
-                throw ex;
+                return new TPaging<LaptopResponse>
+                {
+                    Message = ex.Message,
+                    Error = Error.Error
+                };
             }
         }
 
-        public async Task<ActionResult<BaseResponse<Laptop>>> GetLaptopById(int id)
+        public async Task<ActionResult<BaseResponse<LaptopResponse>>> GetLaptopById(int id)
         {
             try
             {
-                var result = await _repos.GetAsyncById(id);
+                var lap = await _context.Set<Laptop>()
+                    .Include(l => l.Producer)
+                    .Include(l => l.Storage)
+                    .Where(l => l.IsDelete == false)
+                    .FirstOrDefaultAsync(l => l.Id == id);
 
-                if (result == null || result!.IsDelete == true)
+                if (lap == null)
                 {
-                    return new BaseResponse<Laptop>
+                    return new BaseResponse<LaptopResponse>
                     {
                         Success = false,
-                        Message = "Not found!!!"
+                        Message = "Not Found!!!",
+                        ErrorCode = ErrorCode.NotFound
                     };
                 }
 
-                return new BaseResponse<Laptop>
+                LaptopResponse laptopResponse = new LaptopResponse()
+                {
+                    Id = lap.Id,
+                    Name = lap.Name,
+                    ProducerName = lap.Producer?.Name,
+                    CostPrice = lap.CostPrice,
+                    SoldPrice = lap.SoldPrice,
+                    ProducerId = lap.ProducerId,
+                    inventory = lap.inventory,
+                    IsDelete = lap.IsDelete
+                };
+               
+                return new BaseResponse<LaptopResponse>
                 {
                     Success = true,
                     Message = "Successfull!!!",
-                    Data = result
+                    Data = laptopResponse
                 };
             }
             catch (Exception ex)
             {
-                throw ex;
+                return new BaseResponse<LaptopResponse>()
+                {
+                    Success = false,
+                    Message = ex.Message,
+                    ErrorCode = ErrorCode.Error
+                };
             }
-            
         }
-        public async Task<ActionResult<BaseResponse<Laptop>>> Updatelaptop(int id, LaptopModel Upd)
+        public async Task<ActionResult<BaseResponse<Laptop>>> Updatelaptop(int id, LaptopModel laptopModel)
         {
             try
             {
@@ -108,13 +135,24 @@ namespace device.Services
                 Laptop laptop = new Laptop()
                 {
                     Id = id,
-                    Name = Upd.Name,
-                    ProducerId = Upd.ProducerId,
-                    CostPrice = Upd.CostPrice,
-                    SoldPrice = Upd.SoldPrice,
-                    IsDelete = Upd.IsDelete
+                    Name = laptopModel.Name,
+                    ProducerId = laptopModel.ProducerId,
+                    CostPrice = laptopModel.CostPrice,
+                    SoldPrice = laptopModel.SoldPrice,
+                    IsDelete = laptopModel.IsDelete
                 };
-            
+
+                var validator = await _validate.RegexLaptop(laptopModel);
+
+                if (!validator.Success)
+                {
+                    return new BaseResponse<Laptop>
+                    {
+                        Message = validator.Message,
+                        ErrorCode = validator.ErrorCode
+                    };
+                }
+
                 var result = await _repos.UpdateOneAsyns(laptop);
 
                 return new BaseResponse<Laptop>
@@ -126,26 +164,44 @@ namespace device.Services
             }
             catch (Exception ex)
             {
-                throw ex;
+                return new BaseResponse<Laptop>()
+                {
+                    Success = false,
+                    Message = ex.Message,
+                    ErrorCode = ErrorCode.Error
+                };
             }
         }
-        public async Task<ActionResult<BaseResponse<Laptop>>> CreateLaptop( LaptopModel crl)
+        public async Task<ActionResult<BaseResponse<Laptop>>> CreateLaptop( LaptopModel laptopModel)
         {
             try
             {
                 int maxId = await _context.laptops.MaxAsync(p => (int?)p.Id) ?? 0;
+
                 int next = maxId + 1;
 
                 Laptop laptop = new Laptop()
                 {
                     Id = next,
-                    Name = crl.Name,
-                    ProducerId = crl.ProducerId,
-                    CostPrice = crl.CostPrice,
-                    SoldPrice = crl.SoldPrice
+                    Name = laptopModel.Name,
+                    ProducerId = laptopModel.ProducerId,
+                    CostPrice = laptopModel.CostPrice,
+                    SoldPrice = laptopModel.SoldPrice
                 };
 
+                var validator = await _validate.RegexLaptop(laptopModel);
+
+                if (!validator.Success)
+                {
+                    return new BaseResponse<Laptop>
+                    {
+                        Message = validator.Message,
+                        ErrorCode = validator.ErrorCode
+                    };
+                }
+
                 var result = await _repos.AddOneAsync(laptop);
+
                 return new BaseResponse<Laptop> 
                 { 
                     Success = true, 
@@ -155,7 +211,12 @@ namespace device.Services
             }
             catch (Exception ex)
             {
-                throw ex;
+                return new BaseResponse<Laptop>()
+                {
+                    Success = false,
+                    Message = ex.Message,
+                    ErrorCode = ErrorCode.Error
+                };
             }
         }
         public async Task<ActionResult<BaseResponse<Laptop>>> DeleteLaptop(int id)
@@ -175,7 +236,7 @@ namespace device.Services
 
                 laptop.IsDelete = true;
 
-                var del = await _repos.DeleteOneAsync(laptop);
+                var del = await _repos.UpdateOneAsyns(laptop);
 
                 return new BaseResponse<Laptop>
                 {
@@ -186,7 +247,12 @@ namespace device.Services
             }
             catch (Exception ex)
             {
-                throw ex;
+                return new BaseResponse<Laptop>()
+                {
+                    Success = false,
+                    Message = ex.Message,
+                    ErrorCode = ErrorCode.Error
+                };
             }
         }
     }

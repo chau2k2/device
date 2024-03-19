@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using device.ModelResponse;
 using device.IServices;
 using device.Models;
 
@@ -51,7 +50,7 @@ namespace device.Controllers
         }
 
         [HttpDelete("delete")]
-        public async Task<IActionResult> delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
             return Ok (await _service.DeleteProducer(id));
         }

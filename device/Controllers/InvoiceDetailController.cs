@@ -27,15 +27,15 @@ namespace device.Controllers
         [HttpGet("get-by-id")]
         public async Task<IActionResult> FindByInvoiceNum(int id)
         {
-            return Ok(await _service.findById(id));
+            return Ok(await _service.GetById(id));
         }
-        [HttpPost("do-create")]
+        [HttpPost("create")]
         public async Task<IActionResult> CreateInvoiceDetail(InvoiceDetailModel CID)
         {
             return Ok ( await _service.CreateInvoiceDetail(CID));
         }
 
-        [HttpDelete("do-delete")]
+        [HttpDelete("delete")]
         public async Task<IActionResult> DeleteInvoiceDetail(int id)
         {
             return Ok ( await _service.Delete(id));

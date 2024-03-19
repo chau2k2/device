@@ -4,6 +4,13 @@
     {
         public int NumberPage { get; set; }
         public int TotalRecord { get; set; }
+        public Error Error { get; set; }
+        public string? Message { get; set; }
         public IEnumerable<T> Data { get; set;}
+    }
+    public enum Error
+    {
+        None,
+        Error
     }
 }

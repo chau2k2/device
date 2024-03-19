@@ -15,7 +15,7 @@ namespace device.Models
         /// </summary>
         public DateTime DateInvoice { get; set; }
         /// <summary>
-        /// trường xóa => xóa mềm ( soft delete)
+        /// trường xóa => xóa mềm ( soft Delete)
         /// </summary>
         [JsonIgnore]
         public bool IsDelete { get; set; }

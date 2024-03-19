@@ -153,7 +153,7 @@ namespace device.Services
                 throw ex;
             }
         }
-        public async Task<ActionResult<BaseResponse<Storage>>> delete(int id)
+        public async Task<ActionResult<BaseResponse<Storage>>> Delete(int id)
         {
             try
             {

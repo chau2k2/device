@@ -39,7 +39,7 @@ namespace device.Controllers
         [HttpDelete("do-delete")]
         public async Task<IActionResult> DeleteVga(int id)
         {
-            return Ok (await _service.delete(id));
+            return Ok (await _service.Delete(id));
         }
         [HttpGet("get-by-id")]
         public async Task<ActionResult<Vga>> GetById (int id)

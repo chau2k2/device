@@ -5,6 +5,8 @@ using device.Response;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using device.IServices;
+using device.Models;
+using device.Validator;
 
 namespace device.Services
 {
@@ -12,11 +14,13 @@ namespace device.Services
     {
         private readonly IAllRepository<InvoiceDetail> _repo;
         private readonly LaptopDbContext _context;
+        private readonly InvoiceDetailValidate _validate;
 
         public InvoiceDetailService(IAllRepository<InvoiceDetail> repo, LaptopDbContext context)
         {
             _repo = repo;
             _context = context;
+            _validate = new InvoiceDetailValidate(context);
         }
         public async Task<TPaging<InvoiceDetailResponse>> GetAllInvoiceDetail(int page, int pageSize)
         {
@@ -57,11 +61,15 @@ namespace device.Services
             }
             catch (Exception ex)
             {
-                throw ex;
+                return new TPaging<InvoiceDetailResponse>
+                {
+                    Message = ex.Message,
+                    Error = Error.Error
+                };
             }
         }
 
-        public async Task<ActionResult<BaseResponse<InvoiceDetail>>> CreateInvoiceDetail(InvoiceDetailResponse CID)
+        public async Task<ActionResult<BaseResponse<InvoiceDetail>>> CreateInvoiceDetail(InvoiceDetailModel CID)
         {
             try
             {
@@ -82,20 +90,31 @@ namespace device.Services
                 { 
                     detail.Price = laptop.SoldPrice;
 
-                    laptop.Storage.SoldNumber = laptop.Storage.SoldNumber + CID.Quantity;
+                    var storage = await _context.storages.FirstOrDefaultAsync( s => s.LaptopId == CID.LaptopId);
 
-                    laptop.inventory = laptop.inventory - CID.Quantity;
+                    if (storage != null)
+                    {
+                        laptop.Storage.SoldNumber = laptop.Storage.SoldNumber + CID.Quantity;
+
+                        laptop.inventory = laptop.inventory - CID.Quantity;
+                    }
 
                     var laptopValue = detail.Quantity * detail.Price;
 
                     var invoice = await _context.invoices.FirstOrDefaultAsync(i => i.Id == CID.InvoiceId);
 
-                    if (invoice != null)
-                    {
-                        invoice.TotalPrice += laptopValue;
+                }
 
-                        invoice.TotalQuantity += CID.Quantity;
-                    }
+                var validate = await _validate.RegexInvoice(CID);
+
+                if (!validate.Success)
+                {
+                    return new BaseResponse<InvoiceDetail>
+                    {
+                        Success = false,
+                        Message = validate.Message,
+                        ErrorCode = validate.ErrorCode
+                    };
                 }
 
                 var result = await _repo.AddOneAsync(detail); 
@@ -109,7 +128,12 @@ namespace device.Services
             }
             catch (Exception ex)
             {
-                throw ex;
+                return new BaseResponse<InvoiceDetail>
+                {
+                    Success = false,
+                    Message = ex.Message,
+                    ErrorCode = ErrorCode.Error
+                };
             }
         }
 
@@ -119,30 +143,39 @@ namespace device.Services
             {
                 var invoiceDetail = await _repo.GetAsyncById(id);
 
-                if (invoiceDetail == null || invoiceDetail!.IsDelete == true)
+                if (invoiceDetail == null || invoiceDetail.IsDelete == true)
                 {
                     return new BaseResponse<InvoiceDetail>
                     {
                         Success = false,
-                        Message = "NotFound!!!"
+                        Message = "NotFound!!!",
+                        ErrorCode = ErrorCode.NotFound
                     };
                 }
+
                 invoiceDetail.IsDelete = true;
+                
+                var delInvoiceDetail = await _repo.UpdateOneAsyns(invoiceDetail);
 
                 return new BaseResponse<InvoiceDetail>
                 {
                     Success = true,
                     Message = "Successfull!!!",
-                    Data = invoiceDetail
+                    Data = delInvoiceDetail
                 };
             }
             catch (Exception ex)
             {
-                throw ex;
+                return new BaseResponse<InvoiceDetail>
+                {
+                    Success = false,
+                    Message = ex.Message,
+                    ErrorCode = ErrorCode.Error
+                };
             }
         }
 
-        public async Task<ActionResult<BaseResponse<InvoiceDetail>>> findById (int id)
+        public async Task<ActionResult<BaseResponse<InvoiceDetail>>> GetById (int id)
         {
             try
             {
@@ -166,7 +199,12 @@ namespace device.Services
             }
             catch (Exception ex)
             {
-                throw ex;
+                return new BaseResponse<InvoiceDetail>
+                {
+                    Success = false,
+                    Message = ex.Message,
+                    ErrorCode = ErrorCode.Error 
+                };
             }
         }
     }

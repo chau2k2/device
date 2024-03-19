@@ -9,7 +9,7 @@ namespace device.IRepository
         Task<TEntity> GetAsyncById(int id); // lay 1 phan tu theo id
         Task<TEntity> AddOneAsync (TEntity entity); // add 1 phan tu
         Task<TEntity> UpdateOneAsyns(TEntity entity ); // update 1 
-        Task<TEntity> DeleteOneAsync(TEntity entity);// delete 1
+        Task<TEntity> DeleteOneAsync(TEntity entity);// Delete 1
 
     }
 }

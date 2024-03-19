@@ -2,6 +2,7 @@
 using device.Data;
 using device.Models;
 using device.Response;
+using Microsoft.EntityFrameworkCore;
 
 namespace device.Validator
 {
@@ -18,7 +19,7 @@ namespace device.Validator
 
         public async Task<BaseResponse<LaptopModel>> RegexLaptop(LaptopModel laptop)
         {
-            var producer = _context.producers.FirstOrDefault(p => p.Id == laptop.ProducerId);
+            var producer = await _context.producers.FirstOrDefaultAsync(p => p.Id == laptop.ProducerId);
 
             if (laptop.Name.Length >= Constants.MAX_LENGTH_NAME)
             {
@@ -71,6 +72,17 @@ namespace device.Validator
                 {
                     Success = false,
                     Message = $"Giá nhập phải là số dương và lớn hơn {Constants.MAX_PRICE}"
+                };
+            }
+
+            var storage = await _context.storages.FirstOrDefaultAsync(s => s.LaptopId == laptop.Id);
+
+            if ( storage == null )
+            {
+                return new BaseResponse<LaptopModel>
+                {
+                    Success = false,
+                    Message = "Laptop này chưa có kho hàng!!!"
                 };
             }
 
