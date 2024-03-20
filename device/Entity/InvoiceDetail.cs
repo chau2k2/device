@@ -11,9 +11,9 @@ namespace device.Entity
         [Key]
         public int Id { get; set; }
         /// <summary>
-        /// khóa ngoại LaptopId - liên kết với bảng Laptop
+        /// Loại sản phẩm
         /// </summary>
-        public int LaptopId { get; set; }
+        public ProductType ProductType { get; set; }
         /// <summary>
         /// khóa ngoại invoiceId - liên kết với bảng invoice
         /// </summary>
@@ -38,10 +38,13 @@ namespace device.Entity
         /// </summary>
         [JsonIgnore]
         public virtual Invoice invoices { get; set; }
-        /// <summary>
-        /// liết kết 1 - n với bảng laptop
-        /// </summary>
-        [JsonIgnore]
-        public virtual Laptop Laptop { get; set; }
+    }
+    public enum ProductType
+    {
+        Laptop, 
+        PrivateComputer,
+        Ram,
+        Monitor,
+        Vga
     }
 }

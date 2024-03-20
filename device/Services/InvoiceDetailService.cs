@@ -29,7 +29,6 @@ namespace device.Services
                 int totalCount = await _context.Set<InvoiceDetail>().CountAsync(I => I.IsDelete == false);  
 
                 var result = await _context.Set<InvoiceDetail>()!
-                    .Include(l => l.Laptop)
                     .Include(i => i.invoices)
                     .Where( l => l.IsDelete == false)
                     .Take(pageSize).Skip((page - 1) * pageSize)
@@ -42,9 +41,7 @@ namespace device.Services
                     InvoiceDetailResponse.Add(new InvoiceDetailResponse()
                     {
                         Id = invoiceDetail.Id,
-                        LaptopId = invoiceDetail.LaptopId,
                         InvoiceId = invoiceDetail.InvoiceId,
-                        LaptopName = invoiceDetail.Laptop.Name,
                         InvoiceNumber = invoiceDetail.invoices.InvoiceNumber,
                         Quantity = invoiceDetail.Quantity,
                         Price = invoiceDetail.Price,
@@ -79,31 +76,31 @@ namespace device.Services
                 InvoiceDetail detail = new InvoiceDetail()
                 {
                     Id = nextId,
-                    LaptopId = CID.LaptopId,
+                    ///ProductType = ProductType.
                     InvoiceId = CID.InvoiceId,
                     Quantity = CID.Quantity
                 };
 
-                var laptop = await _context.laptops.Include(l => l.Storage).FirstOrDefaultAsync(l => l.Id == CID.LaptopId);
+                //var laptop = await _context.laptops.Include(l => l.Storage).FirstOrDefaultAsync(l => l.Id == CID.LaptopId);
 
-                if (laptop != null || laptop.inventory >= CID.Quantity) 
-                { 
-                    detail.Price = laptop.SoldPrice;
+                //if (laptop != null || laptop.inventory >= CID.Quantity) 
+                //{ 
+                //    detail.Price = laptop.SoldPrice;
 
-                    var storage = await _context.storages.FirstOrDefaultAsync( s => s.LaptopId == CID.LaptopId);
+                //    var storage = await _context.storages.FirstOrDefaultAsync( s => s.LaptopId == CID.LaptopId);
 
-                    if (storage != null)
-                    {
-                        laptop.Storage.SoldNumber = laptop.Storage.SoldNumber + CID.Quantity;
+                //    if (storage != null)
+                //    {
+                //        laptop.Storage.SoldNumber = laptop.Storage.SoldNumber + CID.Quantity;
 
-                        laptop.inventory = laptop.inventory - CID.Quantity;
-                    }
+                //        laptop.inventory = laptop.inventory - CID.Quantity;
+                //    }
 
-                    var laptopValue = detail.Quantity * detail.Price;
+                //    var laptopValue = detail.Quantity * detail.Price;
 
-                    var invoice = await _context.invoices.FirstOrDefaultAsync(i => i.Id == CID.InvoiceId);
+                //    var invoice = await _context.invoices.FirstOrDefaultAsync(i => i.Id == CID.InvoiceId);
 
-                }
+                //}
 
                 var validate = await _validate.RegexInvoice(CID);
 

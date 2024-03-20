@@ -35,6 +35,7 @@ namespace device.Entity
         /// <summary>
         /// số lượng hàng còn lại
         /// </summary>
+        [Range(0,500)]
         public int inventory {  get; set; }
         /// <summary>
         /// dùng để xóa mềm
@@ -51,11 +52,6 @@ namespace device.Entity
         /// </summary>
         [JsonIgnore]
         public ICollection<LaptopDetail> LaptopDetail { get; set; }
-        /// <summary>
-        /// liên kết 1 - n với bảng chi tiết hóa đơn ( invoice detail)
-        /// </summary>
-        [JsonIgnore]
-        public ICollection<InvoiceDetail> InvoiceDetails { get; set; }
         /// <summary>
         /// liên kết 1 - 1 vói bảng Kho hàng ( storage)
         /// </summary>

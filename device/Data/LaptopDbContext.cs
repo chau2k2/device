@@ -28,6 +28,7 @@ namespace device.Data
         public DbSet<Storage> storages { get; set; }
         public DbSet<Invoice> invoices { get; set; }
         public DbSet<InvoiceDetail> InvoicesDetail { get;set; }
+        public DbSet<PrivateComputer> PrivateComputer { get; set; }
 
     }
 }

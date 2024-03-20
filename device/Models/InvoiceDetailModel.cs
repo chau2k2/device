@@ -7,7 +7,7 @@ namespace device.Models
     {
         
         public int Id { get; set; }
-        public int LaptopId { get; set; }
+        public ProductType ProductType { get; set; }
         public int InvoiceId { get; set; }
         [Range(0, 100000000)]
         public decimal Price { get; set; }
@@ -15,5 +15,13 @@ namespace device.Models
         public int Quantity { get; set; }
         [JsonIgnore]
         public bool IsDelete { get; set; }
+    }
+    public enum ProductType
+    {
+        Laptop,
+        PrivateComputer,
+        Ram,
+        Monitor,
+        Vga
     }
 }

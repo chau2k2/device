@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using device.Response;
 using device.IServices;
 using device.Models;
 
@@ -42,7 +41,7 @@ namespace device.Controllers
             return Ok (await _service.Update(id, UDL));
         }
 
-        [HttpDelete("do-Delete")]
+        [HttpDelete("do-delete")]
         public async Task<IActionResult> Delete(int id)
         {
             return Ok ( await _service.Delete(id));

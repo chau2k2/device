@@ -28,7 +28,7 @@ namespace device.Services
 
                 var invoices = await _context.Set<Invoice>()
                     .Include(i => i.invoiceDetail)!
-                        .ThenInclude( l => l.Laptop)
+                        //.ThenInclude( l => l.Laptop)
                     .Where(i => i.IsDelete == false)
                     .Take(pageSize).Skip((page - 1) * pageSize)
                     .ToListAsync();
@@ -48,8 +48,8 @@ namespace device.Services
                             .Select(detail => new InvoiceDetailResponse
                             {
                                 Id = detail.Id,
-                                LaptopId = detail.LaptopId,
-                                LaptopName = detail.Laptop.Name,
+                                //LaptopId = detail.LaptopId,
+                                //LaptopName = detail.Laptop.Name,
                                 InvoiceNumber = detail.invoices.InvoiceNumber,
                                 Quantity = detail.Quantity,
                                 Price = detail.Price,
@@ -81,7 +81,7 @@ namespace device.Services
             {
                 var invoice = await _context.Set<Invoice>()
                     .Include(i => i.invoiceDetail)!
-                        .ThenInclude(l => l.Laptop)
+                        //.ThenInclude(l => l.Laptop)
                     .Where(i => i.IsDelete == false)
                     .FirstOrDefaultAsync(i => i.Id == id);
 
@@ -106,8 +106,8 @@ namespace device.Services
                         .Select(detail => new InvoiceDetailResponse
                         {
                             Id = detail.Id,
-                            LaptopId = detail.LaptopId,
-                            LaptopName = detail.Laptop.Name,
+                            //LaptopId = detail.LaptopId,
+                            //LaptopName = detail.Laptop.Name,
                             InvoiceNumber = detail.invoices.InvoiceNumber,
                             Quantity = detail.Quantity,
                             Price = detail.Price,

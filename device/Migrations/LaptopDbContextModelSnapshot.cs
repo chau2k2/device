@@ -59,11 +59,11 @@ namespace device.Migrations
                     b.Property<bool>("IsDelete")
                         .HasColumnType("boolean");
 
-                    b.Property<int>("LaptopId")
-                        .HasColumnType("integer");
-
                     b.Property<decimal>("Price")
                         .HasColumnType("numeric");
+
+                    b.Property<int>("ProductType")
+                        .HasColumnType("integer");
 
                     b.Property<int>("Quantity")
                         .HasColumnType("integer");
@@ -71,8 +71,6 @@ namespace device.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("InvoiceId");
-
-                    b.HasIndex("LaptopId");
 
                     b.ToTable("InvoicesDetail");
                 });
@@ -205,6 +203,32 @@ namespace device.Migrations
                     b.ToTable("monitors");
                 });
 
+            modelBuilder.Entity("device.Entity.PrivateComputer", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<decimal>("CostPrice")
+                        .HasColumnType("numeric");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("ProducerId")
+                        .HasColumnType("integer");
+
+                    b.Property<decimal>("SoldPrice")
+                        .HasColumnType("numeric");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProducerId");
+
+                    b.ToTable("PrivateComputer");
+                });
+
             modelBuilder.Entity("device.Entity.Producer", b =>
                 {
                     b.Property<int>("Id")
@@ -313,14 +337,6 @@ namespace device.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("device.Entity.Laptop", "Laptop")
-                        .WithMany("InvoiceDetails")
-                        .HasForeignKey("LaptopId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Laptop");
-
                     b.Navigation("invoices");
                 });
 
@@ -370,6 +386,17 @@ namespace device.Migrations
                     b.Navigation("Vga");
                 });
 
+            modelBuilder.Entity("device.Entity.PrivateComputer", b =>
+                {
+                    b.HasOne("device.Entity.Producer", "Producer")
+                        .WithMany()
+                        .HasForeignKey("ProducerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Producer");
+                });
+
             modelBuilder.Entity("device.Entity.Storage", b =>
                 {
                     b.HasOne("device.Entity.Laptop", "Laptop")
@@ -388,8 +415,6 @@ namespace device.Migrations
 
             modelBuilder.Entity("device.Entity.Laptop", b =>
                 {
-                    b.Navigation("InvoiceDetails");
-
                     b.Navigation("LaptopDetail");
 
                     b.Navigation("Storage")

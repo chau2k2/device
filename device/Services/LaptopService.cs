@@ -128,13 +128,31 @@ namespace device.Services
                      .Where( l => l.Name.Contains(name))
                      .ToListAsync();
 
+                List<LaptopResponse> laptopResponse = new List<LaptopResponse>();
+
+                foreach (var lap in laptop)
+                {
+                    laptopResponse.Add(new LaptopResponse()
+                    {
+                        Id = lap.Id,
+                        Name = lap.Name,
+                        ProducerName = lap.Producer?.Name,
+                        CostPrice = lap.CostPrice,
+                        SoldPrice = lap.SoldPrice,
+                        ProducerId = lap.ProducerId,
+                        IsDelete = lap.IsDelete,
+                        inventory = lap.inventory
+                    });
+                }
+
                 if (laptop.Any())
                 {
                     return new BaseResponse<IEnumerable<LaptopResponse>>
                     {
                         Success = true,
                         Message = "Successfull",
-                        ErrorCode = ErrorCode.None
+                        ErrorCode = ErrorCode.None,
+                        Data = laptopResponse
                     };
                 }
                 else
