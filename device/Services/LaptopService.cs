@@ -117,6 +117,46 @@ namespace device.Services
                 };
             }
         }
+
+        public async Task<ActionResult<BaseResponse<IEnumerable< LaptopResponse>>>> FindLaptopByName(string name)
+        {
+            try
+            {
+                var laptop = await _context.Set<Laptop>()
+                     .Include(l => l.Producer)
+                     .Include(l => l.LaptopDetail)
+                     .Where( l => l.Name.Contains(name))
+                     .ToListAsync();
+
+                if (laptop.Any())
+                {
+                    return new BaseResponse<IEnumerable<LaptopResponse>>
+                    {
+                        Success = true,
+                        Message = "Successfull",
+                        ErrorCode = ErrorCode.None
+                    };
+                }
+                else
+                {
+                    return new BaseResponse<IEnumerable<LaptopResponse>>
+                    {
+                        Success = false,
+                        Message = "NotFound!!!",
+                        ErrorCode = ErrorCode.NotFound
+                    };
+                }
+            }
+            catch (Exception ex)
+            {
+                return new BaseResponse<IEnumerable<LaptopResponse>>
+                {
+                    Success = false,
+                    Message = ex.Message,
+                    ErrorCode = ErrorCode.Error
+                };
+            }
+        }
         public async Task<ActionResult<BaseResponse<Laptop>>> Updatelaptop(int id, LaptopModel laptopModel)
         {
             try

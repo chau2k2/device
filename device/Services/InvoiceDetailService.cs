@@ -174,7 +174,6 @@ namespace device.Services
                 };
             }
         }
-
         public async Task<ActionResult<BaseResponse<InvoiceDetail>>> GetById (int id)
         {
             try
