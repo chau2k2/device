@@ -59,6 +59,10 @@ namespace device.Migrations
                     b.Property<bool>("IsDelete")
                         .HasColumnType("boolean");
 
+                    b.Property<string>("NameProduct")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
                     b.Property<decimal>("Price")
                         .HasColumnType("numeric");
 
@@ -212,9 +216,12 @@ namespace device.Migrations
                     b.Property<decimal>("CostPrice")
                         .HasColumnType("numeric");
 
+                    b.Property<bool>("IsDelete")
+                        .HasColumnType("boolean");
+
                     b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
 
                     b.Property<int>("ProducerId")
                         .HasColumnType("integer");

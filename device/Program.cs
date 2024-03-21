@@ -24,6 +24,7 @@ builder.Services.AddScoped(typeof(ILaptopService), typeof(LaptopService));
 builder.Services.AddScoped(typeof(ILaptopDetailService), typeof(LaptopDetailService));
 builder.Services.AddScoped(typeof(IInvoiceService), typeof(InvoiceService));
 builder.Services.AddScoped(typeof(IInvoiceDetailService), typeof(InvoiceDetailService));
+builder.Services.AddScoped(typeof(IPcService), typeof(PcService));
 
 builder.Services.AddControllers(option => option.SuppressImplicitRequiredAttributeForNonNullableReferenceTypes = true);
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

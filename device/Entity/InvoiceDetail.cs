@@ -13,7 +13,10 @@ namespace device.Entity
         /// <summary>
         /// Loại sản phẩm
         /// </summary>
-        public ProductType ProductType { get; set; }
+        [Range(0, int.MaxValue)]
+        public int ProductType { get; set; }
+        [MaxLength(100)]
+        public string? NameProduct { get; set; }
         /// <summary>
         /// khóa ngoại invoiceId - liên kết với bảng invoice
         /// </summary>
@@ -38,13 +41,5 @@ namespace device.Entity
         /// </summary>
         [JsonIgnore]
         public virtual Invoice invoices { get; set; }
-    }
-    public enum ProductType
-    {
-        Laptop, 
-        PrivateComputer,
-        Ram,
-        Monitor,
-        Vga
     }
 }

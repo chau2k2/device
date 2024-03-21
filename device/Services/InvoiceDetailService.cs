@@ -27,13 +27,13 @@ namespace device.Services
             try
             {
                 int totalCount = await _context.Set<InvoiceDetail>().CountAsync(I => I.IsDelete == false);  
-
+                
                 var result = await _context.Set<InvoiceDetail>()!
                     .Include(i => i.invoices)
                     .Where( l => l.IsDelete == false)
                     .Take(pageSize).Skip((page - 1) * pageSize)
                     .ToListAsync();
-
+ 
                 List<InvoiceDetailResponse> InvoiceDetailResponse = new List<InvoiceDetailResponse>();
 
                 foreach (var invoiceDetail in result)
@@ -45,7 +45,9 @@ namespace device.Services
                         InvoiceNumber = invoiceDetail.invoices.InvoiceNumber,
                         Quantity = invoiceDetail.Quantity,
                         Price = invoiceDetail.Price,
-                        IsDelete = invoiceDetail.IsDelete
+                        IsDelete = invoiceDetail.IsDelete,
+                        ProductName = invoiceDetail.NameProduct!,
+                        ProductType = (ProductType)invoiceDetail.ProductType
                     });
                 }
 
@@ -76,31 +78,52 @@ namespace device.Services
                 InvoiceDetail detail = new InvoiceDetail()
                 {
                     Id = nextId,
-                    ///ProductType = ProductType.
+                    ProductType = (int) CID.ProductType,
                     InvoiceId = CID.InvoiceId,
-                    Quantity = CID.Quantity
+                    Quantity = CID.Quantity,
+                    NameProduct = CID.ProductName
                 };
 
-                //var laptop = await _context.laptops.Include(l => l.Storage).FirstOrDefaultAsync(l => l.Id == CID.LaptopId);
+                switch (detail.ProductType)
+                {
+                    case 0:
+                        var laptop = await _context.laptops.Include(l => l.Storage).FirstOrDefaultAsync(l => l.Name == CID.ProductName);
 
-                //if (laptop != null || laptop.inventory >= CID.Quantity) 
-                //{ 
-                //    detail.Price = laptop.SoldPrice;
+                        if (laptop != null || laptop.inventory >= CID.Quantity || laptop.IsDelete == false)
+                        {
+                            detail.Price = laptop.SoldPrice;
 
-                //    var storage = await _context.storages.FirstOrDefaultAsync( s => s.LaptopId == CID.LaptopId);
+                            var storage = await _context.storages.FirstOrDefaultAsync(s => s.LaptopId == laptop.Id);
 
-                //    if (storage != null)
-                //    {
-                //        laptop.Storage.SoldNumber = laptop.Storage.SoldNumber + CID.Quantity;
+                            if (storage != null)
+                            {
+                                laptop.Storage.SoldNumber = laptop.Storage.SoldNumber + CID.Quantity;
 
-                //        laptop.inventory = laptop.inventory - CID.Quantity;
-                //    }
+                                laptop.inventory = laptop.inventory - CID.Quantity;
+                            }
 
-                //    var laptopValue = detail.Quantity * detail.Price;
+                            var laptopValue = detail.Quantity * detail.Price;
 
-                //    var invoice = await _context.invoices.FirstOrDefaultAsync(i => i.Id == CID.InvoiceId);
-
-                //}
+                            var invoice = await _context.invoices.FirstOrDefaultAsync(i => i.Id == CID.InvoiceId);
+                        }
+                        break;
+                    case 1:
+                        var pc = await _context.PrivateComputer.FirstOrDefaultAsync(p => p.Name == CID.ProductName);
+                        detail.Price = pc!.SoldPrice;
+                        break;
+                    case 2:
+                        var ram = await _context.ram.FirstOrDefaultAsync(r =>  r.Name == CID.ProductName);
+                        detail.Price = ram!.Price;
+                        break;
+                    case 3:
+                        var monitor = await _context.monitors.FirstOrDefaultAsync(m => m.Name == CID.ProductName);
+                        detail.Price = monitor!.Price;
+                        break;
+                    case 4:
+                        var vga = await _context.vgas.FirstOrDefaultAsync( v => v.Name == CID.ProductName);
+                        detail.Price = vga!.Price;
+                        break;
+                }
 
                 var validate = await _validate.RegexInvoice(CID);
 
@@ -133,7 +156,6 @@ namespace device.Services
                 };
             }
         }
-
         public async Task<ActionResult<BaseResponse<InvoiceDetail>>> Delete (int id)
         {
             try
