@@ -38,6 +38,11 @@ namespace device.Services
 
                 var result = await _repo.AddOneAsync(pc);
 
+                var pcEntity = await _context.Set<PrivateComputer>()
+                    .Include(p => p.Producer)
+                    .Where( p => p.Id == result.Id)
+                    .FirstOrDefaultAsync();
+
                 var pcResponse = new PcResponse
                 {
                     Id = result.Id,
@@ -66,9 +71,42 @@ namespace device.Services
             }
         }
 
-        public Task<ActionResult<BaseResponse<PrivateComputer>>> Delete(int id)
+        public async Task<ActionResult<BaseResponse<PrivateComputer>>> Delete(string name)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var pc = await _context.PrivateComputer.FirstOrDefaultAsync(p => p.Name == name);
+
+                if (pc == null || pc!.IsDelete == true)
+                {
+                    return new BaseResponse<PrivateComputer>
+                    {
+                        Success = false,
+                        Message = "Not found!!!",
+                        ErrorCode = ErrorCode.NotFound
+                    };
+                }
+
+                pc.IsDelete = true;
+
+                var del = await _repo.UpdateOneAsyns(pc);
+
+                return new BaseResponse<PrivateComputer>
+                {
+                    Success = true,
+                    Message = "Successfull!!!",
+                    Data = del
+                };
+            }
+            catch (Exception ex)
+            {
+                return new BaseResponse<PrivateComputer>()
+                {
+                    Success = false,
+                    Message = ex.Message,
+                    ErrorCode = ErrorCode.Error
+                };
+            }
         }
 
         public Task<ActionResult<BaseResponse<PrivateComputer>>> FindPcByName(string name)
@@ -121,7 +159,7 @@ namespace device.Services
             }
         }
 
-        public Task<ActionResult<BaseResponse<PrivateComputer>>> Update(PrivateComputerModel pc)
+        public Task<ActionResult<BaseResponse<PrivateComputer>>> Update(int id, PrivateComputerModel pc)
         {
             throw new NotImplementedException();
         }

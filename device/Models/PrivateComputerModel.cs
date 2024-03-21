@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace device.Models
 {
@@ -30,6 +31,7 @@ namespace device.Models
         /// <summary>
         /// liên kết với bảng nhà sản xuất
         /// </summary>
+        [JsonIgnore]
         public bool IsDelete { get; set; }
     }
 }

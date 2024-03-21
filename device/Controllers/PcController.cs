@@ -1,7 +1,8 @@
 ﻿using device.IServices;
 using device.Models;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.Update.Internal;
+using Microsoft.OpenApi.Writers;
 
 namespace device.Controllers
 {
@@ -10,10 +11,12 @@ namespace device.Controllers
     public class PcController : ControllerBase
     {
         private readonly IPcService _service;
+        private readonly ILogger<PcController> _logger;
 
-        public PcController(IPcService service) 
+        public PcController(IPcService service, ILogger<PcController> logger)
         {
             _service = service;
+            _logger = logger;
         }
         [HttpGet("get-all-pc")]
         public async Task<IActionResult> GetAll (int page = 1, int pageSize = 5)
@@ -25,6 +28,17 @@ namespace device.Controllers
         public async Task<IActionResult> Create (PrivateComputerModel pcModel)
         {
             return Ok ( await _service.Create(pcModel));
+        }
+
+        [HttpPost("update-pc")]
+        public async Task<IActionResult> Update (int id, PrivateComputerModel pcModel)
+        {
+            return Ok (await _service.Update(id, pcModel));
+        }
+        [HttpDelete("delete-pc")]
+        public async Task<IActionResult> Delete (string name)
+        {
+            return Ok (await _service.Delete(name));
         }
     }
 }
