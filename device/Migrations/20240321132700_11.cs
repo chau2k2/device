@@ -34,7 +34,7 @@ namespace device.Migrations
                 nullable: true);
 
             migrationBuilder.AddColumn<int>(
-                name: "ProductType",
+                name: "EProductType",
                 table: "storages",
                 type: "integer",
                 nullable: false,
@@ -49,7 +49,7 @@ namespace device.Migrations
                 table: "storages");
 
             migrationBuilder.DropColumn(
-                name: "ProductType",
+                name: "EProductType",
                 table: "storages");
 
             migrationBuilder.RenameColumn(

@@ -24,7 +24,7 @@ namespace device.Migrations
                 oldType: "integer");
 
             migrationBuilder.AddColumn<int>(
-                name: "ProductType",
+                name: "EProductType",
                 table: "InvoicesDetail",
                 type: "integer",
                 nullable: false,
@@ -75,7 +75,7 @@ namespace device.Migrations
                 name: "PrivateComputer");
 
             migrationBuilder.DropColumn(
-                name: "ProductType",
+                name: "EProductType",
                 table: "InvoicesDetail");
 
             migrationBuilder.AlterColumn<int>(

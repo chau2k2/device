@@ -69,7 +69,7 @@ namespace device.Migrations
                     b.Property<decimal>("Price")
                         .HasColumnType("numeric");
 
-                    b.Property<int>("ProductType")
+                    b.Property<int>("EProductType")
                         .HasColumnType("integer");
 
                     b.Property<int>("Quantity")
@@ -301,7 +301,7 @@ namespace device.Migrations
                     b.Property<string>("ProductName")
                         .HasColumnType("text");
 
-                    b.Property<int>("ProductType")
+                    b.Property<int>("EProductType")
                         .HasColumnType("integer");
 
                     b.Property<int>("SoldNumber")

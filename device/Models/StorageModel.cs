@@ -6,20 +6,14 @@ namespace device.Models
     public class StorageModel
     {
         public int Id { get; set; }
-        [Range(0, 1000, ErrorMessage = "nhap gia tri trong khoang 0 den 1000")]
+        [Range(0, 1000, ErrorMessage = "Nhập giá trị trong khoảng 0 đến 1000")]
         public int SoldNumber { get; set; }
         [Required]
-        [Range(0, 1000, ErrorMessage = "nhap gia tri trong khoang 0 den 1000")]
+        [Range(0, 1000, ErrorMessage = "Nhập giá trị trong khoảng 0 đến 1000")]
         public int ImportNumber { get; set; }
-        public ProductType ProductType { get; set; }
+        public EProductType ProductType { get; set; }
         public string? ProductName { get; set; }
         [JsonIgnore]
         public bool IsDelete { get; set; }
-    }
-    public enum ProductType
-    {
-        Laptop,
-        Pc,
-        Monitor
     }
 }

@@ -47,7 +47,7 @@ namespace device.Services
                         Price = invoiceDetail.Price,
                         IsDelete = invoiceDetail.IsDelete,
                         ProductName = invoiceDetail.NameProduct!,
-                        ProductType = (ProductType)invoiceDetail.ProductType
+                        ProductType = (EProductType)invoiceDetail.ProductType
                     });
                 }
 
@@ -86,7 +86,7 @@ namespace device.Services
 
                 switch (detail.ProductType)
                 {
-                    case 0:
+                    case 1:
                         //var laptop = await _context.laptops.Include(l => l.Storage).FirstOrDefaultAsync(l => l.Name == CID.ProductName);
 
                         //if (laptop != null || laptop.inventory >= CID.Quantity || laptop.IsDelete == false)
@@ -107,19 +107,19 @@ namespace device.Services
                         //    var invoice = await _context.invoices.FirstOrDefaultAsync(i => i.Id == CID.InvoiceId);
                         //}
                         break;
-                    case 1:
+                    case 2:
                         var pc = await _context.PrivateComputer.FirstOrDefaultAsync(p => p.Name == CID.ProductName);
                         detail.Price = pc!.SoldPrice;
                         break;
-                    case 2:
+                    case 3:
                         var ram = await _context.ram.FirstOrDefaultAsync(r =>  r.Name == CID.ProductName);
                         detail.Price = ram!.Price;
                         break;
-                    case 3:
+                    case 4:
                         var monitor = await _context.monitors.FirstOrDefaultAsync(m => m.Name == CID.ProductName);
                         detail.Price = monitor!.Price;
                         break;
-                    case 4:
+                    case 5:
                         var vga = await _context.vgas.FirstOrDefaultAsync( v => v.Name == CID.ProductName);
                         detail.Price = vga!.Price;
                         break;

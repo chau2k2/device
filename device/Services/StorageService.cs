@@ -39,7 +39,8 @@ namespace device.Services
                     {
                         Id = storage.Id,
                         ImportNumber = storage.ImportNumber,
-                        ProductType = storage.ProductType,
+                        ProductType = (EProductType)storage.ProductType,
+                        Invenetory = storage.inventory,
                         SoldNumber = storage.SoldNumber,
                         ProductName = storage.ProductName,
                         IsDelete = storage.IsDelete
@@ -55,7 +56,11 @@ namespace device.Services
             }
             catch (Exception ex)
             {
-                throw ex;
+                return new TPaging<StorageResponse>
+                {
+                    Message = ex.Message,
+                    Error = Error.Error
+                };
             }
         }
         public async Task<ActionResult<BaseResponse<Storage>>> GetById(int id)
@@ -81,7 +86,12 @@ namespace device.Services
             }
             catch (Exception ex) 
             {
-                throw ex;
+                return new BaseResponse<Storage>
+                {
+                    Success = false,
+                    Message = ex.Message,
+                    ErrorCode = ErrorCode.Error
+                };
             }
         }
         public async Task<ActionResult<BaseResponse<Storage>>> Create(StorageModel CrS)
@@ -94,17 +104,29 @@ namespace device.Services
                 Storage storage = new Storage()
                 {
                     Id = nextId,
-                    //LaptopId = CrS.LaptopId,
+                    ProductType = (int) CrS.ProductType,
+                    ProductName = CrS.ProductName,
+                    inventory = CrS.ImportNumber - CrS.SoldNumber,
                     ImportNumber = CrS.ImportNumber,
                     SoldNumber = CrS.SoldNumber
                 };
 
-                var laptop = await _context.laptops.FirstOrDefaultAsync( s => s.Id == CrS.LaptopId );
-
-                if (laptop != null)
+                switch (storage.ProductType)
                 {
-                    //laptop.inventory = CrS.ImportNumber - CrS.SoldNumber;
+                    case 1:
+                        var laptop = await _context.laptops.FirstOrDefaultAsync(s => s.Name == CrS.ProductName);
+
+                        break;
+                    case 2:
+                        break;
+                    case 3:
+                        break;
+                    case 4:
+                        break;
+                    case 5:
+                        break;
                 }
+
                 var result = await _repo.AddOneAsync(storage);
 
                 return new BaseResponse<Storage>
