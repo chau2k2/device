@@ -19,7 +19,7 @@ namespace device.Validator
         {
             var invoice = _context.invoices.FirstOrDefaultAsync(i => i.Id == invoiceDetail.InvoiceId);
 
-            var laptop = await _context.laptops.Include(l => l.Storage).FirstOrDefaultAsync(l => l.Name == invoiceDetail.ProductName);
+            //var laptop = await _context.laptops.Include(l => l.Storage).FirstOrDefaultAsync(l => l.Name == invoiceDetail.ProductName);
 
             if (invoice == null)
             {
@@ -31,15 +31,15 @@ namespace device.Validator
                 };
             }
 
-            if (laptop == null || laptop.IsDelete == true)
-            {
-                return new BaseResponse<InvoiceDetailModel>
-                {
-                    Success = false,
-                    Message = "Laptop không tồn tại!!!",
-                    ErrorCode = ErrorCode.NotFound
-                };
-            }
+            //if (laptop == null || laptop.IsDelete == true)
+            //{
+            //    return new BaseResponse<InvoiceDetailModel>
+            //    {
+            //        Success = false,
+            //        Message = "Laptop không tồn tại!!!",
+            //        ErrorCode = ErrorCode.NotFound
+            //    };
+            //}
 
             if (invoiceDetail.Quantity < 0 || invoiceDetail.Quantity > Constants.MAX_QUANTITY)
             {
@@ -50,17 +50,17 @@ namespace device.Validator
                 };
             }
 
-            var existLaptop = await _context.InvoicesDetail.FirstOrDefaultAsync(d => d.InvoiceId == invoiceDetail.InvoiceId & d.LaptopId == invoiceDetail.LaptopId);
+            //var existLaptop = await _context.InvoicesDetail.FirstOrDefaultAsync(d => d.InvoiceId == invoiceDetail.InvoiceId & d.LaptopId == invoiceDetail.LaptopId);
 
-            if (existLaptop != null)
-            {
-                return new BaseResponse<InvoiceDetailModel>
-                {
-                    Success = false,
-                    Message = "Hóa đơn đã chứa laptop này",
-                    ErrorCode = ErrorCode.Error
-                };
-            }
+            //if (existLaptop != null)
+            //{
+            //    return new BaseResponse<InvoiceDetailModel>
+            //    {
+            //        Success = false,
+            //        Message = "Hóa đơn đã chứa laptop này",
+            //        ErrorCode = ErrorCode.Error
+            //    };
+            //}
 
             return new BaseResponse<InvoiceDetailModel>
             {

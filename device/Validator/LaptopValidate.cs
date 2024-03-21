@@ -75,16 +75,16 @@ namespace device.Validator
                 };
             }
 
-            var storage = await _context.storages.FirstOrDefaultAsync(s => s.LaptopId == laptop.Id);
+            //var storage = await _context.storages.FirstOrDefaultAsync(s => s.LaptopId == laptop.Id);
 
-            if ( storage == null )
-            {
-                return new BaseResponse<LaptopModel>
-                {
-                    Success = false,
-                    Message = "Laptop này chưa có kho hàng!!!"
-                };
-            }
+            //if ( storage == null )
+            //{
+            //    return new BaseResponse<LaptopModel>
+            //    {
+            //        Success = false,
+            //        Message = "Laptop này chưa có kho hàng!!!"
+            //    };
+            //}
 
             return new BaseResponse<LaptopModel>
             {

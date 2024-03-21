@@ -87,25 +87,25 @@ namespace device.Services
                 switch (detail.ProductType)
                 {
                     case 0:
-                        var laptop = await _context.laptops.Include(l => l.Storage).FirstOrDefaultAsync(l => l.Name == CID.ProductName);
+                        //var laptop = await _context.laptops.Include(l => l.Storage).FirstOrDefaultAsync(l => l.Name == CID.ProductName);
 
-                        if (laptop != null || laptop.inventory >= CID.Quantity || laptop.IsDelete == false)
-                        {
-                            detail.Price = laptop.SoldPrice;
+                        //if (laptop != null || laptop.inventory >= CID.Quantity || laptop.IsDelete == false)
+                        //{
+                        //    detail.Price = laptop.SoldPrice;
 
-                            var storage = await _context.storages.FirstOrDefaultAsync(s => s.LaptopId == laptop.Id);
+                        //    var storage = await _context.storages.FirstOrDefaultAsync(s => s.LaptopId == laptop.Id);
 
-                            if (storage != null)
-                            {
-                                laptop.Storage.SoldNumber = laptop.Storage.SoldNumber + CID.Quantity;
+                        //    if (storage != null)
+                        //    {
+                        //        laptop.Storage.SoldNumber = laptop.Storage.SoldNumber + CID.Quantity;
 
-                                laptop.inventory = laptop.inventory - CID.Quantity;
-                            }
+                        //        laptop.inventory = laptop.inventory - CID.Quantity;
+                        //    }
 
-                            var laptopValue = detail.Quantity * detail.Price;
+                        //    var laptopValue = detail.Quantity * detail.Price;
 
-                            var invoice = await _context.invoices.FirstOrDefaultAsync(i => i.Id == CID.InvoiceId);
-                        }
+                        //    var invoice = await _context.invoices.FirstOrDefaultAsync(i => i.Id == CID.InvoiceId);
+                        //}
                         break;
                     case 1:
                         var pc = await _context.PrivateComputer.FirstOrDefaultAsync(p => p.Name == CID.ProductName);

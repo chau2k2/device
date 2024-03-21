@@ -22,18 +22,22 @@ namespace device.Entity
         [Range(0, 1000)]
         public int ImportNumber { get; set; }
         /// <summary>
-        /// khóa ngoại liên kết với bảng Laptop Detail
+        /// số lượng hàng còn lại
         /// </summary>
-        public int LaptopId { get; set; }
+        [Range(0, 500)]
+        public int inventory { get; set; }
+        /// <summary>
+        /// loại sản phẩm: Laptop, PC
+        /// </summary>
+        public int ProductType { get; set; }
+        /// <summary>
+        /// tên sản phẩm
+        /// </summary>
+        public string? ProductName { get; set; } 
         /// <summary>
         /// trường xóa
         /// </summary>
         [JsonIgnore] 
         public bool IsDelete { get; set; }
-        /// <summary>
-        /// liên kết với bảng laptop
-        /// </summary>
-        [JsonIgnore]
-        public virtual Laptop Laptop { get; set; }
     }
 }

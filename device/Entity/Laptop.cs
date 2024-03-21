@@ -33,11 +33,6 @@ namespace device.Entity
         [Range(0, 10000000)]
         public decimal SoldPrice { get; set; }
         /// <summary>
-        /// số lượng hàng còn lại
-        /// </summary>
-        [Range(0,500)]
-        public int inventory {  get; set; }
-        /// <summary>
         /// dùng để xóa mềm
         /// </summary>
         [JsonIgnore] 
@@ -55,8 +50,6 @@ namespace device.Entity
         /// <summary>
         /// liên kết 1 - 1 vói bảng Kho hàng ( storage)
         /// </summary>
-        [JsonIgnore]
-        public virtual Storage Storage { get; set; }
 
     }
 }

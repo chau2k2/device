@@ -27,7 +27,6 @@ namespace device.Services
                 int totalCount = await _context.Set<Storage>().CountAsync(i => i.IsDelete == false);
 
                 var result = await _context.Set<Storage>()
-                    .Include(s => s.Laptop)
                     .Where( s => s.IsDelete == false)
                     .Take(pageSize).Skip((page - 1) * pageSize)
                     .ToListAsync();
@@ -40,9 +39,9 @@ namespace device.Services
                     {
                         Id = storage.Id,
                         ImportNumber = storage.ImportNumber,
-                        LaptopId = storage.LaptopId,
+                        ProductType = storage.ProductType,
                         SoldNumber = storage.SoldNumber,
-                        nameLaptop = storage.Laptop.Name,
+                        ProductName = storage.ProductName,
                         IsDelete = storage.IsDelete
                     });
                 }
@@ -95,7 +94,7 @@ namespace device.Services
                 Storage storage = new Storage()
                 {
                     Id = nextId,
-                    LaptopId = CrS.LaptopId,
+                    //LaptopId = CrS.LaptopId,
                     ImportNumber = CrS.ImportNumber,
                     SoldNumber = CrS.SoldNumber
                 };
@@ -104,7 +103,7 @@ namespace device.Services
 
                 if (laptop != null)
                 {
-                    laptop.inventory = CrS.ImportNumber - CrS.SoldNumber;
+                    //laptop.inventory = CrS.ImportNumber - CrS.SoldNumber;
                 }
                 var result = await _repo.AddOneAsync(storage);
 
@@ -134,7 +133,7 @@ namespace device.Services
                 Storage storage = new Storage()
                 {
                     Id = id,
-                    LaptopId = UpS.LaptopId,
+                   // LaptopId = UpS.LaptopId,
                     ImportNumber = UpS.ImportNumber,
                     SoldNumber = UpS.SoldNumber
                 };

@@ -18,7 +18,7 @@ namespace device.Validator
         }
         public async Task<BaseResponse<LaptopDetail>> RegexLaptopDetail(LaptopDetailModel laptopDetail)
         {
-            var laptop = await _context.laptops.Include(i => i.Storage).FirstOrDefaultAsync(i => i.Id == laptopDetail.LaptopId);
+            //var laptop = await _context.laptops.Include(i => i.Storage).FirstOrDefaultAsync(i => i.Id == laptopDetail.LaptopId);
 
             var ram = await _context.ram.FindAsync(laptopDetail.RamId);
 
@@ -64,23 +64,23 @@ namespace device.Validator
                 };
             }
              
-            if (laptop == null || laptop.IsDelete == true)
-            {
-                return new BaseResponse<LaptopDetail>
-                {
-                    Success = false,
-                    Message = "Laptop không tồn tại hoặc đã bị xóa!"
-                };
-            }
+            //if (laptop == null || laptop.IsDelete == true)
+            //{
+            //    return new BaseResponse<LaptopDetail>
+            //    {
+            //        Success = false,
+            //        Message = "Laptop không tồn tại hoặc đã bị xóa!"
+            //    };
+            //}
 
-            if (laptop.Storage.ImportNumber == laptop.Storage.SoldNumber)
-            {
-                return new BaseResponse<LaptopDetail>
-                {
-                    Success = false,
-                    Message = "Laptop này đã hết hàng!!!"
-                };
-            }
+            //if (laptop.Storage.ImportNumber == laptop.Storage.SoldNumber)
+            //{
+            //    return new BaseResponse<LaptopDetail>
+            //    {
+            //        Success = false,
+            //        Message = "Laptop này đã hết hàng!!!"
+            //    };
+            //}
 
             if (laptopDetail.Cpu.Length >= 50)
             {

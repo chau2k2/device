@@ -46,8 +46,7 @@ namespace device.Services
                         CostPrice = laptop.CostPrice,
                         SoldPrice = laptop.SoldPrice,
                         ProducerId = laptop.ProducerId,
-                        IsDelete = laptop.IsDelete,
-                        inventory = laptop.inventory
+                        IsDelete = laptop.IsDelete
                     }) ;
                 }
 
@@ -74,7 +73,6 @@ namespace device.Services
             {
                 var lap = await _context.Set<Laptop>()
                     .Include(l => l.Producer)
-                    .Include(l => l.Storage)
                     .Where(l => l.IsDelete == false)
                     .FirstOrDefaultAsync(l => l.Id == id);
 
@@ -96,7 +94,6 @@ namespace device.Services
                     CostPrice = lap.CostPrice,
                     SoldPrice = lap.SoldPrice,
                     ProducerId = lap.ProducerId,
-                    inventory = lap.inventory,
                     IsDelete = lap.IsDelete
                 };
                
@@ -140,8 +137,7 @@ namespace device.Services
                         CostPrice = lap.CostPrice,
                         SoldPrice = lap.SoldPrice,
                         ProducerId = lap.ProducerId,
-                        IsDelete = lap.IsDelete,
-                        inventory = lap.inventory
+                        IsDelete = lap.IsDelete
                     });
                 }
 
