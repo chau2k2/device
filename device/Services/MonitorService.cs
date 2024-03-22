@@ -3,7 +3,6 @@ using device.IRepository;
 using device.Entity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using device.ModelResponse;
 using device.IServices;
 using device.Response;
 using device.Models;
@@ -38,7 +37,11 @@ namespace device.Services
             }
             catch (Exception ex)
             {
-                throw ex;
+                return new TPaging<MonitorM>
+                {
+                    Message = ex.Message,
+                    Error = Error.Error
+                };
             }
         }
         public async Task<ActionResult<BaseResponse<MonitorM>>> GetById(int id)
@@ -63,7 +66,12 @@ namespace device.Services
             }
             catch(Exception ex)
             {
-                throw ex;
+                return new BaseResponse<MonitorM>
+                {
+                    Success = false,
+                    Message = ex.Message,
+                    ErrorCode = ErrorCode.Error
+                };
             }
         }
         public async Task<ActionResult<BaseResponse<MonitorM>>> Update(int id, MonitorModel UpM)
@@ -99,7 +107,12 @@ namespace device.Services
             }
             catch (Exception ex)
             {
-                throw ex;
+                return new BaseResponse<MonitorM>
+                {
+                    Success = false,
+                    Message = ex.Message,
+                    ErrorCode = ErrorCode.Error
+                };
             }
         }
         public async Task<ActionResult<BaseResponse<MonitorM>>> Create(MonitorModel CrM)
@@ -128,7 +141,12 @@ namespace device.Services
             }
             catch (Exception ex)
             {
-                throw ex;
+                return new BaseResponse<MonitorM>
+                {
+                    Success = false,
+                    Message = ex.Message,
+                    ErrorCode = ErrorCode.Error
+                };
             }
         }
         public async Task<ActionResult<BaseResponse<MonitorM>>> Delete(int id)
@@ -159,7 +177,12 @@ namespace device.Services
             }
             catch (Exception ex)
             {
-                throw ex;
+                return new BaseResponse<MonitorM>
+                {
+                    Success = false,
+                    Message = ex.Message,
+                    ErrorCode = ErrorCode.Error
+                };
             }
         }
     }

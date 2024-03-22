@@ -77,7 +77,11 @@ namespace device.Services
             }
             catch (Exception ex)
             {
-                throw ex;
+                return new TPaging<LaptopDetailResponse>
+                {
+                    Message = ex.Message,
+                    Error = Error.Error
+                };
             }
         }
         public async Task<ActionResult<BaseResponse<LaptopDetail>>> GetById(int id)
@@ -105,7 +109,12 @@ namespace device.Services
             }
             catch( Exception ex)
             {
-                throw ex;
+                return new BaseResponse<LaptopDetail>
+                {
+                    Success = false,
+                    Message = ex.Message,
+                    ErrorCode = ErrorCode.Error
+                };
             }
             
         }
@@ -257,7 +266,12 @@ namespace device.Services
             }
             catch (Exception ex)
             {
-                throw ex;
+                return new BaseResponse<LaptopDetail>
+                {
+                    Success = false,
+                    Message = ex.Message,
+                    ErrorCode = ErrorCode.Error
+                };
             }
         }
     }

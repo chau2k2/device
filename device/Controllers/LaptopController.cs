@@ -4,6 +4,8 @@ using device.Entity;
 using device.Services;
 using Microsoft.AspNetCore.Mvc;
 using device.Models;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
+using device.Cons;
 
 namespace device.Controllers
 {
@@ -33,15 +35,15 @@ namespace device.Controllers
         }
 
         [HttpPost("create-laptop")]
-        public async Task<IActionResult> Create([FromBody] LaptopModel CrL)
+        public async Task<IActionResult> Create([FromBody] LaptopModel model)
         {
-           return Ok(await _service.CreateLaptop(CrL));
+           return Ok(await _service.CreateLaptop(model));
         }
 
         [HttpPost("update-id")]
-        public async Task<IActionResult> Update(int id,[FromBody] LaptopModel upl)
+        public async Task<IActionResult> Update(int id,[FromBody] LaptopModel model)
         {
-            return Ok(await _service.Updatelaptop(id, upl));
+            return Ok(await _service.Updatelaptop(id, model));
         }
 
         [HttpDelete("delete-laptop")]
@@ -53,6 +55,11 @@ namespace device.Controllers
         public async Task<IActionResult> FindLaptopByName (string name)
         {
             return Ok (await _service.FindLaptopByName(name));
+        }
+        [HttpGet("find-laptop")]
+        public async Task<IActionResult> FindLaptop (string name, string producer, decimal firstPrice = 0, decimal endPrice = Constants.MAX_PRICE)
+        {
+            return Ok (await _service.SearchLaptop(name, producer, firstPrice, endPrice));
         }
     }
 }

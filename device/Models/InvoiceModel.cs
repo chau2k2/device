@@ -9,7 +9,7 @@ namespace device.Models
         /// <summary>
         /// số hóa đơn
         /// </summary>
-        public string InvoiceNumber { get; set; }
+        public string? InvoiceNumber { get; set; }
         /// <summary>
         /// ngày giờ trong hóa đơn
         /// </summary>

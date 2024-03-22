@@ -30,9 +30,9 @@ namespace device.Controllers
             return Ok(await _service.GetById(id));
         }
         [HttpPost("create")]
-        public async Task<IActionResult> CreateInvoiceDetail(InvoiceDetailModel CID)
+        public async Task<IActionResult> CreateInvoiceDetail(InvoiceDetailModel model)
         {
-            return Ok ( await _service.CreateInvoiceDetail(CID));
+            return Ok ( await _service.CreateInvoiceDetail(model));
         }
 
         [HttpDelete("delete")]

@@ -42,12 +42,12 @@ namespace device.Services
                     {
                         Id = invoiceDetail.Id,
                         InvoiceId = invoiceDetail.InvoiceId,
-                        InvoiceNumber = invoiceDetail.invoices.InvoiceNumber,
+                        InvoiceNumber = invoiceDetail.invoices?.InvoiceNumber,
                         Quantity = invoiceDetail.Quantity,
                         Price = invoiceDetail.Price,
                         IsDelete = invoiceDetail.IsDelete,
                         ProductName = invoiceDetail.NameProduct!,
-                        ProductType = (EProductType)invoiceDetail.ProductType
+                        ProductType = invoiceDetail.ProductType
                     });
                 }
 
@@ -78,7 +78,7 @@ namespace device.Services
                 InvoiceDetail detail = new InvoiceDetail()
                 {
                     Id = nextId,
-                    ProductType = (int) CID.ProductType,
+                    ProductType = CID.ProductType,
                     InvoiceId = CID.InvoiceId,
                     Quantity = CID.Quantity,
                     NameProduct = CID.ProductName
@@ -86,43 +86,27 @@ namespace device.Services
 
                 switch (detail.ProductType)
                 {
-                    case 1:
-                        //var laptop = await _context.laptops.Include(l => l.Storage).FirstOrDefaultAsync(l => l.Name == CID.ProductName);
-
-                        //if (laptop != null || laptop.inventory >= CID.Quantity || laptop.IsDelete == false)
-                        //{
-                        //    detail.Price = laptop.SoldPrice;
-
-                        //    var storage = await _context.storages.FirstOrDefaultAsync(s => s.LaptopId == laptop.Id);
-
-                        //    if (storage != null)
-                        //    {
-                        //        laptop.Storage.SoldNumber = laptop.Storage.SoldNumber + CID.Quantity;
-
-                        //        laptop.inventory = laptop.inventory - CID.Quantity;
-                        //    }
-
-                        //    var laptopValue = detail.Quantity * detail.Price;
-
-                        //    var invoice = await _context.invoices.FirstOrDefaultAsync(i => i.Id == CID.InvoiceId);
-                        //}
+                    case EProductType.Laptop:
+                        var laptop = await _context.laptops.FirstOrDefaultAsync(l => l.Name == CID.ProductName);
+                        detail.Price = laptop!.SoldPrice;
                         break;
-                    case 2:
+                    case EProductType.PrivateComputer:
                         var pc = await _context.PrivateComputer.FirstOrDefaultAsync(p => p.Name == CID.ProductName);
                         detail.Price = pc!.SoldPrice;
                         break;
-                    case 3:
+                    case EProductType.Ram:
                         var ram = await _context.ram.FirstOrDefaultAsync(r =>  r.Name == CID.ProductName);
                         detail.Price = ram!.Price;
                         break;
-                    case 4:
+                    case EProductType.Monitor:
                         var monitor = await _context.monitors.FirstOrDefaultAsync(m => m.Name == CID.ProductName);
                         detail.Price = monitor!.Price;
                         break;
-                    case 5:
+                    case EProductType.Vga:
                         var vga = await _context.vgas.FirstOrDefaultAsync( v => v.Name == CID.ProductName);
                         detail.Price = vga!.Price;
                         break;
+
                 }
 
                 var validate = await _validate.RegexInvoice(CID);

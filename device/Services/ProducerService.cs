@@ -39,7 +39,11 @@ namespace device.Services
             }
             catch (Exception ex)
             {
-                throw ex;
+                return new TPaging<Producer>
+                {
+                    Message = ex.Message,
+                    Error = Error.Error
+                };
             }
         }
         public async Task<ActionResult<BaseResponse<Producer>>> GetProducerById( int id)
@@ -64,8 +68,13 @@ namespace device.Services
                 };
             }
             catch (Exception ex) 
-            { 
-                throw ex; 
+            {
+                return new BaseResponse<Producer>
+                {
+                    Success = false,
+                    Message = ex.Message,
+                    ErrorCode = ErrorCode.Error
+                };
             }
         }
         public async Task<ActionResult<BaseResponse<Producer>>> UpdateProducer (int id, ProducerModel Upd)
@@ -100,7 +109,12 @@ namespace device.Services
             }
             catch (Exception ex)
             {
-                throw ex;
+                return new BaseResponse<Producer>
+                {
+                    Success = false,
+                    Message = ex.Message,
+                    ErrorCode = ErrorCode.Error
+                };
             }
         }
         public async Task<ActionResult<BaseResponse<Producer>>> CreateProducer (ProducerModel cpr)
@@ -130,7 +144,12 @@ namespace device.Services
             }
             catch (Exception ex)
             {
-                throw ex;
+                return new BaseResponse<Producer>
+                {
+                    Success = false,
+                    Message = ex.Message,
+                    ErrorCode = ErrorCode.Error
+                };
             }
         }
         public async Task<ActionResult<BaseResponse<Producer>>> DeleteProducer(int id)
@@ -160,7 +179,12 @@ namespace device.Services
             }
             catch (Exception ex)
             {
-                throw ex;
+                return new BaseResponse<Producer>
+                {
+                    Success = false,
+                    Message = ex.Message,
+                    ErrorCode = ErrorCode.Error
+                };
             }
         }
     }

@@ -104,7 +104,7 @@ namespace device.Services
                 Storage storage = new Storage()
                 {
                     Id = nextId,
-                    ProductType = (int) CrS.ProductType,
+                    ProductType = CrS.ProductType,
                     ProductName = CrS.ProductName,
                     inventory = CrS.ImportNumber - CrS.SoldNumber,
                     ImportNumber = CrS.ImportNumber,
@@ -113,17 +113,20 @@ namespace device.Services
 
                 switch (storage.ProductType)
                 {
-                    case 1:
+                    case EProductType.Laptop:
                         var laptop = await _context.laptops.FirstOrDefaultAsync(s => s.Name == CrS.ProductName);
-
                         break;
-                    case 2:
+                    case EProductType.PrivateComputer:
+                        var pc = await _context.PrivateComputer.FirstOrDefaultAsync(p => p.Name == CrS.ProductName);
                         break;
-                    case 3:
+                    case EProductType.Ram:
+                        var ram = await _context.ram.FirstOrDefaultAsync(r => r.Name == CrS.ProductName);
                         break;
-                    case 4:
+                    case EProductType.Monitor:
+                        var monitor = await _context.monitors.FirstOrDefaultAsync(m => m.Name == CrS.ProductName);
                         break;
-                    case 5:
+                    case EProductType.Vga:
+                        var vga = await _context.vgas.FirstOrDefaultAsync(v => v.Name == CrS.ProductName);
                         break;
                 }
 
@@ -138,7 +141,12 @@ namespace device.Services
             }
             catch (Exception ex)
             {
-                throw ex;
+                return new BaseResponse<Storage>
+                {
+                    Success = false,
+                    Message = ex.Message,
+                    ErrorCode = ErrorCode.Error
+                };
             }
         }
         public async Task<ActionResult<BaseResponse<Storage>>> Update(int id, StorageModel UpS)
@@ -207,7 +215,12 @@ namespace device.Services
             }
             catch (Exception ex)
             {
-                throw ex;
+                return new BaseResponse<Storage>
+                {
+                    Success = false,
+                    Message = ex.Message,
+                    ErrorCode = ErrorCode.Error
+                };
             }
         }
     }

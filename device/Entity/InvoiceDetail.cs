@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using device.Models;
+using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 
 namespace device.Entity
@@ -14,7 +15,7 @@ namespace device.Entity
         /// Loại sản phẩm
         /// </summary>
         [Range(0, int.MaxValue)]
-        public int ProductType { get; set; }
+        public EProductType ProductType { get; set; }
         [MaxLength(100)]
         public string? NameProduct { get; set; }
         /// <summary>
@@ -40,6 +41,6 @@ namespace device.Entity
         /// liên kết 1 - n với bảng invoice
         /// </summary>
         [JsonIgnore]
-        public virtual Invoice invoices { get; set; }
+        public virtual Invoice? invoices { get; set; }
     }
 }

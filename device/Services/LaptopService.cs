@@ -66,6 +66,28 @@ namespace device.Services
                 };
             }
         }
+        public async Task<ActionResult<BaseResponse<IEnumerable<LaptopResponse>>>> SearchLaptop(string? name, string? producer, decimal? firstPrice, decimal? endPrice)
+        {
+            try
+            {
+                List<Laptop> laptops = new List<Laptop>();
+
+                IEnumerable<Laptop> laptopQuery = from Laptop in laptops
+                                                  where Laptop.Name == name
+                                                  select Laptop;
+
+
+            }
+            catch (Exception ex)
+            {
+                return new BaseResponse<IEnumerable<LaptopResponse>>()
+                {
+                    Success = false,
+                    Message = ex.Message,
+                    ErrorCode = ErrorCode.Error
+                };
+            }
+        }
 
         public async Task<ActionResult<BaseResponse<LaptopResponse>>> GetLaptopById(int id)
         {
@@ -309,5 +331,6 @@ namespace device.Services
                 };
             }
         }
+        
     }
 }

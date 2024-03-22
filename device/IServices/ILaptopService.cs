@@ -13,5 +13,6 @@ namespace device.IServices
         Task<ActionResult<BaseResponse<Laptop>>> CreateLaptop(LaptopModel crl);
         Task<ActionResult<BaseResponse<Laptop>>> DeleteLaptop(int id);
         Task<ActionResult<BaseResponse<IEnumerable< LaptopResponse>>>> FindLaptopByName (string name);
+        Task<ActionResult<BaseResponse<IEnumerable<LaptopResponse>>>> SearchLaptop(string? name, string? producer, decimal? firstPrice, decimal? endPrice);
     }
 }

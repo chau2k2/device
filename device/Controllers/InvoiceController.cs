@@ -30,15 +30,15 @@ namespace device.Controllers
         }
 
         [HttpPost("do-create")]
-        public async Task<IActionResult> CreateInvoice([FromBody] InvoiceModel civ)
+        public async Task<IActionResult> CreateInvoice([FromBody] InvoiceModel model)
         {
-            return Ok ( await _service.Create(civ));
+            return Ok ( await _service.Create(model));
         }
 
         [HttpPut("do-update")]
-        public async Task<IActionResult> UpdateInvoice(int id, InvoiceModel upI)
+        public async Task<IActionResult> UpdateInvoice(int id, InvoiceModel model)
         {
-            return Ok (await _service.Update(id, upI));
+            return Ok (await _service.Update(id, model));
         }
 
         [HttpDelete("delete")]

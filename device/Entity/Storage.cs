@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using device.Models;
+using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 
 namespace device.Entity
@@ -29,7 +30,7 @@ namespace device.Entity
         /// <summary>
         /// loại sản phẩm: Laptop, PC
         /// </summary>
-        public int ProductType { get; set; }
+        public EProductType ProductType { get; set; }
         /// <summary>
         /// tên sản phẩm
         /// </summary>

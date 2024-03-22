@@ -17,7 +17,7 @@ namespace device.Validator
 
         public async Task<BaseResponse<InvoiceDetailModel>> RegexInvoice ( InvoiceDetailModel invoiceDetail)
         {
-            var invoice = _context.invoices.FirstOrDefaultAsync(i => i.Id == invoiceDetail.InvoiceId);
+            var invoice = await _context.invoices.FirstOrDefaultAsync(i => i.Id == invoiceDetail.InvoiceId);
 
             //var laptop = await _context.laptops.Include(l => l.Storage).FirstOrDefaultAsync(l => l.Name == invoiceDetail.ProductName);
 
