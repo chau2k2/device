@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using device.IServices;
 using device.Models;
 using device.Validator;
+using System.Reflection.Metadata.Ecma335;
 
 namespace device.Services
 {
@@ -70,13 +71,35 @@ namespace device.Services
         {
             try
             {
-                List<Laptop> laptops = new List<Laptop>();
+                var laptop = await _context.Set<Laptop>()
+                     .Include(l => l.Producer)
+                     .Include(l => l.LaptopDetail)
+                     .ToListAsync();
 
-                IEnumerable<Laptop> laptopQuery = from Laptop in laptops
-                                                  where Laptop.Name == name
-                                                  select Laptop;
+                var laptopQuery = (from s in laptop
+                                   where s.CostPrice >= firstPrice && s.CostPrice <= endPrice
+                              select s).ToList();
 
+                List<LaptopResponse> laptopResponses = new List<LaptopResponse>();
 
+                foreach ( var lap in laptopQuery )
+                {
+                    laptopResponses.Add(new LaptopResponse()
+                    {
+                        Id = lap.Id,
+                        ProducerId = lap.ProducerId,
+                        Name = lap.Name,
+                        CostPrice = lap.CostPrice,
+                        SoldPrice = lap.SoldPrice,
+                        IsDelete = lap.IsDelete
+                    }) ;
+                }
+                return new BaseResponse<IEnumerable<LaptopResponse>> 
+                {
+                    Success = true,
+                    Message = "Successfull!!!",
+                    Data = laptopResponses
+                };
             }
             catch (Exception ex)
             {
