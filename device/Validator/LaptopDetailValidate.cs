@@ -16,17 +16,17 @@ namespace device.Validator
             _context = context;
             _duplicate = duplicate;
         }
-        public async Task<BaseResponse<LaptopDetail>> RegexLaptopDetail(LaptopDetailModel laptopDetail)
+        public async Task<BaseResponse<LaptopDetail>> RegexLaptopDetail(LaptopDetailModel model)
         {
-            //var laptop = await _context.laptops.Include(i => i.Storage).FirstOrDefaultAsync(i => i.Id == laptopDetail.LaptopId);
+            var laptop = await _context.laptops.FindAsync(model.LaptopId);
 
-            var ram = await _context.ram.FindAsync(laptopDetail.RamId);
+            var ram = await _context.ram.FindAsync(model.RamId);
 
-            var vga = await _context.vgas.FindAsync(laptopDetail.VgaId);
+            var vga = await _context.vgas.FindAsync(model.VgaId);
 
-            var monitor = await _context.monitors.FindAsync(laptopDetail.MonitorId);
+            var monitor = await _context.monitors.FindAsync(model.MonitorId);
 
-            var seri = await _context.laptopsDetail.FirstOrDefaultAsync( i => i.Seri == laptopDetail.Seri);
+            var seri = await _context.laptopsDetail.FirstOrDefaultAsync( i => i.Seri == model.Seri);
             
             if (seri != null)
             {
@@ -63,15 +63,15 @@ namespace device.Validator
                     Message = "Ram không tồn tại hoặc đã bị xóa!!!"
                 };
             }
-             
-            //if (laptop == null || laptop.IsDelete == true)
-            //{
-            //    return new BaseResponse<LaptopDetail>
-            //    {
-            //        Success = false,
-            //        Message = "Laptop không tồn tại hoặc đã bị xóa!"
-            //    };
-            //}
+
+            if (laptop == null || laptop.IsDelete == true)
+            {
+                return new BaseResponse<LaptopDetail>
+                {
+                    Success = false,
+                    Message = "Laptop không tồn tại hoặc đã bị xóa!"
+                };
+            }
 
             //if (laptop.Storage.ImportNumber == laptop.Storage.SoldNumber)
             //{
@@ -82,7 +82,7 @@ namespace device.Validator
             //    };
             //}
 
-            if (laptopDetail.Cpu.Length >= 50)
+            if (model.Cpu.Length >= 50)
             {
                 return new BaseResponse<LaptopDetail>
                 {
@@ -91,7 +91,7 @@ namespace device.Validator
                 };
             }
 
-            if (laptopDetail.HardDriver.Length >= 50)
+            if (model.HardDriver.Length >= 50)
             {
                 return new BaseResponse<LaptopDetail>
                 {
@@ -100,7 +100,7 @@ namespace device.Validator
                 };
             }
 
-            if (_duplicate.isValueName(laptopDetail.HardDriver))
+            if (_duplicate.isValueName(model.HardDriver))
             {
                 return new BaseResponse<LaptopDetail>
                 {
@@ -109,7 +109,7 @@ namespace device.Validator
                 };
             }
 
-            if (_duplicate.isValueName(laptopDetail.Cpu))
+            if (_duplicate.isValueName(model.Cpu))
             {
                 return new BaseResponse<LaptopDetail>
                 {

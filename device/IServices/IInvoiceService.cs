@@ -10,8 +10,8 @@ namespace device.IServices
     {
         Task<TPaging<InvoiceResponse>> GetAll(int page, int pageSize);
         Task<ActionResult<BaseResponse<InvoiceResponse>>> GetById(int id);
-        Task<ActionResult<BaseResponse<Invoice>>> Create(InvoiceModel CrI);
-        Task<ActionResult<BaseResponse<Invoice>>> Update(int id, InvoiceModel UpI);
+        Task<ActionResult<BaseResponse<Invoice>>> Create(InvoiceModel model);
+        Task<ActionResult<BaseResponse<Invoice>>> Update(int id, InvoiceModel model);
         Task<ActionResult<BaseResponse<Invoice>>> Delete(int id);
     }
 }

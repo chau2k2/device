@@ -24,9 +24,9 @@ namespace device.Controllers
         }
 
         [HttpPut("update")]
-        public async Task<IActionResult> Update(int id, [FromBody] MonitorModel UMn)
+        public async Task<IActionResult> Update(int id, [FromBody] MonitorModel model)
         {
-            return Ok (await _service.Update(id, UMn));
+            return Ok (await _service.Update(id, model));
         }
 
         [HttpGet("get-by-id")]
@@ -36,9 +36,9 @@ namespace device.Controllers
         }
 
         [HttpPost("create-monitor")]
-        public async Task<IActionResult> Create([FromBody] MonitorModel CMn)
+        public async Task<IActionResult> Create([FromBody] MonitorModel model)
         {
-            return Ok (await _service.Create(CMn));
+            return Ok (await _service.Create(model));
         }
 
         [HttpDelete("delete")]

@@ -94,7 +94,7 @@ namespace device.Services
                 };
             }
         }
-        public async Task<ActionResult<BaseResponse<Storage>>> Create(StorageModel CrS)
+        public async Task<ActionResult<BaseResponse<Storage>>> Create(StorageModel model)
         {
             try
             {
@@ -104,29 +104,29 @@ namespace device.Services
                 Storage storage = new Storage()
                 {
                     Id = nextId,
-                    ProductType = CrS.ProductType,
-                    ProductName = CrS.ProductName,
-                    inventory = CrS.ImportNumber - CrS.SoldNumber,
-                    ImportNumber = CrS.ImportNumber,
-                    SoldNumber = CrS.SoldNumber
+                    ProductType = model.ProductType,
+                    ProductName = model.ProductName,
+                    inventory = model.ImportNumber - model.SoldNumber,
+                    ImportNumber = model.ImportNumber,
+                    SoldNumber = model.SoldNumber
                 };
 
                 switch (storage.ProductType)
                 {
                     case EProductType.Laptop:
-                        var laptop = await _context.laptops.FirstOrDefaultAsync(s => s.Name == CrS.ProductName);
+                        var laptop = await _context.laptops.FirstOrDefaultAsync(s => s.Name == model.ProductName);
                         break;
                     case EProductType.PrivateComputer:
-                        var pc = await _context.PrivateComputer.FirstOrDefaultAsync(p => p.Name == CrS.ProductName);
+                        var pc = await _context.PrivateComputer.FirstOrDefaultAsync(p => p.Name == model.ProductName);
                         break;
                     case EProductType.Ram:
-                        var ram = await _context.ram.FirstOrDefaultAsync(r => r.Name == CrS.ProductName);
+                        var ram = await _context.ram.FirstOrDefaultAsync(r => r.Name == model.ProductName);
                         break;
                     case EProductType.Monitor:
-                        var monitor = await _context.monitors.FirstOrDefaultAsync(m => m.Name == CrS.ProductName);
+                        var monitor = await _context.monitors.FirstOrDefaultAsync(m => m.Name == model.ProductName);
                         break;
                     case EProductType.Vga:
-                        var vga = await _context.vgas.FirstOrDefaultAsync(v => v.Name == CrS.ProductName);
+                        var vga = await _context.vgas.FirstOrDefaultAsync(v => v.Name == model.ProductName);
                         break;
                 }
 
@@ -149,7 +149,7 @@ namespace device.Services
                 };
             }
         }
-        public async Task<ActionResult<BaseResponse<Storage>>> Update(int id, StorageModel UpS)
+        public async Task<ActionResult<BaseResponse<Storage>>> Update(int id, StorageModel model)
         {
             try
             {
@@ -163,9 +163,9 @@ namespace device.Services
                 Storage storage = new Storage()
                 {
                     Id = id,
-                   // LaptopId = UpS.LaptopId,
-                    ImportNumber = UpS.ImportNumber,
-                    SoldNumber = UpS.SoldNumber
+                   // LaptopId = model.LaptopId,
+                    ImportNumber = model.ImportNumber,
+                    SoldNumber = model.SoldNumber
                 };
 
                 var result = await _repo.UpdateOneAsyns(storages);

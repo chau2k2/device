@@ -133,7 +133,7 @@ namespace device.Services
                 };
             }
         }
-        public async Task<ActionResult<BaseResponse<Invoice>>> Create(InvoiceModel CrI)
+        public async Task<ActionResult<BaseResponse<Invoice>>> Create(InvoiceModel model)
         {
             try
             {
@@ -144,8 +144,8 @@ namespace device.Services
                 Invoice invoice = new Invoice()
                 {
                     Id = nextId,
-                    DateInvoice = CrI.DateInvoice,
-                    IsDelete = CrI.IsDelete
+                    DateInvoice = model.DateInvoice,
+                    IsDelete = model.IsDelete
                 };
 
                 invoice.InvoiceNumber = $"IV{invoice.Id:D4}";
@@ -169,7 +169,7 @@ namespace device.Services
                 };
             }
         }
-        public async Task<ActionResult<BaseResponse<Invoice>>> Update(int id, InvoiceModel UpI)
+        public async Task<ActionResult<BaseResponse<Invoice>>> Update(int id, InvoiceModel model)
         {
             try
             {
@@ -186,7 +186,7 @@ namespace device.Services
                 Invoice invoice = new Invoice()
                 {
                     Id = id,
-                    DateInvoice = UpI.DateInvoice
+                    DateInvoice = model.DateInvoice
                 };
 
                 invoice.InvoiceNumber = $"IV{invoice.Id:D4}";

@@ -51,11 +51,7 @@ namespace device.Controllers
         {
             return Ok (await _service.DeleteLaptop(id));
         }
-        [HttpGet("get-laptop-by-name")]
-        public async Task<IActionResult> FindLaptopByName (string name)
-        {
-            return Ok (await _service.FindLaptopByName(name));
-        }
+
         [HttpGet("find-laptop")]
         public async Task<IActionResult> FindLaptop (string name, string producer, decimal firstPrice = 0, decimal endPrice = Constants.MAX_PRICE)
         {

@@ -30,23 +30,23 @@ namespace device.Controllers
         }
 
         [HttpPut("do-update")]
-        public async Task< ActionResult> Update(int id, [FromBody] ProducerModel Upd)
+        public async Task< ActionResult> Update(int id, [FromBody] ProducerModel model)
         {
             if (!ModelState.IsValid)
             {
                 StatusCode(StatusCodes.Status400BadRequest, "Error Request");
             }
-            return Ok(await _service.UpdateProducer(id, Upd));
+            return Ok(await _service.UpdateProducer(id, model));
         }
 
         [HttpPost("create")]
-        public async Task<ActionResult> CreateProducer([FromBody] ProducerModel cpr)
+        public async Task<ActionResult> CreateProducer([FromBody] ProducerModel model)
         {
             if (!ModelState.IsValid)
             {
                 StatusCode(StatusCodes.Status400BadRequest, "Error Request");
             }
-            return Ok(await _service.CreateProducer(cpr));
+            return Ok(await _service.CreateProducer(model));
         }
 
         [HttpDelete("delete")]

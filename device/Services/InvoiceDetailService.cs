@@ -68,7 +68,7 @@ namespace device.Services
             }
         }
 
-        public async Task<ActionResult<BaseResponse<InvoiceDetail>>> CreateInvoiceDetail(InvoiceDetailModel CID)
+        public async Task<ActionResult<BaseResponse<InvoiceDetail>>> CreateInvoiceDetail(InvoiceDetailModel model)
         {
             try
             {
@@ -78,38 +78,38 @@ namespace device.Services
                 InvoiceDetail detail = new InvoiceDetail()
                 {
                     Id = nextId,
-                    ProductType = CID.ProductType,
-                    InvoiceId = CID.InvoiceId,
-                    Quantity = CID.Quantity,
-                    NameProduct = CID.ProductName
+                    ProductType = model.ProductType,
+                    InvoiceId = model.InvoiceId,
+                    Quantity = model.Quantity,
+                    NameProduct = model.ProductName
                 };
 
                 switch (detail.ProductType)
                 {
                     case EProductType.Laptop:
-                        var laptop = await _context.laptops.FirstOrDefaultAsync(l => l.Name == CID.ProductName);
+                        var laptop = await _context.laptops.FirstOrDefaultAsync(l => l.Name == model.ProductName);
                         detail.Price = laptop!.SoldPrice;
                         break;
                     case EProductType.PrivateComputer:
-                        var pc = await _context.PrivateComputer.FirstOrDefaultAsync(p => p.Name == CID.ProductName);
+                        var pc = await _context.PrivateComputer.FirstOrDefaultAsync(p => p.Name == model.ProductName);
                         detail.Price = pc!.SoldPrice;
                         break;
                     case EProductType.Ram:
-                        var ram = await _context.ram.FirstOrDefaultAsync(r =>  r.Name == CID.ProductName);
+                        var ram = await _context.ram.FirstOrDefaultAsync(r =>  r.Name == model.ProductName);
                         detail.Price = ram!.Price;
                         break;
                     case EProductType.Monitor:
-                        var monitor = await _context.monitors.FirstOrDefaultAsync(m => m.Name == CID.ProductName);
+                        var monitor = await _context.monitors.FirstOrDefaultAsync(m => m.Name == model.ProductName);
                         detail.Price = monitor!.Price;
                         break;
                     case EProductType.Vga:
-                        var vga = await _context.vgas.FirstOrDefaultAsync( v => v.Name == CID.ProductName);
+                        var vga = await _context.vgas.FirstOrDefaultAsync( v => v.Name == model.ProductName);
                         detail.Price = vga!.Price;
                         break;
 
                 }
 
-                var validate = await _validate.RegexInvoice(CID);
+                var validate = await _validate.RegexInvoice(model);
 
                 if (!validate.Success)
                 {

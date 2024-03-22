@@ -7,7 +7,6 @@ using Microsoft.EntityFrameworkCore;
 using device.IServices;
 using device.Models;
 using device.Validator;
-using System.Reflection.Metadata.Ecma335;
 
 namespace device.Services
 {
@@ -67,7 +66,7 @@ namespace device.Services
                 };
             }
         }
-        public async Task<ActionResult<BaseResponse<IEnumerable<LaptopResponse>>>> SearchLaptop(string? name, string? producer, decimal? firstPrice, decimal? endPrice)
+        public async Task<ActionResult<BaseResponse<IEnumerable<LaptopResponse>>>> SearchLaptop(string? name, string? producerName, decimal? firstPrice, decimal? endPrice)
         {
             try
             {
@@ -77,8 +76,12 @@ namespace device.Services
                      .ToListAsync();
 
                 var laptopQuery = (from s in laptop
-                                   where s.CostPrice >= firstPrice && s.CostPrice <= endPrice
-                              select s).ToList();
+                                  where (!firstPrice.HasValue || s.CostPrice >= firstPrice) &&
+                                        (!endPrice.HasValue || s.CostPrice <= endPrice) &&
+                                        (string.IsNullOrEmpty(name) || s.Name.Contains(name)) &&
+                                        (string.IsNullOrEmpty(producerName) || s.Producer!.Name == producerName) &&
+                                        !s.IsDelete
+                                        select s).ToList();
 
                 List<LaptopResponse> laptopResponses = new List<LaptopResponse>();
 
@@ -91,9 +94,11 @@ namespace device.Services
                         Name = lap.Name,
                         CostPrice = lap.CostPrice,
                         SoldPrice = lap.SoldPrice,
-                        IsDelete = lap.IsDelete
+                        IsDelete = lap.IsDelete,
+                        ProducerName = lap.Producer!.Name
                     }) ;
                 }
+
                 return new BaseResponse<IEnumerable<LaptopResponse>> 
                 {
                     Success = true,
@@ -160,63 +165,7 @@ namespace device.Services
             }
         }
 
-        public async Task<ActionResult<BaseResponse<IEnumerable< LaptopResponse>>>> FindLaptopByName(string name)
-        {
-            try
-            {
-                var laptop = await _context.Set<Laptop>()
-                     .Include(l => l.Producer)
-                     .Include(l => l.LaptopDetail)
-                     .Where( l => l.Name.Contains(name))
-                     .ToListAsync();
-
-                List<LaptopResponse> laptopResponse = new List<LaptopResponse>();
-
-                foreach (var lap in laptop)
-                {
-                    laptopResponse.Add(new LaptopResponse()
-                    {
-                        Id = lap.Id,
-                        Name = lap.Name,
-                        ProducerName = lap.Producer?.Name,
-                        CostPrice = lap.CostPrice,
-                        SoldPrice = lap.SoldPrice,
-                        ProducerId = lap.ProducerId,
-                        IsDelete = lap.IsDelete
-                    });
-                }
-
-                if (laptop.Any())
-                {
-                    return new BaseResponse<IEnumerable<LaptopResponse>>
-                    {
-                        Success = true,
-                        Message = "Successfull",
-                        ErrorCode = ErrorCode.None,
-                        Data = laptopResponse
-                    };
-                }
-                else
-                {
-                    return new BaseResponse<IEnumerable<LaptopResponse>>
-                    {
-                        Success = false,
-                        Message = "NotFound!!!",
-                        ErrorCode = ErrorCode.NotFound
-                    };
-                }
-            }
-            catch (Exception ex)
-            {
-                return new BaseResponse<IEnumerable<LaptopResponse>>
-                {
-                    Success = false,
-                    Message = ex.Message,
-                    ErrorCode = ErrorCode.Error
-                };
-            }
-        }
-        public async Task<ActionResult<BaseResponse<Laptop>>> Updatelaptop(int id, LaptopModel laptopModel)
+        public async Task<ActionResult<BaseResponse<Laptop>>> Updatelaptop(int id, LaptopModel model)
         {
             try
             {
@@ -234,14 +183,14 @@ namespace device.Services
                 Laptop laptop = new Laptop()
                 {
                     Id = id,
-                    Name = laptopModel.Name,
-                    ProducerId = laptopModel.ProducerId,
-                    CostPrice = laptopModel.CostPrice,
-                    SoldPrice = laptopModel.SoldPrice,
-                    IsDelete = laptopModel.IsDelete
+                    Name = model.Name,
+                    ProducerId = model.ProducerId,
+                    CostPrice = model.CostPrice,
+                    SoldPrice = model.SoldPrice,
+                    IsDelete = model.IsDelete
                 };
 
-                var validator = await _validate.RegexLaptop(laptopModel);
+                var validator = await _validate.RegexLaptop(model);
 
                 if (!validator.Success)
                 {
@@ -271,7 +220,7 @@ namespace device.Services
                 };
             }
         }
-        public async Task<ActionResult<BaseResponse<Laptop>>> CreateLaptop( LaptopModel laptopModel)
+        public async Task<ActionResult<BaseResponse<Laptop>>> CreateLaptop( LaptopModel model)
         {
             try
             {
@@ -282,13 +231,13 @@ namespace device.Services
                 Laptop laptop = new Laptop()
                 {
                     Id = next,
-                    Name = laptopModel.Name,
-                    ProducerId = laptopModel.ProducerId,
-                    CostPrice = laptopModel.CostPrice,
-                    SoldPrice = laptopModel.SoldPrice
+                    Name = model.Name,
+                    ProducerId = model.ProducerId,
+                    CostPrice = model.CostPrice,
+                    SoldPrice = model.SoldPrice
                 };
 
-                var validator = await _validate.RegexLaptop(laptopModel);
+                var validator = await _validate.RegexLaptop(model);
 
                 if (!validator.Success)
                 {

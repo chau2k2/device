@@ -25,15 +25,15 @@ namespace device.Controllers
         }
 
         [HttpPost("create-pc")]
-        public async Task<IActionResult> Create (PrivateComputerModel pcModel)
+        public async Task<IActionResult> Create (PrivateComputerModel model)
         {
-            return Ok ( await _service.Create(pcModel));
+            return Ok ( await _service.Create(model));
         }
 
         [HttpPost("update-pc")]
-        public async Task<IActionResult> Update (int id, PrivateComputerModel pcModel)
+        public async Task<IActionResult> Update (int id, PrivateComputerModel model)
         {
-            return Ok (await _service.Update(id, pcModel));
+            return Ok (await _service.Update(id, model));
         }
         [HttpDelete("delete-pc")]
         public async Task<IActionResult> Delete (string name)

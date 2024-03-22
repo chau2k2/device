@@ -10,8 +10,8 @@ namespace device.IServices
     {
         Task<TPaging<MonitorM>> GetAll(int page, int pageSize);
         Task<ActionResult<BaseResponse<MonitorM>>> GetById(int id);
-        Task<ActionResult<BaseResponse<MonitorM>>> Update(int id, MonitorModel UpM);
-        Task<ActionResult<BaseResponse<MonitorM>>> Create(MonitorModel CrM);
+        Task<ActionResult<BaseResponse<MonitorM>>> Update(int id, MonitorModel model);
+        Task<ActionResult<BaseResponse<MonitorM>>> Create(MonitorModel model);
         Task<ActionResult<BaseResponse<MonitorM>>> Delete(int id);
     }
 }

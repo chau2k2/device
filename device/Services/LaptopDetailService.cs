@@ -118,7 +118,7 @@ namespace device.Services
             }
             
         }
-        public async Task<ActionResult<BaseResponse<LaptopDetail>>> Update(int id, LaptopDetailModel UpLD)
+        public async Task<ActionResult<BaseResponse<LaptopDetail>>> Update(int id, LaptopDetailModel model)
         {
             try
             {
@@ -137,22 +137,22 @@ namespace device.Services
                 LaptopDetail laptopDetail = new LaptopDetail()
                 {
                     Id = id,
-                    Cpu = UpLD.Cpu,
-                    Seri = UpLD.Seri,
-                    VgaId = UpLD.VgaId,
-                    RamId = UpLD.RamId,
-                    HardDriver = UpLD.HardDriver,
-                    MonitorId = UpLD.MonitorId,
-                    Webcam = UpLD.Webcam,
-                    Weight = UpLD.Weight,
-                    Height = UpLD.Height,
-                    Width = UpLD.Width,
-                    Length = UpLD.Length,
-                    BatteryCapacity = UpLD.BatteryCapacity,
-                    LaptopId = UpLD.LaptopId
+                    Cpu = model.Cpu,
+                    Seri = model.Seri,
+                    VgaId = model.VgaId,
+                    RamId = model.RamId,
+                    HardDriver = model.HardDriver,
+                    MonitorId = model.MonitorId,
+                    Webcam = model.Webcam,
+                    Weight = model.Weight,
+                    Height = model.Height,
+                    Width = model.Width,
+                    Length = model.Length,
+                    BatteryCapacity = model.BatteryCapacity,
+                    LaptopId = model.LaptopId
                 };
 
-                var validator = await _validate.RegexLaptopDetail(UpLD);
+                var validator = await _validate.RegexLaptopDetail(model);
 
                 if (!validator.Success)
                 {
@@ -182,7 +182,7 @@ namespace device.Services
                 };
             }
         }
-        public async Task<ActionResult<BaseResponse<LaptopDetail>>> Create(LaptopDetailModel CrLD)
+        public async Task<ActionResult<BaseResponse<LaptopDetail>>> Create(LaptopDetailModel model)
         {
             try
             {
@@ -193,23 +193,23 @@ namespace device.Services
                 LaptopDetail laptopDetail = new LaptopDetail()
                 {
                     Id = next,
-                    Cpu = CrLD.Cpu,
-                    Seri = CrLD.Seri,
-                    VgaId = CrLD.VgaId,
-                    RamId = CrLD.RamId,
-                    HardDriver = CrLD.HardDriver,
-                    MonitorId = CrLD.MonitorId,
-                    Webcam = CrLD.Webcam,
-                    Weight = CrLD.Weight,
-                    Height = CrLD.Height,
-                    Width = CrLD.Width,
-                    Length = CrLD.Length,
-                    BatteryCapacity = CrLD.BatteryCapacity,
-                    LaptopId = CrLD.LaptopId,
-                    IsDelete = CrLD.IsDelete
+                    Cpu = model.Cpu,
+                    Seri = model.Seri,
+                    VgaId = model.VgaId,
+                    RamId = model.RamId,
+                    HardDriver = model.HardDriver,
+                    MonitorId = model.MonitorId,
+                    Webcam = model.Webcam,
+                    Weight = model.Weight,
+                    Height = model.Height,
+                    Width = model.Width,
+                    Length = model.Length,
+                    BatteryCapacity = model.BatteryCapacity,
+                    LaptopId = model.LaptopId,
+                    IsDelete = model.IsDelete
                 };
 
-                var validator = await _validate.RegexLaptopDetail(CrLD);
+                var validator = await _validate.RegexLaptopDetail(model);
 
                 if (!validator.Success)
                 {

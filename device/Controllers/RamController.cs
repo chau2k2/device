@@ -25,9 +25,9 @@ namespace device.Controllers
         }
 
         [HttpPut("do-update")]
-        public async Task<IActionResult> Update(int id, [FromBody] RamModel udR)
+        public async Task<IActionResult> Update(int id, [FromBody] RamModel model)
         {
-            return Ok (await _service.Update(id, udR));
+            return Ok (await _service.Update(id, model));
         }
 
         [HttpGet("get-by-id")]
@@ -37,9 +37,9 @@ namespace device.Controllers
         }
 
         [HttpPost("create")]
-        public async Task<IActionResult> Create([FromBody] RamModel CrR)
+        public async Task<IActionResult> Create([FromBody] RamModel model)
         {
-            return Ok (await _service.Create(CrR)); 
+            return Ok (await _service.Create(model)); 
         }
 
         [HttpDelete("delete")]

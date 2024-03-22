@@ -74,7 +74,7 @@ namespace device.Services
                 };
             }
         }
-        public async Task<ActionResult<BaseResponse<MonitorM>>> Update(int id, MonitorModel UpM)
+        public async Task<ActionResult<BaseResponse<MonitorM>>> Update(int id, MonitorModel model)
         {
             try
             {
@@ -92,8 +92,8 @@ namespace device.Services
                 MonitorM monitor = new MonitorM()
                 {
                     Id = id,
-                    Name = UpM.Name,
-                    Price = UpM.Price
+                    Name = model.Name,
+                    Price = model.Price
                 };
             
                 var result = await _repos.UpdateOneAsyns(monitor);
@@ -115,7 +115,7 @@ namespace device.Services
                 };
             }
         }
-        public async Task<ActionResult<BaseResponse<MonitorM>>> Create(MonitorModel CrM)
+        public async Task<ActionResult<BaseResponse<MonitorM>>> Create(MonitorModel model)
         {
             try
             {
@@ -125,8 +125,8 @@ namespace device.Services
                 MonitorM monitor = new MonitorM()
                 {
                     Id = next,
-                    Name = CrM.Name,
-                    Price = CrM.Price
+                    Name = model.Name,
+                    Price = model.Price
                 };
 
             

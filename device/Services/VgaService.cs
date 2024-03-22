@@ -85,7 +85,7 @@ namespace device.Services
             }
             
         }
-        public async Task<ActionResult<BaseResponse<Vga>>> Create(VgaModel CrV)
+        public async Task<ActionResult<BaseResponse<Vga>>> Create(VgaModel model)
         {
             try
             {
@@ -95,8 +95,8 @@ namespace device.Services
                 Vga vga = new Vga()
                 {
                     Id = nextId,
-                    Name = CrV.Name,
-                    Price = CrV.Price
+                    Name = model.Name,
+                    Price = model.Price
                 };
 
                 var result = await _repo.AddOneAsync(vga);
@@ -113,7 +113,7 @@ namespace device.Services
                 throw ex;
             }
         }
-        public async Task<ActionResult<BaseResponse<Vga>>> Update(int id, VgaModel UpV)
+        public async Task<ActionResult<BaseResponse<Vga>>> Update(int id, VgaModel model)
         {
             var VgaModel = await _context.ram.FindAsync(id);
 
@@ -129,8 +129,8 @@ namespace device.Services
             Vga vga = new Vga()
             {
                 Id = id,
-                Name = UpV.Name,
-                Price = UpV.Price
+                Name = model.Name,
+                Price = model.Price
             };
 
             try

@@ -22,18 +22,18 @@ namespace device.Services
             _context = context;
         }
 
-        public async Task<ActionResult<BaseResponse<PcResponse>>> Create(PrivateComputerModel pcModel)
+        public async Task<ActionResult<BaseResponse<PcResponse>>> Create(PrivateComputerModel model)
         {
             try
             {
                 PrivateComputer pc = new PrivateComputer()
                 {
-                    Id = pcModel.Id,
-                    Name = pcModel.Name,
-                    CostPrice = pcModel.CostPrice,
-                    SoldPrice = pcModel.SoldPrice,
-                    ProducerId = pcModel.ProducerId,
-                    IsDelete = pcModel.IsDelete
+                    Id = model.Id,
+                    Name = model.Name,
+                    CostPrice = model.CostPrice,
+                    SoldPrice = model.SoldPrice,
+                    ProducerId = model.ProducerId,
+                    IsDelete = model.IsDelete
                 };
 
                 var result = await _repo.AddOneAsync(pc);
@@ -159,7 +159,7 @@ namespace device.Services
             }
         }
 
-        public Task<ActionResult<BaseResponse<PrivateComputer>>> Update(int id, PrivateComputerModel pc)
+        public Task<ActionResult<BaseResponse<PrivateComputer>>> Update(int id, PrivateComputerModel model)
         {
             throw new NotImplementedException();
         }

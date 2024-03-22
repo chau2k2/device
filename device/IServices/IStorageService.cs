@@ -10,8 +10,8 @@ namespace device.IServices
     {
         Task<TPaging<StorageResponse>> GetAll(int page, int pageSize);
         Task<ActionResult<BaseResponse<Storage>>> GetById(int id);
-        Task<ActionResult<BaseResponse<Storage>>> Create(StorageModel CrS);
-        Task<ActionResult<BaseResponse<Storage>>> Update(int id, StorageModel UpS);
+        Task<ActionResult<BaseResponse<Storage>>> Create(StorageModel model);
+        Task<ActionResult<BaseResponse<Storage>>> Update(int id, StorageModel model);
         Task<ActionResult<BaseResponse<Storage>>> Delete(int id);
     }
 }

@@ -75,7 +75,7 @@ namespace device.Services
                 };
             }
         }
-        public async Task<ActionResult<BaseResponse<Ram>>> Create (RamModel CrR)
+        public async Task<ActionResult<BaseResponse<Ram>>> Create (RamModel model)
         {
             try
             {
@@ -85,8 +85,8 @@ namespace device.Services
                 Ram ram = new Ram()
                 {
                     Id = nextId,
-                    Name = CrR.Name,
-                    Price = CrR.Price
+                    Name = model.Name,
+                    Price = model.Price
                 };
 
                 var result = await _repo.AddOneAsync(ram);
@@ -108,7 +108,7 @@ namespace device.Services
                 };
             }
         }
-        public async Task<ActionResult<BaseResponse<Ram>>> Update (int id, RamModel UpR)
+        public async Task<ActionResult<BaseResponse<Ram>>> Update (int id, RamModel model)
         {
             try
             {
@@ -126,8 +126,8 @@ namespace device.Services
                 Ram ram = new Ram()
                 {
                     Id = id,
-                    Name = UpR.Name,
-                    Price= UpR.Price
+                    Name = model.Name,
+                    Price= model.Price
                 };
             
                 var result = await _repo.UpdateOneAsyns(ram);

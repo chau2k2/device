@@ -23,9 +23,9 @@ namespace device.Controllers
             return Ok( await _service.GetAll(page, pageSize));
         }
         [HttpPut("do-update")]
-        public async Task<IActionResult> Update(int id, [FromBody] StorageModel USt)
+        public async Task<IActionResult> Update(int id, [FromBody] StorageModel model)
         {
-            return Ok(await _service.Update(id, USt));
+            return Ok(await _service.Update(id, model));
         }
         [HttpGet("get-by-{id}")]
         public async Task<IActionResult> FindById(int id)
@@ -33,9 +33,9 @@ namespace device.Controllers
             return Ok(await _service.GetById(id));
         }
         [HttpPost("create")]
-        public async Task<IActionResult> Add([FromBody] StorageModel Cst)
+        public async Task<IActionResult> Add([FromBody] StorageModel model)
         {
-            return Ok (await _service.Create(Cst));
+            return Ok (await _service.Create(model));
         }
         [HttpDelete("delete-vga")]
         public async Task<IActionResult> Delete(int id)

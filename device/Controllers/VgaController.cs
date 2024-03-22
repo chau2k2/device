@@ -25,15 +25,15 @@ namespace device.Controllers
         }
 
         [HttpPost("do-create")]
-        public async Task<ActionResult<Vga>> CreateVga(VgaModel vgs)
+        public async Task<ActionResult<Vga>> CreateVga(VgaModel model)
         {
-            return Ok(await _service.Create(vgs));
+            return Ok(await _service.Create(model));
         }
 
         [HttpPut("do-update")]
-        public async Task<ActionResult<Vga>> UpdateVga(int id, VgaModel Uvga)
+        public async Task<ActionResult<Vga>> UpdateVga(int id, VgaModel model)
         {
-            return Ok (await _service .Update(id, Uvga));
+            return Ok (await _service .Update(id, model));
         }
 
         [HttpDelete("do-delete")]

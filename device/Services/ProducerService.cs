@@ -77,7 +77,7 @@ namespace device.Services
                 };
             }
         }
-        public async Task<ActionResult<BaseResponse<Producer>>> UpdateProducer (int id, ProducerModel Upd)
+        public async Task<ActionResult<BaseResponse<Producer>>> UpdateProducer (int id, ProducerModel model)
         {
             try
             {
@@ -94,8 +94,8 @@ namespace device.Services
                 Producer producer = new Producer()
                 {
                     Id = id,
-                    Name = Upd.Name,
-                    IsActive = Upd.IsActive
+                    Name = model.Name,
+                    IsActive = model.IsActive
                 };
             
                 var result = await _repos.UpdateOneAsyns(producer);
@@ -117,7 +117,7 @@ namespace device.Services
                 };
             }
         }
-        public async Task<ActionResult<BaseResponse<Producer>>> CreateProducer (ProducerModel cpr)
+        public async Task<ActionResult<BaseResponse<Producer>>> CreateProducer (ProducerModel model)
         {
             try
             {
@@ -129,8 +129,8 @@ namespace device.Services
                 Producer producer = new Producer()
                 {
                     Id = next,
-                    Name = cpr.Name,
-                    IsActive = cpr.IsActive
+                    Name = model.Name,
+                    IsActive = model.IsActive
                 };
 
                 var result = await _repos.AddOneAsync(producer);

@@ -30,15 +30,15 @@ namespace device.Controllers
         }
 
         [HttpPost("create")]
-        public async Task<IActionResult> Create([FromBody] LaptopDetailModel CLD)
+        public async Task<IActionResult> Create([FromBody] LaptopDetailModel model)
         {
-            return Ok (await _service.Create(CLD));
+            return Ok (await _service.Create(model));
         }
 
         [HttpPost("update-lap-detail")]
-        public async Task<IActionResult> Update(int id, [FromBody] LaptopDetailModel UDL)
+        public async Task<IActionResult> Update(int id, [FromBody] LaptopDetailModel model)
         {
-            return Ok (await _service.Update(id, UDL));
+            return Ok (await _service.Update(id, model));
         }
 
         [HttpDelete("do-delete")]

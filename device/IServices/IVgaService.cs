@@ -10,8 +10,8 @@ namespace device.IServices
     {
         Task<ActionResult<BaseResponse<Vga>>> GetById(int id);
         Task<TPaging<VgaResponse>> GetAll(int page, int pageSize);
-        Task<ActionResult<BaseResponse<Vga>>> Create(VgaModel CrV);
-        Task<ActionResult<BaseResponse<Vga>>> Update(int id, VgaModel UpV);
+        Task<ActionResult<BaseResponse<Vga>>> Create(VgaModel model);
+        Task<ActionResult<BaseResponse<Vga>>> Update(int id, VgaModel model);
         Task<ActionResult<BaseResponse<Vga>>> Delete(int id);
     }
 }

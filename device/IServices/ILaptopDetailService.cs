@@ -9,8 +9,8 @@ namespace device.IServices
     {
         Task<TPaging<LaptopDetailResponse>> GetAll(int page, int pageSize);
         Task<ActionResult<BaseResponse<LaptopDetail>>> GetById(int id);
-        Task<ActionResult<BaseResponse<LaptopDetail>>> Update(int id, LaptopDetailModel UpLD);
-        Task<ActionResult<BaseResponse<LaptopDetail>>> Create(LaptopDetailModel CrLD);
+        Task<ActionResult<BaseResponse<LaptopDetail>>> Update(int id, LaptopDetailModel model);
+        Task<ActionResult<BaseResponse<LaptopDetail>>> Create(LaptopDetailModel model);
         Task<ActionResult<BaseResponse<LaptopDetail>>> Delete(int id);
     }
 }

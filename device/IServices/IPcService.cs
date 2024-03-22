@@ -10,8 +10,8 @@ namespace device.IServices
     {
         Task<TPaging<PcResponse>> GetAll ( int page, int pageSize );
         Task<ActionResult<BaseResponse<PrivateComputer>>> FindPcByName ( string name );
-        Task<ActionResult<BaseResponse<PcResponse>>> Create(PrivateComputerModel pc);
-        Task<ActionResult<BaseResponse<PrivateComputer>>> Update(int id, PrivateComputerModel pc);
+        Task<ActionResult<BaseResponse<PcResponse>>> Create(PrivateComputerModel model);
+        Task<ActionResult<BaseResponse<PrivateComputer>>> Update(int id, PrivateComputerModel model);
         Task<ActionResult<BaseResponse<PrivateComputer>>> Delete (string name);
     }
 }
