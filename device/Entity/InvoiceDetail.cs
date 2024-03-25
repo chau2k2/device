@@ -1,5 +1,4 @@
-﻿using device.Models;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 
 namespace device.Entity
@@ -17,7 +16,7 @@ namespace device.Entity
         [Range(0, int.MaxValue)]
         public EProductType ProductType { get; set; }
         [MaxLength(100)]
-        public string? NameProduct { get; set; }
+        public int ProductId { get; set; }
         /// <summary>
         /// khóa ngoại invoiceId - liên kết với bảng invoice
         /// </summary>
@@ -43,4 +42,12 @@ namespace device.Entity
         [JsonIgnore]
         public virtual Invoice? invoices { get; set; }
     }
+    public enum EProductType
+    {
+        Laptop = 1,
+        PrivateComputer,
+        Ram,
+        Monitor,
+        Vga
+    };
 }

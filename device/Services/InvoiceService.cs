@@ -28,7 +28,6 @@ namespace device.Services
 
                 var invoices = await _context.Set<Invoice>()
                     .Include(i => i.invoiceDetail)!
-                        //.ThenInclude( l => l.Laptop)
                     .Where(i => i.IsDelete == false)
                     .Take(pageSize).Skip((page - 1) * pageSize)
                     .ToListAsync();
@@ -48,9 +47,9 @@ namespace device.Services
                             .Select(detail => new InvoiceDetailResponse
                             {
                                 Id = detail.Id,
-                                //LaptopId = detail.LaptopId,
-                                //LaptopName = detail.Laptop.Name,
-                                InvoiceNumber = detail.invoices.InvoiceNumber,
+                                ProductType = detail.ProductType,
+                                ProductId = detail.ProductId,
+                                InvoiceNumber = detail.invoices!.InvoiceNumber,
                                 Quantity = detail.Quantity,
                                 Price = detail.Price,
                                 InvoiceId = invoice.Id
@@ -81,7 +80,6 @@ namespace device.Services
             {
                 var invoice = await _context.Set<Invoice>()
                     .Include(i => i.invoiceDetail)!
-                        //.ThenInclude(l => l.Laptop)
                     .Where(i => i.IsDelete == false)
                     .FirstOrDefaultAsync(i => i.Id == id);
 
@@ -106,9 +104,9 @@ namespace device.Services
                         .Select(detail => new InvoiceDetailResponse
                         {
                             Id = detail.Id,
-                            //LaptopId = detail.LaptopId,
-                            //LaptopName = detail.Laptop.Name,
-                            InvoiceNumber = detail.invoices.InvoiceNumber,
+                            ProductType = detail.ProductType,
+                            ProductId = detail.ProductId,
+                            InvoiceNumber = detail.invoices!.InvoiceNumber,
                             Quantity = detail.Quantity,
                             Price = detail.Price,
                             InvoiceId = invoice.Id

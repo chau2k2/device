@@ -9,12 +9,10 @@ namespace device.Validator
     public class LaptopDetailValidate
     {
         private readonly LaptopDbContext _context;
-        private readonly CheckDuplicate _duplicate;
 
-        public LaptopDetailValidate(LaptopDbContext context, CheckDuplicate duplicate)
+        public LaptopDetailValidate(LaptopDbContext context)
         {
             _context = context;
-            _duplicate = duplicate;
         }
         public async Task<BaseResponse<LaptopDetail>> RegexLaptopDetail(LaptopDetailModel model)
         {
@@ -73,15 +71,6 @@ namespace device.Validator
                 };
             }
 
-            //if (laptop.Storage.ImportNumber == laptop.Storage.SoldNumber)
-            //{
-            //    return new BaseResponse<LaptopDetail>
-            //    {
-            //        Success = false,
-            //        Message = "Laptop này đã hết hàng!!!"
-            //    };
-            //}
-
             if (model.Cpu.Length >= 50)
             {
                 return new BaseResponse<LaptopDetail>
@@ -97,24 +86,6 @@ namespace device.Validator
                 {
                     Success = false,
                     Message = "Vượt quá kí tự cho phép!!!"
-                };
-            }
-
-            if (_duplicate.isValueName(model.HardDriver))
-            {
-                return new BaseResponse<LaptopDetail>
-                {
-                    Success = false,
-                    Message = "Không spam!!!"
-                };
-            }
-
-            if (_duplicate.isValueName(model.Cpu))
-            {
-                return new BaseResponse<LaptopDetail>
-                {
-                    Success = false,
-                    Message = "Không spam!!!"
                 };
             }
           

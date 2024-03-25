@@ -51,8 +51,9 @@ namespace device.Services
                     SoldPrice = result.SoldPrice,
                     ProducerId = result.ProducerId,
                     IsDelete = result.IsDelete,
-                    ProducerName = result.Producer.Name
+                    ProducerName = result.Producer!.Name
                 };
+
                 return new BaseResponse<PcResponse>
                 {
                     Success = true,
@@ -109,7 +110,7 @@ namespace device.Services
             }
         }
 
-        public Task<ActionResult<BaseResponse<PrivateComputer>>> FindPcByName(string name)
+        public Task<ActionResult<BaseResponse<PrivateComputer>>> FindPc(string name)
         {
             throw new NotImplementedException();
         }
@@ -134,7 +135,7 @@ namespace device.Services
                     {
                         Id = pc.Id,
                         Name = pc.Name,
-                        ProducerName = pc.Producer.Name,
+                        ProducerName = pc.Producer!.Name,
                         CostPrice = pc.CostPrice,
                         SoldPrice = pc.SoldPrice,
                         ProducerId = pc.ProducerId,

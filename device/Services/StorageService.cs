@@ -7,6 +7,8 @@ using device.ModelResponse;
 using device.IServices;
 using device.Response;
 using device.Models;
+using device.Validator;
+using System.ComponentModel.DataAnnotations;
 
 namespace device.Services
 {
@@ -14,11 +16,13 @@ namespace device.Services
     {
         private readonly IAllRepository<Storage> _repo;
         private readonly LaptopDbContext _context;
+        private readonly StorageValidate _validate;
 
         public StorageService(IAllRepository<Storage> repo,LaptopDbContext context)
         {
             _repo = repo;
             _context = context;
+            _validate = new StorageValidate(context);
         }
         public async Task<TPaging<StorageResponse>> GetAll(int page, int pageSize)
         {
@@ -39,10 +43,10 @@ namespace device.Services
                     {
                         Id = storage.Id,
                         ImportNumber = storage.ImportNumber,
-                        ProductType = (EProductType)storage.ProductType,
+                        ProductType = storage.ProductType,
                         Invenetory = storage.inventory,
                         SoldNumber = storage.SoldNumber,
-                        ProductName = storage.ProductName,
+                        ProductId = storage.ProductId,
                         IsDelete = storage.IsDelete
                     });
                 }
@@ -105,29 +109,21 @@ namespace device.Services
                 {
                     Id = nextId,
                     ProductType = model.ProductType,
-                    ProductName = model.ProductName,
+                    ProductId = model.ProductId,
                     inventory = model.ImportNumber - model.SoldNumber,
                     ImportNumber = model.ImportNumber,
                     SoldNumber = model.SoldNumber
                 };
 
-                switch (storage.ProductType)
+                var validator = await _validate.RegexStorage(model);
+
+                if (!validator.Success)
                 {
-                    case EProductType.Laptop:
-                        var laptop = await _context.laptops.FirstOrDefaultAsync(s => s.Name == model.ProductName);
-                        break;
-                    case EProductType.PrivateComputer:
-                        var pc = await _context.PrivateComputer.FirstOrDefaultAsync(p => p.Name == model.ProductName);
-                        break;
-                    case EProductType.Ram:
-                        var ram = await _context.ram.FirstOrDefaultAsync(r => r.Name == model.ProductName);
-                        break;
-                    case EProductType.Monitor:
-                        var monitor = await _context.monitors.FirstOrDefaultAsync(m => m.Name == model.ProductName);
-                        break;
-                    case EProductType.Vga:
-                        var vga = await _context.vgas.FirstOrDefaultAsync(v => v.Name == model.ProductName);
-                        break;
+                    return new BaseResponse<Storage>
+                    {
+                        Message = validator.Message,
+                        ErrorCode = validator.ErrorCode
+                    };
                 }
 
                 var result = await _repo.AddOneAsync(storage);
@@ -163,10 +159,23 @@ namespace device.Services
                 Storage storage = new Storage()
                 {
                     Id = id,
-                   // LaptopId = model.LaptopId,
+                    ProductType = model.ProductType,
+                    ProductId = model.ProductId,
+                    inventory = model.ImportNumber - model.SoldNumber,
                     ImportNumber = model.ImportNumber,
                     SoldNumber = model.SoldNumber
                 };
+
+                var validator = await _validate.RegexStorage(model);
+
+                if (!validator.Success)
+                {
+                    return new BaseResponse<Storage>
+                    {
+                        Message = validator.Message,
+                        ErrorCode = validator.ErrorCode
+                    };
+                }
 
                 var result = await _repo.UpdateOneAsyns(storages);
 

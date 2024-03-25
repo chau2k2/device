@@ -20,7 +20,7 @@ namespace device.Services
         {
             _repos = repos;
             _context = context;
-            _validate = new LaptopValidate(context, new CheckDuplicate());
+            _validate = new LaptopValidate(context);
         }
         public async Task<TPaging<LaptopResponse>> GetAllLaptop(int page, int pageSize)
         {

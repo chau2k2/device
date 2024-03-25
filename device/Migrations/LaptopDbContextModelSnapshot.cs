@@ -59,14 +59,14 @@ namespace device.Migrations
                     b.Property<bool>("IsDelete")
                         .HasColumnType("boolean");
 
-                    b.Property<string>("NameProduct")
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
-
                     b.Property<decimal>("Price")
                         .HasColumnType("numeric");
 
-                    b.Property<int>("EProductType")
+                    b.Property<int>("ProductId")
+                        .HasMaxLength(100)
+                        .HasColumnType("integer");
+
+                    b.Property<int>("ProductType")
                         .HasColumnType("integer");
 
                     b.Property<int>("Quantity")
@@ -206,9 +206,11 @@ namespace device.Migrations
 
             modelBuilder.Entity("device.Entity.PrivateComputer", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<decimal>("CostPrice")
                         .HasColumnType("numeric");
@@ -295,10 +297,10 @@ namespace device.Migrations
                     b.Property<bool>("IsDelete")
                         .HasColumnType("boolean");
 
-                    b.Property<string>("ProductName")
-                        .HasColumnType("text");
+                    b.Property<int>("ProductId")
+                        .HasColumnType("integer");
 
-                    b.Property<int>("EProductType")
+                    b.Property<int>("ProductType")
                         .HasColumnType("integer");
 
                     b.Property<int>("SoldNumber")

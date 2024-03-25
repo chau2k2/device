@@ -8,7 +8,7 @@ namespace device.Models
         /// <summary>
         /// Id Pc guid
         /// </summary>
-        public Guid Id { get; set; }
+        public int Id { get; set; }
         /// <summary>
         /// Tên PC
         /// </summary>

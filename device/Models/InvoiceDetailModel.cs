@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using device.Entity;
+using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 
 namespace device.Models
@@ -8,7 +9,7 @@ namespace device.Models
         
         public int Id { get; set; }
         public EProductType ProductType { get; set; }
-        public string? ProductName { get; set; }
+        public int ProductId { get; set; }
         public int InvoiceId { get; set; }
         [Range(0, 100000000)]
         [JsonIgnore]
@@ -18,12 +19,5 @@ namespace device.Models
         [JsonIgnore]
         public bool IsDelete { get; set; }
     }
-    public enum EProductType 
-    {
-        Laptop = 1,
-        PrivateComputer,
-        Ram,
-        Monitor,
-        Vga
-    };
+    
 }

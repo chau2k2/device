@@ -9,12 +9,10 @@ namespace device.Validator
     public class LaptopValidate
     {
         private readonly LaptopDbContext _context;
-        private readonly CheckDuplicate _duplicate;
 
-        public LaptopValidate(LaptopDbContext context, CheckDuplicate duplicate)
+        public LaptopValidate(LaptopDbContext context)
         {
             _context = context;
-            _duplicate = duplicate;
         }
 
         public async Task<BaseResponse<LaptopModel>> RegexLaptop(LaptopModel laptop)
@@ -30,15 +28,6 @@ namespace device.Validator
                 };
             }
 
-            if (_duplicate.isValueName(laptop.Name))
-            {
-                return new BaseResponse<LaptopModel>
-                {
-                    Success = false,
-                    Message = "Không spam"
-                };
-            }
-
             if (producer == null)
             {
                 return new BaseResponse<LaptopModel>
@@ -48,7 +37,7 @@ namespace device.Validator
                 };
             }
 
-            if (laptop.SoldPrice >= laptop.CostPrice)
+            if (laptop.SoldPrice < laptop.CostPrice)
             {
                 return new BaseResponse<LaptopModel>
                 {
@@ -57,7 +46,7 @@ namespace device.Validator
                 };
             }
 
-            if (laptop.SoldPrice <= Constants.MAX_PRICE || laptop.SoldPrice >= 0)
+            if (laptop.SoldPrice >= Constants.MAX_PRICE || laptop.SoldPrice <= 0)
             {
                 return new BaseResponse<LaptopModel>
                 {
@@ -66,7 +55,7 @@ namespace device.Validator
                 };
             }
 
-            if (laptop.CostPrice <= Constants.MAX_PRICE || laptop.CostPrice >= 0)
+            if (laptop.CostPrice >= Constants.MAX_PRICE || laptop.CostPrice <= 0)
             {
                 return new BaseResponse<LaptopModel>
                 {
@@ -74,17 +63,8 @@ namespace device.Validator
                     Message = $"Giá nhập phải là số dương và lớn hơn {Constants.MAX_PRICE}"
                 };
             }
-
-            //var storage = await _context.storages.FirstOrDefaultAsync(s => s.LaptopId == laptop.Id);
-
-            //if ( storage == null )
-            //{
-            //    return new BaseResponse<LaptopModel>
-            //    {
-            //        Success = false,
-            //        Message = "Laptop này chưa có kho hàng!!!"
-            //    };
-            //}
+            //check so luong
+            var storage = _context.storages.FirstOrDefault();
 
             return new BaseResponse<LaptopModel>
             {

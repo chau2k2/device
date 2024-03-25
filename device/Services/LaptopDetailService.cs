@@ -21,7 +21,7 @@ namespace device.Services
         {
             _repos = repos;
             _context = context;
-            _validate = new LaptopDetailValidate(context,new CheckDuplicate());
+            _validate = new LaptopDetailValidate(context);
             _logger = logger;
         }
 
@@ -38,7 +38,8 @@ namespace device.Services
                     .Include(r => r.Rams)
                     .Include(m => m.Monitor)
                     .Include(v => v.Vga)
-                    .Take(page).Skip((page - 1) * pageSize)
+                    .Where(d => d.IsDelete == false)
+                    .Take(pageSize).Skip((page - 1) * pageSize)
                     .ToListAsync();
 
                 List<LaptopDetailResponse> laptopDetailResponse = new List<LaptopDetailResponse>();

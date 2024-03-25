@@ -46,7 +46,7 @@ namespace device.Services
                         Quantity = invoiceDetail.Quantity,
                         Price = invoiceDetail.Price,
                         IsDelete = invoiceDetail.IsDelete,
-                        ProductName = invoiceDetail.NameProduct!,
+                        ProductId = invoiceDetail.ProductId!,
                         ProductType = invoiceDetail.ProductType
                     });
                 }
@@ -81,32 +81,79 @@ namespace device.Services
                     ProductType = model.ProductType,
                     InvoiceId = model.InvoiceId,
                     Quantity = model.Quantity,
-                    NameProduct = model.ProductName
+                    ProductId = model.ProductId
                 };
+
+                var storage = await _context.storages.FirstOrDefaultAsync(s => s.ProductType == model.ProductType & s.ProductId == model.ProductId);
+
+                if (storage != null)
+                {
+                    storage!.SoldNumber = storage.SoldNumber += detail.Quantity;
+
+                    storage!.inventory = storage.ImportNumber - storage!.SoldNumber;
+                }
 
                 switch (detail.ProductType)
                 {
                     case EProductType.Laptop:
-                        var laptop = await _context.laptops.FirstOrDefaultAsync(l => l.Name == model.ProductName);
-                        detail.Price = laptop!.SoldPrice;
-                        break;
-                    case EProductType.PrivateComputer:
-                        var pc = await _context.PrivateComputer.FirstOrDefaultAsync(p => p.Name == model.ProductName);
-                        detail.Price = pc!.SoldPrice;
-                        break;
-                    case EProductType.Ram:
-                        var ram = await _context.ram.FirstOrDefaultAsync(r =>  r.Name == model.ProductName);
-                        detail.Price = ram!.Price;
-                        break;
-                    case EProductType.Monitor:
-                        var monitor = await _context.monitors.FirstOrDefaultAsync(m => m.Name == model.ProductName);
-                        detail.Price = monitor!.Price;
-                        break;
-                    case EProductType.Vga:
-                        var vga = await _context.vgas.FirstOrDefaultAsync( v => v.Name == model.ProductName);
-                        detail.Price = vga!.Price;
+
+                        var laptop = await _context.laptops.FirstOrDefaultAsync(l => l.Id == model.ProductId);
+
+                        if (laptop != null)
+                        {
+                            detail.Price = laptop!.SoldPrice;
+                        }
+                        
                         break;
 
+                    case EProductType.PrivateComputer:
+
+                        var pc = await _context.PrivateComputer.FirstOrDefaultAsync(p => p.Id == model.ProductId);
+
+                        if (pc != null)
+                        {
+                            detail.Price = pc!.SoldPrice;
+                        }
+
+                        break;
+
+                    case EProductType.Ram:
+                        var ram = await _context.ram.FirstOrDefaultAsync(r =>  r.Id == model.ProductId);
+
+                        if (ram != null)
+                        {
+                            detail.Price = ram!.Price;
+                        }
+                        
+                        break;
+
+                    case EProductType.Monitor:
+                        var monitor = await _context.monitors.FirstOrDefaultAsync(m => m.Id == model.ProductId);
+
+                        if (monitor != null)
+                        {
+                            detail.Price = monitor!.Price;
+                        }
+                        
+                        break;
+
+                    case EProductType.Vga:
+                        var vga = await _context.vgas.FirstOrDefaultAsync( v => v.Id == model.ProductId);
+
+                        if(vga != null)
+                        {
+                            detail.Price = vga!.Price;
+                        }
+                        
+                        break;
+
+                    default:
+                        return new BaseResponse<InvoiceDetail>
+                        {
+                            Success = false,
+                            Message = "No exist this product!!!",
+                            ErrorCode = ErrorCode.NotFound
+                        };
                 }
 
                 var validate = await _validate.RegexInvoice(model);
@@ -156,8 +203,14 @@ namespace device.Services
                     };
                 }
 
+                var storage = await _context.storages.FirstOrDefaultAsync(s => s.ProductType == invoiceDetail.ProductType & s.ProductId == invoiceDetail.ProductId);
+
+                storage!.SoldNumber = storage.SoldNumber -= invoiceDetail.Quantity;
+
+                storage!.inventory = storage.ImportNumber - storage.SoldNumber;
+
                 invoiceDetail.IsDelete = true;
-                
+
                 var delInvoiceDetail = await _repo.UpdateOneAsyns(invoiceDetail);
 
                 return new BaseResponse<InvoiceDetail>

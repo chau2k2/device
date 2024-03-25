@@ -34,7 +34,7 @@ namespace device.Entity
         /// <summary>
         /// tên sản phẩm
         /// </summary>
-        public string? ProductName { get; set; } 
+        public int ProductId { get; set; } 
         /// <summary>
         /// trường xóa
         /// </summary>

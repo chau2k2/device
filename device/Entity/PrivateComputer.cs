@@ -8,7 +8,8 @@ namespace device.Entity
         /// <summary>
         /// Id Pc guid
         /// </summary>
-        public Guid Id { get; set; }
+        [Key]
+        public int Id { get; set; }
         /// <summary>
         /// Tên PC
         /// </summary>
@@ -33,6 +34,6 @@ namespace device.Entity
         /// </summary>
         public bool IsDelete { get; set; }
         [JsonIgnore]
-        public virtual Producer Producer { get; set; }
+        public virtual Producer? Producer { get; set; }
     }
 }
