@@ -5,6 +5,7 @@ using device.IServices;
 using device.ModelResponse;
 using device.Models;
 using device.Response;
+using device.Validator;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -15,11 +16,13 @@ namespace device.Services
     {
         private readonly IAllRepository<PrivateComputer> _repo;
         private readonly LaptopDbContext _context;
+        private readonly PcValidate _validate;
 
         public PcService(IAllRepository<PrivateComputer> repo, LaptopDbContext context) 
         {
             _repo = repo;
             _context = context;
+            _validate = new PcValidate(context);
         }
 
         public async Task<ActionResult<BaseResponse<PcResponse>>> Create(PrivateComputerModel model)
@@ -33,8 +36,20 @@ namespace device.Services
                     CostPrice = model.CostPrice,
                     SoldPrice = model.SoldPrice,
                     ProducerId = model.ProducerId,
-                    IsDelete = model.IsDelete
+                    IsDelete = model.IsDelete,
+                    
                 };
+
+                var validator = await _validate.RegexPc(model);
+
+                if (!validator.Success)
+                {
+                    return new BaseResponse<PcResponse>
+                    {
+                        Message = validator.Message,
+                        ErrorCode = validator.ErrorCode
+                    };
+                }
 
                 var result = await _repo.AddOneAsync(pc);
 
@@ -160,9 +175,60 @@ namespace device.Services
             }
         }
 
-        public Task<ActionResult<BaseResponse<PrivateComputer>>> Update(int id, PrivateComputerModel model)
+        public async Task<ActionResult<BaseResponse<PrivateComputer>>> Update(int id, PrivateComputerModel model)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var lap = await _repo.GetAsyncById(id);
+
+                if (lap == null || lap!.IsDelete == true)
+                {
+                    return new BaseResponse<PrivateComputer>
+                    {
+                        Success = false,
+                        Message = "Not found!!!"
+                    };
+                }
+
+                PrivateComputer pc = new PrivateComputer()
+                {
+                    Id = id,
+                    Name = model.Name,
+                    ProducerId = model.ProducerId,
+                    CostPrice = model.CostPrice,
+                    SoldPrice = model.SoldPrice,
+                    IsDelete = model.IsDelete
+                };
+
+                var validator = await _validate.RegexPc(model);
+
+                if (!validator.Success)
+                {
+                    return new BaseResponse<PrivateComputer>
+                    {
+                        Message = validator.Message,
+                        ErrorCode = validator.ErrorCode
+                    };
+                }
+
+                var result = await _repo.UpdateOneAsyns(pc);
+
+                return new BaseResponse<PrivateComputer>
+                {
+                    Success = true,
+                    Message = "Successfull!!!",
+                    Data = result
+                };
+            }
+            catch (Exception ex)
+            {
+                return new BaseResponse<PrivateComputer>
+                {
+                    Success = false,
+                    Message = ex.Message,
+                    ErrorCode = ErrorCode.Error
+                };
+            }
         }
     }
 }

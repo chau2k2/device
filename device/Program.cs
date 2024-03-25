@@ -1,8 +1,10 @@
 using device.Data;
+using device.Entity;
 using device.IRepository;
 using device.IServices;
 using device.Repository;
 using device.Services;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -25,6 +27,12 @@ builder.Services.AddScoped(typeof(ILaptopDetailService), typeof(LaptopDetailServ
 builder.Services.AddScoped(typeof(IInvoiceService), typeof(InvoiceService));
 builder.Services.AddScoped(typeof(IInvoiceDetailService), typeof(InvoiceDetailService));
 builder.Services.AddScoped(typeof(IPcService), typeof(PcService));
+builder.Services.AddScoped(typeof(IUserService), typeof(UserService));
+
+
+builder.Services.AddTransient<UserManager<User>, UserManager<User>>();
+builder.Services.AddTransient<SignInManager<User>, SignInManager<User>>();
+
 
 builder.Services.AddControllers(option => option.SuppressImplicitRequiredAttributeForNonNullableReferenceTypes = true);
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

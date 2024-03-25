@@ -225,6 +225,13 @@ namespace device.Services
 
                 invoice.IsDelete = true;
 
+                var invoiceDetail = await _context.InvoicesDetail.FirstOrDefaultAsync( d => d.InvoiceId == id & d.IsDelete == false);
+
+                if (invoiceDetail != null)
+                {
+                    invoiceDetail.IsDelete = true;
+                }
+
                 var del = await _repo.UpdateOneAsyns(invoice);
 
                 return new BaseResponse<Invoice>
