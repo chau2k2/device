@@ -1,14 +1,11 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Identity;
+using System.ComponentModel.DataAnnotations;
 
 namespace device.Entity
 {
-    public class User
+    public class User : IdentityUser<int>
     {
-        /// <summary>
-        /// khóa chính id (int)
-        /// </summary>
-        [Key]
-        public int Id { get; set; }
+        public User() { }
         public string Name { get; set; }
         /// <summary>
         /// Email
@@ -22,5 +19,6 @@ namespace device.Entity
         [Required(ErrorMessage = "Vui lòng nhập mật khẩu.")]
         [MinLength(8, ErrorMessage = "Mật khẩu phải có ít nhất 8 ký tự.")]
         public string Password { get; set; }
+
     }
 }

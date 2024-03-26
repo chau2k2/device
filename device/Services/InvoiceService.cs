@@ -143,7 +143,16 @@ namespace device.Services
                 {
                     Id = nextId,
                     DateInvoice = model.DateInvoice,
-                    IsDelete = model.IsDelete
+                    IsDelete = model.IsDelete,
+                    invoiceDetail = new List <InvoiceDetail>()
+                    {
+                        new InvoiceDetail()
+                        {
+                            ProductId = model.ProductId,
+                            ProductType = model.ProductType,
+                            Quantity = model.Quantity
+                        }
+                    }
                 };
 
                 invoice.InvoiceNumber = $"IV{invoice.Id:D4}";

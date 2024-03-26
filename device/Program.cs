@@ -6,6 +6,9 @@ using device.Repository;
 using device.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using device.Models;
+using Microsoft.Extensions.Options;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,6 +16,12 @@ var builder = WebApplication.CreateBuilder(args);
 
 //add dbcontext 
 builder.Services.AddDbContext<LaptopDbContext>(opt => opt.UseNpgsql("DeviceDB"));
+
+
+
+builder.Services.AddIdentity<User, Role>()
+    .AddEntityFrameworkStores<LaptopDbContext>()
+    .AddDefaultTokenProviders();
 
 // Dependency Injection
 builder.Services.AddScoped(typeof(IAllRepository<>), typeof(AllRepository<>));
@@ -28,7 +37,6 @@ builder.Services.AddScoped(typeof(IInvoiceService), typeof(InvoiceService));
 builder.Services.AddScoped(typeof(IInvoiceDetailService), typeof(InvoiceDetailService));
 builder.Services.AddScoped(typeof(IPcService), typeof(PcService));
 builder.Services.AddScoped(typeof(IUserService), typeof(UserService));
-
 
 builder.Services.AddTransient<UserManager<User>, UserManager<User>>();
 builder.Services.AddTransient<SignInManager<User>, SignInManager<User>>();

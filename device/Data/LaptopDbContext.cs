@@ -1,12 +1,15 @@
 ﻿using device.Entity;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace device.Data
 {
-    public class LaptopDbContext :DbContext
+    public class LaptopDbContext :IdentityDbContext <User, Role, int>
     {
         private readonly IConfiguration Configuration;
-        public LaptopDbContext(IConfiguration configuration)
+        public LaptopDbContext(IConfiguration configuration, DbContextOptions option)
+            :base(option)
         {
             Configuration = configuration;
         }
@@ -16,7 +19,7 @@ namespace device.Data
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-          
+            base.OnModelCreating(modelBuilder);
         }
         
         public DbSet<Laptop> laptops { get; set; }

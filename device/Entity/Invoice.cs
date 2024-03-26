@@ -29,6 +29,6 @@ namespace device.Entity
         /// liên kết với chi tiết hóa đơn ( invoice Detail)
         /// </summary>
         [JsonIgnore]
-        public ICollection<InvoiceDetail>? invoiceDetail { get; set;}
+        public List<InvoiceDetail>? invoiceDetail { get; set;}
     }
 }
