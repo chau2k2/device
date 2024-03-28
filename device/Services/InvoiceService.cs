@@ -7,6 +7,7 @@ using device.ModelResponse;
 using device.IServices;
 using device.Response;
 using device.Models;
+using device.Validator;
 
 namespace device.Services
 {
@@ -14,11 +15,15 @@ namespace device.Services
     {
         private readonly IAllRepository<Invoice> _repo;
         private readonly LaptopDbContext _context;
+        private readonly InvoiceDetailValidate _validate;
+        private readonly ProductService _productService;
 
         public InvoiceService(IAllRepository<Invoice> repo, LaptopDbContext context)
         {
             _repo = repo;
             _context = context;
+            _validate = new InvoiceDetailValidate(context);
+            _productService = new ProductService(context);
         }
         public async Task<TPaging<InvoiceResponse>> GetAll(int page, int pageSize)
         {
@@ -139,66 +144,52 @@ namespace device.Services
 
                 int nextId = maxId + 1;
 
+                InvoiceDetail invoiceDetail = new InvoiceDetail()
+                {
+                    ProductId = model.Details.ProductId,
+                    ProductType = model.Details.ProductType,
+                    Quantity = model.Details.Quantity
+                };
+
                 Invoice invoice = new Invoice()
                 {
                     Id = nextId,
-                    DateInvoice = model.DateInvoice,
+                    DateInvoice = DateTime.Now,
                     IsDelete = model.IsDelete,
                     invoiceDetail = new List <InvoiceDetail>()
                     {
-                        new InvoiceDetail()
-                        {
-                            ProductId = model.ProductId,
-                            ProductType = model.ProductType,
-                            Quantity = model.Quantity
-                        }
+                        invoiceDetail
                     }
                 };
 
                 invoice.InvoiceNumber = $"IV{invoice.Id:D4}";
 
-                var result = await _repo.AddOneAsync(invoice);
+                var invoiceDetailq = await _context.InvoicesDetail.FirstOrDefaultAsync(e => e.InvoiceId == model.Id);
 
-                return new BaseResponse<Invoice>
-                {
-                    Success = true,
-                    Message = "Successfull!!!",
-                    Data = result
-                };
-            }
-            catch (Exception ex)
-            {
-                return new BaseResponse<Invoice>
-                {
-                    Success = false,
-                    Message = ex.Message,
-                    ErrorCode = ErrorCode.Error
-                };
-            }
-        }
-        public async Task<ActionResult<BaseResponse<Invoice>>> Update(int id, InvoiceModel model)
-        {
-            try
-            {
-                var invo = await _repo.GetAsyncById(id);
+                var storage = await _context.storages.FirstOrDefaultAsync(s => s.ProductType == model.Details.ProductType && s.ProductId == model.Details.ProductId);
 
-                if (invo == null || invo!.IsDelete == true)
+                if (storage != null & invoiceDetail != null)
+                {
+                    storage!.SoldNumber = storage.SoldNumber += model.Details.Quantity;
+
+                    storage!.inventory = storage.inventory -= model.Details.Quantity;
+                }
+
+                await _productService.ProductTypePrice(invoiceDetail!.Price, model.Details.ProductId, model.Details.ProductType);
+
+                var validate = await _validate.RegexInvoice(model.Details);
+
+                if (!validate.Success)
                 {
                     return new BaseResponse<Invoice>
                     {
                         Success = false,
-                        Message = "NotFound!!!"
+                        Message = validate.Message,
+                        ErrorCode = validate.ErrorCode
                     };
                 }
-                Invoice invoice = new Invoice()
-                {
-                    Id = id,
-                    DateInvoice = model.DateInvoice
-                };
 
-                invoice.InvoiceNumber = $"IV{invoice.Id:D4}";
-
-                var result = await _repo.UpdateOneAsyns(invoice);
+                var result = await _repo.AddOneAsync(invoice);
 
                 return new BaseResponse<Invoice>
                 {
@@ -234,7 +225,7 @@ namespace device.Services
 
                 invoice.IsDelete = true;
 
-                var invoiceDetail = await _context.InvoicesDetail.FirstOrDefaultAsync( d => d.InvoiceId == id & d.IsDelete == false);
+                var invoiceDetail = await _context.InvoicesDetail.FirstOrDefaultAsync( d => d.InvoiceId == id && d.IsDelete == false);
 
                 if (invoiceDetail != null)
                 {

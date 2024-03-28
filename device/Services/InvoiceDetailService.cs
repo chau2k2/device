@@ -15,12 +15,14 @@ namespace device.Services
         private readonly IAllRepository<InvoiceDetail> _repo;
         private readonly LaptopDbContext _context;
         private readonly InvoiceDetailValidate _validate;
+        private readonly ProductService _productService;
 
         public InvoiceDetailService(IAllRepository<InvoiceDetail> repo, LaptopDbContext context)
         {
             _repo = repo;
             _context = context;
             _validate = new InvoiceDetailValidate(context);
+            _productService = new ProductService(context);
         }
         public async Task<TPaging<InvoiceDetailResponse>> GetAllInvoiceDetail(int page, int pageSize)
         {
@@ -84,77 +86,17 @@ namespace device.Services
                     ProductId = model.ProductId
                 };
 
-                var storage = await _context.storages.FirstOrDefaultAsync(s => s.ProductType == model.ProductType & s.ProductId == model.ProductId);
+                var storage = await _context.storages.FirstOrDefaultAsync(s => s.ProductType == model.ProductType && s.ProductId == model.ProductId);
 
                 if (storage != null)
                 {
-                    storage!.SoldNumber = storage.SoldNumber += detail.Quantity;
+                    storage!.SoldNumber += detail.Quantity;
 
-                    storage!.inventory = storage.ImportNumber - storage!.SoldNumber;
+                    storage!.inventory -= detail.Quantity;
                 }
-
-                switch (detail.ProductType)
-                {
-                    case EProductType.Laptop:
-
-                        var laptop = await _context.laptops.FirstOrDefaultAsync(l => l.Id == model.ProductId);
-
-                        if (laptop != null)
-                        {
-                            detail.Price = laptop!.SoldPrice;
-                        }
-                        
-                        break;
-
-                    case EProductType.PrivateComputer:
-
-                        var pc = await _context.PrivateComputer.FirstOrDefaultAsync(p => p.Id == model.ProductId);
-
-                        if (pc != null)
-                        {
-                            detail.Price = pc!.SoldPrice;
-                        }
-
-                        break;
-
-                    case EProductType.Ram:
-                        var ram = await _context.ram.FirstOrDefaultAsync(r =>  r.Id == model.ProductId);
-
-                        if (ram != null)
-                        {
-                            detail.Price = ram!.Price;
-                        }
-                        
-                        break;
-
-                    case EProductType.Monitor:
-                        var monitor = await _context.monitors.FirstOrDefaultAsync(m => m.Id == model.ProductId);
-
-                        if (monitor != null)
-                        {
-                            detail.Price = monitor!.Price;
-                        }
-                        
-                        break;
-
-                    case EProductType.Vga:
-                        var vga = await _context.vgas.FirstOrDefaultAsync( v => v.Id == model.ProductId);
-
-                        if(vga != null)
-                        {
-                            detail.Price = vga!.Price;
-                        }
-                        
-                        break;
-
-                    default:
-                        return new BaseResponse<InvoiceDetail>
-                        {
-                            Success = false,
-                            Message = "No exist this product!!!",
-                            ErrorCode = ErrorCode.NotFound
-                        };
-                }
+                
+                decimal price = await _productService.ProductTypePrice(detail.Price, model.ProductId, model.ProductType);
+                detail.Price = price;
 
                 var validate = await _validate.RegexInvoice(model);
 
@@ -203,9 +145,9 @@ namespace device.Services
                     };
                 }
 
-                var storage = await _context.storages.FirstOrDefaultAsync(s => s.ProductType == invoiceDetail.ProductType & s.ProductId == invoiceDetail.ProductId);
+                var storage = await _context.storages.FirstOrDefaultAsync(s => s.ProductType == invoiceDetail.ProductType && s.ProductId == invoiceDetail.ProductId);
 
-                storage!.SoldNumber = storage.SoldNumber -= invoiceDetail.Quantity;
+                storage!.SoldNumber = storage.SoldNumber - invoiceDetail.Quantity;
 
                 storage!.inventory = storage.ImportNumber - storage.SoldNumber;
 
@@ -259,6 +201,84 @@ namespace device.Services
                     Success = false,
                     Message = ex.Message,
                     ErrorCode = ErrorCode.Error 
+                };
+            }
+        }
+
+        public async Task<ActionResult<BaseResponse<InvoiceDetail>>> Update(int id, InvoiceDetailModel model)
+        {
+            try
+            {
+                var invoiceDetail = await _repo.GetAsyncById(id);
+
+                if (invoiceDetail == null || invoiceDetail!.IsDelete)
+                {
+                    return new BaseResponse<InvoiceDetail>
+                    {
+                        Success = false,
+                        Message = "Not found!!!"
+                    };
+                }
+
+                // Cập nhật các thuộc tính của invoiceDetail với giá trị mới
+                invoiceDetail.ProductType = model.ProductType;
+                invoiceDetail.ProductId = model.ProductId;
+                invoiceDetail.InvoiceId = model.InvoiceId;
+                invoiceDetail.Quantity = model.Quantity;
+                invoiceDetail.IsDelete = model.IsDelete;
+
+                // Lấy giá mới từ ProductService và gán cho invoiceDetail
+                decimal price = await _productService.ProductTypePrice(invoiceDetail.Price, model.ProductId, model.ProductType);
+                invoiceDetail.Price = price;
+
+                var storage = await _context.storages.FirstOrDefaultAsync(s => s.ProductType == invoiceDetail.ProductType && s.ProductId == invoiceDetail.ProductId);
+
+                //trường hợp chỉ update số lượng- giữ nguyên sản phẩm
+                if (invoiceDetail.ProductType == model.ProductType && invoiceDetail.ProductId == model.ProductId && invoiceDetail.Quantity != model.Quantity)
+                {
+                    var discrepancy = invoiceDetail.Quantity - model.Quantity;
+
+                    if (storage != null)
+                    {
+                        storage.inventory -= discrepancy;
+                        storage.SoldNumber += discrepancy;
+                    }
+                }
+                else //trường hợp update sản phẩm
+                {
+                    var storageOld = await _context.storages.FirstOrDefaultAsync(o => o.ProductType == invoiceDetail.ProductType && o.ProductId == invoiceDetail.ProductId);
+
+                    if (storageOld != null)
+                    {
+                        storageOld.inventory += invoiceDetail.Quantity;
+                        storageOld.SoldNumber -= invoiceDetail.Quantity;
+                    }
+
+                    var storageNew = await _context.storages.FirstOrDefaultAsync(o => o.ProductType == model.ProductType && o.ProductId == model.ProductId);
+
+                    if (storageNew != null)
+                    {
+                        storageNew.SoldNumber += model.Quantity;
+                        storageNew.inventory = storageNew.ImportNumber - model.Quantity;
+                    }
+                }
+
+                var result = await _repo.UpdateOneAsyns(invoiceDetail);
+
+                return new BaseResponse<InvoiceDetail>
+                {
+                    Success = true,
+                    Message = "Successfull!!!",
+                    Data = result
+                };
+            }
+            catch (Exception ex)
+            {
+                return new BaseResponse<InvoiceDetail>
+                {
+                    Success = false,
+                    Message = ex.Message,
+                    ErrorCode = ErrorCode.Error
                 };
             }
         }

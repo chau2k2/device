@@ -18,7 +18,7 @@ namespace device.Controllers
         }
 
         [HttpGet("get-all")]
-        public async Task<IActionResult> GetAll(int page = 1, int pageSize = 5)
+        public async Task<IActionResult> GetAll(int page = 1, int pageSize = 10)
         {
             return Ok(await _service.GetAll(page, pageSize));
         }
@@ -33,12 +33,6 @@ namespace device.Controllers
         public async Task<IActionResult> CreateInvoice([FromBody] InvoiceModel model)
         {
             return Ok ( await _service.Create(model));
-        }
-
-        [HttpPut("do-update")]
-        public async Task<IActionResult> UpdateInvoice(int id, InvoiceModel model)
-        {
-            return Ok (await _service.Update(id, model));
         }
 
         [HttpDelete("delete")]

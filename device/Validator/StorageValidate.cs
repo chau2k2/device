@@ -91,7 +91,7 @@ namespace device.Validator
                 };
             }
 
-            var storage = _context.storages.FirstOrDefaultAsync(s => s.ProductType == model.ProductType & s.ProductId == model.ProductId & s.IsDelete == false);
+            var storage = await _context.storages.FirstOrDefaultAsync(s => s.ProductType == model.ProductType && s.ProductId == model.ProductId && s.IsDelete == false);
 
             if (storage != null)
             {

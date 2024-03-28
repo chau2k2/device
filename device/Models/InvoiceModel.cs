@@ -1,5 +1,4 @@
-﻿using device.Entity;
-using System.Text.Json.Serialization;
+﻿using System.Text.Json.Serialization;
 
 namespace device.Models
 {
@@ -9,21 +8,14 @@ namespace device.Models
         /// <summary>
         /// số hóa đơn
         /// </summary>
+        [JsonIgnore]
         public string? InvoiceNumber { get; set; }
-        /// <summary>
-        /// ngày giờ trong hóa đơn
-        /// </summary>
-        public DateTime DateInvoice { get; set; }
 
-        public EProductType ProductType { get; set; }
-
-        public int ProductId { get; set; }
-
-        public int Quantity { get; set; }
         /// <summary>
         /// trường xóa => xóa mềm ( soft Delete)
         /// </summary>
         [JsonIgnore]
         public bool IsDelete { get; set; }
+        public InvoiceDetailModel Details { get; set; }
     }
 }

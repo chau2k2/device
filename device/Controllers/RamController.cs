@@ -19,7 +19,7 @@ namespace device.Controllers
         }
 
         [HttpGet("get-all")]
-        public async Task<IActionResult> GetAll(int page = 1, int pageSize = 5)
+        public async Task<IActionResult> GetAll(int page = 1, int pageSize = 10)
         {
             return Ok(await _service.GetAll(page, pageSize));
         }

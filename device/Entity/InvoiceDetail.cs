@@ -42,12 +42,5 @@ namespace device.Entity
         [JsonIgnore]
         public virtual Invoice? invoices { get; set; }
     }
-    public enum EProductType
-    {
-        Laptop = 1,
-        PrivateComputer,
-        Ram,
-        Monitor,
-        Vga
-    };
+
 }
