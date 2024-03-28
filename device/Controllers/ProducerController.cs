@@ -34,7 +34,7 @@ namespace device.Controllers
         {
             if (!ModelState.IsValid)
             {
-                StatusCode(StatusCodes.Status400BadRequest, "Error Request");
+                StatusCode(StatusCodes.Status400BadRequest, "ErrorCode Request");
             }
             return Ok(await _service.UpdateProducer(id, model));
         }
@@ -44,7 +44,7 @@ namespace device.Controllers
         {
             if (!ModelState.IsValid)
             {
-                StatusCode(StatusCodes.Status400BadRequest, "Error Request");
+                StatusCode(StatusCodes.Status400BadRequest, "ErrorCode Request");
             }
             return Ok(await _service.CreateProducer(model));
         }

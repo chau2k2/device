@@ -170,7 +170,7 @@ namespace device.Services
                 return new TPaging<PcResponse>
                 {
                     Message = ex.Message,
-                    Error = Error.Error
+                    Error = ErrorCode.Error
                 };
             }
         }

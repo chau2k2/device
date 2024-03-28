@@ -42,7 +42,7 @@ namespace device.Services
                 return new TPaging<Producer>
                 {
                     Message = ex.Message,
-                    Error = Error.Error
+                    Error = ErrorCode.Error
                 };
             }
         }

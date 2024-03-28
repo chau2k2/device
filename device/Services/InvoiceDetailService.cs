@@ -65,7 +65,7 @@ namespace device.Services
                 return new TPaging<InvoiceDetailResponse>
                 {
                     Message = ex.Message,
-                    Error = Error.Error
+                    Error = ErrorCode.Error
                 };
             }
         }
